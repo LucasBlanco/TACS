@@ -9,10 +9,10 @@ public class User {
 
 	private String username;
 
-	private List<Repository> faveRepos;
+	private List<Repository> favourites;
 
 	public User(){
-		faveRepos = new ArrayList<>();
+		favourites = new ArrayList<>();
 	}
 
 	public Long getId() {
@@ -31,12 +31,11 @@ public class User {
 		this.username = username;
 	}
 
-
-	public List<Repository> getFaveRepos() {
-		return faveRepos;
+	public List<Repository> getFavourites() {
+		return favourites;
 	}
 
-	public void setFaveRepos(List<Repository> faveRepos) {
-		this.faveRepos = faveRepos;
+	public void setFavourites(List<Repository> favourites) {
+		this.favourites = favourites;
 	}
 }
