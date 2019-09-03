@@ -8,9 +8,9 @@
 ## Levantar el proyecto:
 * Levantar el servicio de MySQL con los parámetros por defecto
 * Crear una base de datos, configurarla con:
-    - Crear schema con nombre "tacs"
-    - Agregar usuario al schema con username: tacs, password: tacs y los permisos necesarios
-* Posicionarse en el root del proyecto
+    - Nombre del schema: tacs
+    - Agregar usuario al schema con username: tacs, password: tacs y los permisos necesarios (Select, insert, update, delete)
+* Posicionarse en el root del proyecto desde el command prompt
 * Ejecutar el comando mvn spring-boot:run
 
 ## Descripción de las rutas:
