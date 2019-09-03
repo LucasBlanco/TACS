@@ -33,7 +33,10 @@ public class RepositoryMockService {
     public List<Repository> getRepositories(Date since, Date to){
         return repositories.stream().filter(repository -> !repository.getRegistrationDate().before(since) && !repository.getRegistrationDate().after(to)).collect(Collectors.toList());
     }
-
+    
+    public  List<Repository> getRepositoriesFiltered(String language, Integer nofcommits, Integer nofstars, Integer nofissues) throws ServiceException{
+       return repositories;
+    }
 }
     
 
