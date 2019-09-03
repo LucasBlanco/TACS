@@ -45,16 +45,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/users/{id}/filters")
-    public ResponseEntity<Object> createFilters(@PathVariable Long id){    	
-    	Filter filter1 = new Filter();
-        Filter filter2 = new Filter();
-        filter1.setCriterios(Arrays.asList("NAME", "AGE", "LANGUAGE", "OWNER", "LOCS"));
-        filter2.setCriterios(Arrays.asList());
-        List<Filter> filters = Arrays.asList(filter1, filter2);
-		return ResponseEntity.ok(filters);
-    }
-
     @GetMapping("/users/{id}/favourites")
     public ResponseEntity<Object> getFavourites(@PathVariable Long id){
         try {
