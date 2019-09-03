@@ -44,7 +44,7 @@ public class UserMockService {
         return newUser;
     }
 
-    public List<User> getUsers(){
+    public List<User> getUsers() throws ServiceException{
         return users;
     }
 

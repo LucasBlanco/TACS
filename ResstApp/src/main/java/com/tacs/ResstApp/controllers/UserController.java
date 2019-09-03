@@ -72,7 +72,13 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity<Object> getUsers(){
-        return ResponseEntity.ok(userMockService.getUsers());
+        try {
+            return ResponseEntity.ok(userMockService.getUsers());
+         } catch (ServiceException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
     }
 
     @GetMapping("/users/{id}")
@@ -102,7 +108,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{userId}/favourites/{id}")
-    public ResponseEntity<Object> getFavouriteById(@PathVariable Long userId, @PathVariable Long id){
+    public ResponseEntity<Object> getFavouriteById(@PathVariable Long userId, @RequestBody Long id){
         try {
             return ResponseEntity.ok(userMockService.getUserFavouriteRepoById(userId, id));
         }
@@ -155,9 +161,9 @@ public class UserController {
     }
 
     @GetMapping("/repositories")
-    public ResponseEntity<Object> getRepositoryByDate(@RequestParam LocalDateTime inicio, @RequestParam LocalDateTime fin){
+    public ResponseEntity<Object> getRepositoryByDate(@RequestParam("since") LocalDateTime since, @RequestParam("to") LocalDateTime to, @RequestParam("start") int start, @RequestParam("limit") int limit){
         try {
-            return ResponseEntity.ok(userMockService.getRepositoriesBetween(inicio, fin));
+            return ResponseEntity.ok(userMockService.getRepositoriesBetween(since, to));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
