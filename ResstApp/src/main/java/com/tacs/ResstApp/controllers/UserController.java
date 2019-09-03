@@ -47,6 +47,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
+    
 
     @GetMapping("/users/{id}/favourites")
     public ResponseEntity<Object> getFavourites(@PathVariable Long id){

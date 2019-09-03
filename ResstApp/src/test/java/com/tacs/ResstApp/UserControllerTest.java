@@ -86,7 +86,7 @@ class UserControllerTest {
 		User returnedUser = (User)response.getBody();
 		Assertions.assertEquals(1L, returnedUser.getId());
 		Assertions.assertEquals("Maria",returnedUser.getUsername());
-		Assertions.assertEquals(new ArrayList<>(),returnedUser.getFaveRepos());
+		Assertions.assertEquals(new ArrayList<>(),returnedUser.getFavourites());
 	}
 
 	@Test

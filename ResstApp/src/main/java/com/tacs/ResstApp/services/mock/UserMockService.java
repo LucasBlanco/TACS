@@ -40,6 +40,7 @@ public class UserMockService {
         users.addAll(newUsers);
         return users;
     }
+    
 
     public User getUser(Long id) throws ServiceException{
         return users.stream().filter(user -> user.getId() == id).findFirst().orElseThrow(()-> new ServiceException("Usuario inexistente"));
