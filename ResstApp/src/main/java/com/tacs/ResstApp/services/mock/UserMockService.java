@@ -38,19 +38,24 @@ public class UserMockService {
         this.users = new ArrayList<>(Arrays.asList(user1, user2, user3, user4, user5, user6));
     }
 
-    public List<User> createUser (User newUser) throws ServiceException{
+
+    public User createUser(User newUser) throws ServiceException{
         users.add(newUser);
+        return newUser;
+    }
+
+    public List<User> getUsers(){
         return users;
     }
-    
 
     public User getUser(Long id) throws ServiceException{
-        return users.stream().filter(user -> user.getId() == id).findFirst().orElseThrow(()-> new ServiceException("Usuario inexistente"));
+        return users.stream().filter(user -> user.getId() == id).findFirst().orElseThrow(()-> new ServiceException("User does not exist"));
     }
 
     public List<Repository> getUserFavouriteRepos(Long id) throws ServiceException{
-        return users.stream().filter(user -> user.getId() == id).findFirst().orElseThrow(()-> new ServiceException("Usuario inexistente")).getFavourites();
+        return users.stream().filter(user -> user.getId() == id).findFirst().orElseThrow(()-> new ServiceException("User does not exist")).getFavourites();
     }
+
 
     public List<Repository> addFavourite(Long userId, Long repositoryId) throws ServiceException{
         List<Repository> favouriteRepos = getUserFavouriteRepos(userId);
@@ -60,14 +65,25 @@ public class UserMockService {
     }
 
     public Repository findRepository(Long repositoryId) throws ServiceException {
-        return repositories.stream().filter(repo -> repo.getId() == repositoryId).findFirst().orElseThrow(()-> new ServiceException("Repositrio inexistente"));
+        return repositories.stream().filter(repo -> repo.getId() == repositoryId).findFirst().orElseThrow(() -> new ServiceException("Repositrio inexistente"));
     }
 
-    public List<Repository> deleteFavourite(Long userId, Long id) throws ServiceException{
+
+    public Repository getUserFavouriteRepoById(Long userId, Long id) throws ServiceException{
+        return getUserFavouriteRepos(userId).stream().filter(repo -> repo.getId() == id).findFirst().orElseThrow(()-> new ServiceException("Favourite does not exist"));
+    }
+
+    public List<Repository> createFavourite(Long id, Repository repositoryToFave) throws ServiceException{
+        List<Repository> favouriteRepos = getUserFavouriteRepos(id);
+        favouriteRepos.add(repositoryToFave);
+        getUser(id).setFavourites(favouriteRepos);
+        return getUserFavouriteRepos(id);
+    }
+
+    public void deleteFavourite(Long userId, Long id) throws ServiceException{
         List<Repository> favouriteRepos = getUserFavouriteRepos(userId);
         favouriteRepos.removeIf(repository -> repository.getId() == id);
         getUser(id).setFavourites(favouriteRepos);
-        return getUserFavouriteRepos(id);
     }
 
     public void logout(String token) throws ServiceException{

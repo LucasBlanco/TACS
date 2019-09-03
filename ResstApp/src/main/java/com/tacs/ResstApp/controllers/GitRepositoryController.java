@@ -2,7 +2,6 @@ package com.tacs.ResstApp.controllers;
 
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.mock.RepositoryMockService;
-import com.tacs.ResstApp.services.mock.UserMockService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,19 +35,13 @@ public class GitRepositoryController {
     @GetMapping("/repositories")
     public ResponseEntity<Object> getRepositories(@RequestParam("since") String since, @RequestParam("to") String to){
         try{
-            Date sinceDate = new SimpleDateFormat("ddMMyyyy").parse(since);
-            Date toDate = new SimpleDateFormat("ddMMyyyy").parse(to);
+            Date sinceDate = since == null ? new Date(Long.MIN_VALUE) : new SimpleDateFormat("ddMMyyyy").parse(since);
+            Date toDate = to == null ? new Date(Long.MAX_VALUE) : new SimpleDateFormat("ddMMyyyy").parse(to);
             return ResponseEntity.ok(repositoryMockService.getRepositories(sinceDate, toDate));
         }
         catch(ParseException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
-    
-    @GetMapping("/users")
-    public ResponseEntity<Object> getUsers(){
-    	return ResponseEntity.ok(repositoryMockService.getUsers());
-     }
-
 
 }

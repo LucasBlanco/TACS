@@ -32,9 +32,6 @@ class GitRepositoryControllerTest {
 	
     @Autowired
     UserMockService userMockService;
-    
-	@InjectMocks
-	UserController userController;
 
 	@BeforeEach
 	public void before()  {
@@ -82,33 +79,6 @@ class GitRepositoryControllerTest {
 		Assertions.assertEquals("repo 2",returnedRepos.get(1).getName());
 		Assertions.assertEquals(3L,returnedRepos.get(2).getId());
 		Assertions.assertEquals("repo 3",returnedRepos.get(2).getName());
-	}
-	
-	@Test
-	public void getUsers(){
-		List<User> newUsers = new ArrayList<>();
-		User user1 = new User();
-		User user2 = new User();
-		User user3 = new User();
-		user1.setId(1L);
-		user1.setUsername("Jose");
-		user2.setId(2L);
-		user2.setUsername("Pepe");
-		user3.setId(3L);
-		user3.setUsername("Juan");
-		newUsers.add(user1);
-		newUsers.add(user2);
-		Mockito.when(repositoryMockService.getUsers()).thenReturn(new ArrayList<>(Arrays.asList(user1, user2, user3)));
-		ResponseEntity<Object> response = gitRepositoryController.getUsers();
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-		List<User> updatedUsers = (ArrayList) response.getBody();
-		Assertions.assertEquals(3,updatedUsers.size());
-		Assertions.assertEquals(1L,updatedUsers.get(0).getId());
-		Assertions.assertEquals("Jose",updatedUsers.get(0).getUsername());
-		Assertions.assertEquals(2L,updatedUsers.get(1).getId());
-		Assertions.assertEquals("Pepe",updatedUsers.get(1).getUsername());
-		Assertions.assertEquals(3L,updatedUsers.get(2).getId());
-		Assertions.assertEquals("Juan",updatedUsers.get(2).getUsername());
 	}
 
 }
