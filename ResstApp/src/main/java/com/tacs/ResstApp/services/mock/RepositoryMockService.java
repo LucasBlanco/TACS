@@ -6,7 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class RepositoryMockService {
@@ -28,8 +30,8 @@ public class RepositoryMockService {
         return repositories.stream().filter(repo -> repo.getId() == id).findFirst().orElseThrow(()-> new ServiceException("Repositorio inexistente"));
     }
 
-    public List<Repository> getRepositories(){
-        return repositories;
+    public List<Repository> getRepositories(Date since, Date to){
+        return repositories.stream().filter(repository -> !repository.getRegistrationDate().before(since) && !repository.getRegistrationDate().after(to)).collect(Collectors.toList());
     }
 }
 

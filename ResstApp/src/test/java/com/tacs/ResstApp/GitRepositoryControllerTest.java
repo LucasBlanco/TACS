@@ -18,9 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @SpringBootTest
 class GitRepositoryControllerTest {
@@ -64,8 +62,10 @@ class GitRepositoryControllerTest {
 		Repository repo1 = new Repository(1L, "repo 1");
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
-		Mockito.when(repositoryMockService.getRepositories()).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
-		ResponseEntity<Object> response = gitRepositoryController.getRepositories();
+		String since = "01012018";
+		String to = "01012020";
+		Mockito.when(repositoryMockService.getRepositories(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+		ResponseEntity<Object> response = gitRepositoryController.getRepositories(since, to);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
 		List<Repository> returnedRepos = (ArrayList)response.getBody();
 		Assertions.assertEquals(3, returnedRepos.size());
