@@ -5,6 +5,7 @@ import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 public class UserMockService {
 
     private List<User> users;
+    private List<Repository> repositories;
 
     public UserMockService() {
         User user1 = new User();
@@ -36,8 +38,8 @@ public class UserMockService {
         this.users = new ArrayList<>(Arrays.asList(user1, user2, user3, user4, user5, user6));
     }
 
-    public List<User> createUsers(List<User> newUsers){
-        users.addAll(newUsers);
+    public List<User> createUser (User newUser) throws ServiceException{
+        users.add(newUser);
         return users;
     }
     
@@ -50,11 +52,15 @@ public class UserMockService {
         return users.stream().filter(user -> user.getId() == id).findFirst().orElseThrow(()-> new ServiceException("Usuario inexistente")).getFavourites();
     }
 
-    public List<Repository> createFavourites(Long id, List<Repository> repositoriesToFave) throws ServiceException{
-        List<Repository> favouriteRepos = getUserFavouriteRepos(id);
-        favouriteRepos.addAll(repositoriesToFave);
-        getUser(id).setFavourites(favouriteRepos);
-        return getUserFavouriteRepos(id);
+    public List<Repository> addFavourite(Long userId, Long repositoryId) throws ServiceException{
+        List<Repository> favouriteRepos = getUserFavouriteRepos(userId);
+        favouriteRepos.add(this.findRepository(repositoryId));
+        getUser(userId).setFavourites(favouriteRepos);
+        return getUserFavouriteRepos(userId);
+    }
+
+    public Repository findRepository(Long repositoryId) throws ServiceException {
+        return repositories.stream().filter(repo -> repo.getId() == repositoryId).findFirst().orElseThrow(()-> new ServiceException("Repositrio inexistente"));
     }
 
     public List<Repository> deleteFavourite(Long userId, Long id) throws ServiceException{
@@ -64,7 +70,13 @@ public class UserMockService {
         return getUserFavouriteRepos(id);
     }
 
+    public void logout(String token) throws ServiceException{
+        //todo
+    }
 
-
+    public List<Repository> getRepositoriesBetween(LocalDateTime inicio, LocalDateTime fin) throws ServiceException{
+        return repositories;
+        //todo
+    }
 }
 
