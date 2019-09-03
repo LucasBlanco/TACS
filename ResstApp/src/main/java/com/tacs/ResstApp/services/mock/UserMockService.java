@@ -46,20 +46,20 @@ public class UserMockService {
     }
 
     public List<Repository> getUserFavouriteRepos(Long id) throws ServiceException{
-        return users.stream().filter(user -> user.getId() == id).findFirst().orElseThrow(()-> new ServiceException("Usuario inexistente")).getFaveRepos();
+        return users.stream().filter(user -> user.getId() == id).findFirst().orElseThrow(()-> new ServiceException("Usuario inexistente")).getFavourites();
     }
 
     public List<Repository> createFavourites(Long id, List<Repository> repositoriesToFave) throws ServiceException{
         List<Repository> favouriteRepos = getUserFavouriteRepos(id);
         favouriteRepos.addAll(repositoriesToFave);
-        getUser(id).setFaveRepos(favouriteRepos);
+        getUser(id).setFavourites(favouriteRepos);
         return getUserFavouriteRepos(id);
     }
 
     public List<Repository> deleteFavourite(Long userId, Long id) throws ServiceException{
         List<Repository> favouriteRepos = getUserFavouriteRepos(userId);
         favouriteRepos.removeIf(repository -> repository.getId() == id);
-        getUser(id).setFaveRepos(favouriteRepos);
+        getUser(id).setFavourites(favouriteRepos);
         return getUserFavouriteRepos(id);
     }
 
