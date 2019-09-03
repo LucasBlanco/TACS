@@ -36,32 +36,38 @@ public class UserMockService {
         this.users = new ArrayList<>(Arrays.asList(user1, user2, user3, user4, user5, user6));
     }
 
-    public List<User> createUsers(List<User> newUsers){
-        users.addAll(newUsers);
+    public User createUser(User newUser){
+        users.add(newUser);
+        return newUser;
+    }
+
+    public List<User> getUsers(){
         return users;
     }
-    
 
     public User getUser(Long id) throws ServiceException{
-        return users.stream().filter(user -> user.getId() == id).findFirst().orElseThrow(()-> new ServiceException("Usuario inexistente"));
+        return users.stream().filter(user -> user.getId() == id).findFirst().orElseThrow(()-> new ServiceException("User does not exist"));
     }
 
     public List<Repository> getUserFavouriteRepos(Long id) throws ServiceException{
-        return users.stream().filter(user -> user.getId() == id).findFirst().orElseThrow(()-> new ServiceException("Usuario inexistente")).getFavourites();
+        return users.stream().filter(user -> user.getId() == id).findFirst().orElseThrow(()-> new ServiceException("User does not exist")).getFavourites();
     }
 
-    public List<Repository> createFavourites(Long id, List<Repository> repositoriesToFave) throws ServiceException{
+    public Repository getUserFavouriteRepoById(Long userId, Long id) throws ServiceException{
+        return getUserFavouriteRepos(userId).stream().filter(repo -> repo.getId() == id).findFirst().orElseThrow(()-> new ServiceException("Favourite does not exist"));
+    }
+
+    public List<Repository> createFavourite(Long id, Repository repositoryToFave) throws ServiceException{
         List<Repository> favouriteRepos = getUserFavouriteRepos(id);
-        favouriteRepos.addAll(repositoriesToFave);
+        favouriteRepos.add(repositoryToFave);
         getUser(id).setFavourites(favouriteRepos);
         return getUserFavouriteRepos(id);
     }
 
-    public List<Repository> deleteFavourite(Long userId, Long id) throws ServiceException{
+    public void deleteFavourite(Long userId, Long id) throws ServiceException{
         List<Repository> favouriteRepos = getUserFavouriteRepos(userId);
         favouriteRepos.removeIf(repository -> repository.getId() == id);
         getUser(id).setFavourites(favouriteRepos);
-        return getUserFavouriteRepos(id);
     }
 
 

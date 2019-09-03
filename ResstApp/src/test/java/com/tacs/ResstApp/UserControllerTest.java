@@ -4,6 +4,8 @@ import com.tacs.ResstApp.controllers.UserController;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.services.mock.LoggerMockService;
+import com.tacs.ResstApp.services.mock.RepositoryMockService;
 import com.tacs.ResstApp.services.mock.UserMockService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +31,12 @@ class UserControllerTest {
 	@Mock
 	UserMockService userMockService;
 
+	@Mock
+	RepositoryMockService repositoryMockService;
+
+	@Mock
+	LoggerMockService loggerMockService;
+
 	@BeforeEach
 	public void before()  {
 		MockitoAnnotations.initMocks(this);
@@ -36,19 +44,26 @@ class UserControllerTest {
 
 
 	@Test
-	public void login() throws Exception{
-		String response = userController.login();
-		Assertions.assertEquals(response, "Login");
+	public void login(){
+		Mockito.when(loggerMockService.login()).thenReturn("soyeltoken");
+		ResponseEntity<Object> response = userController.login();
+		String token = (String) response.getBody();
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+		Assertions.assertEquals("soyeltoken", token);
+
 	}
 
 	@Test
-	public void logout() throws Exception{
-		String response = userController.logout();
-		Assertions.assertEquals(response, "Logout");
+	public void logout(){
+		String token = "soyeltoken";
+		Mockito.doNothing().when(loggerMockService).logout(Mockito.anyString());
+		ResponseEntity<Object> response = userController.logout(token);
+		Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+		Assertions.assertEquals("Logout successful", response.getBody());
 	}
 
 	@Test
-	public void createUsers(){
+	public void getUsers(){
 		List<User> newUsers = new ArrayList<>();
 		User user1 = new User();
 		User user2 = new User();
@@ -61,9 +76,9 @@ class UserControllerTest {
 		user3.setUsername("Juan");
 		newUsers.add(user1);
 		newUsers.add(user2);
-		Mockito.when(userMockService.createUsers(Mockito.anyList())).thenReturn(new ArrayList<>(Arrays.asList(user1, user2, user3)));
-		ResponseEntity<Object> response = userController.createUsers(newUsers);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+		Mockito.when(userMockService.getUsers()).thenReturn(new ArrayList<>(Arrays.asList(user1, user2, user3)));
+		ResponseEntity<Object> response = userController.getUsers();
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 		List<User> updatedUsers = (ArrayList) response.getBody();
 		Assertions.assertEquals(3,updatedUsers.size());
 		Assertions.assertEquals(1L,updatedUsers.get(0).getId());
@@ -75,6 +90,19 @@ class UserControllerTest {
 	}
 
 	@Test
+	public void createUsers(){
+		User user = new User();
+		user.setId(1L);
+		user.setUsername("Jose");
+		Mockito.when(userMockService.createUser(Mockito.any(User.class))).thenReturn(user);
+		ResponseEntity<Object> response = userController.createUser(user);
+		Assertions.assertEquals(HttpStatus.CREATED,response.getStatusCode());
+		User createdUser = (User) response.getBody();
+		Assertions.assertEquals(1L,createdUser.getId());
+		Assertions.assertEquals("Jose", createdUser.getUsername());
+	}
+
+	@Test
 	public void getUserByIdSuccess() throws Exception{
 		Long id = 1L;
 		User user = new User();
@@ -82,7 +110,7 @@ class UserControllerTest {
 		user.setUsername("Maria");
 		Mockito.when(userMockService.getUser(Mockito.anyLong())).thenReturn(user);
 		ResponseEntity<Object> response = userController.getUserById(id);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+		Assertions.assertEquals(HttpStatus.OK,response.getStatusCode());
 		User returnedUser = (User)response.getBody();
 		Assertions.assertEquals(1L, returnedUser.getId());
 		Assertions.assertEquals("Maria",returnedUser.getUsername());
@@ -97,7 +125,7 @@ class UserControllerTest {
 		user.setUsername("Maria");
 		Mockito.when(userMockService.getUser(Mockito.anyLong())).thenThrow(ServiceException.class);
 		ResponseEntity<Object> response = userController.getUserById(id);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+		Assertions.assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
 		User returnedUser = (User)response.getBody();
 		Assertions.assertEquals(null, returnedUser);
 	}
@@ -108,7 +136,7 @@ class UserControllerTest {
 		Repository repo = new Repository(1L, "repo 1");
 		Mockito.when(userMockService.getUserFavouriteRepos(Mockito.anyLong())).thenReturn(new ArrayList<>(Arrays.asList(repo)));
 		ResponseEntity<Object> response = userController.getFavourites(id);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+		Assertions.assertEquals(HttpStatus.OK,response.getStatusCode());
 		List<Repository> favourites = (ArrayList)response.getBody();
 		Assertions.assertEquals(1, favourites.size());
 		Assertions.assertEquals(1L, favourites.get(0).getId());
@@ -120,9 +148,33 @@ class UserControllerTest {
 		Long id = 1L;
 		Mockito.when(userMockService.getUserFavouriteRepos(Mockito.anyLong())).thenThrow(ServiceException.class);
 		ResponseEntity<Object> response = userController.getFavourites(id);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+		Assertions.assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
 		List<Repository> returnedFaves = (ArrayList)response.getBody();
 		Assertions.assertEquals(null, returnedFaves);
+	}
+
+	@Test
+	public void getFavouriteByIdSuccess() throws Exception{
+		Long userId = 1L;
+		Long id = 22L;
+		Repository repo = new Repository(22L, "repo 1");
+		Mockito.when(userMockService.getUserFavouriteRepoById(Mockito.anyLong(),Mockito.anyLong())).thenReturn(repo);
+		ResponseEntity<Object> response = userController.getFavouriteById(userId,id);
+		Assertions.assertEquals(HttpStatus.OK,response.getStatusCode());
+		Repository favourite = (Repository)response.getBody();
+		Assertions.assertEquals(22L, favourite.getId());
+		Assertions.assertEquals("repo 1",favourite.getName());
+	}
+
+	@Test
+	public void getFavouriteByIdError() throws Exception{
+		Long userId = 1L;
+		Long id = 22L;
+		Mockito.when(userMockService.getUserFavouriteRepoById(Mockito.anyLong(),Mockito.anyLong())).thenThrow(ServiceException.class);
+		ResponseEntity<Object> response = userController.getFavouriteById(userId,id);
+		Assertions.assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+		Repository returnedFave = (Repository)response.getBody();
+		Assertions.assertEquals(null, returnedFave);
 	}
 
 	@Test
@@ -131,10 +183,10 @@ class UserControllerTest {
 		Repository repo1 = new Repository(1L, "repo 1");
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
-		List<Repository> repositoriesToFave = new ArrayList<>(Arrays.asList(repo2, repo3));
-		Mockito.when(userMockService.createFavourites(Mockito.anyLong(), Mockito.anyList())).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
-		ResponseEntity<Object> response = userController.createFavourites(id,repositoriesToFave);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+		Mockito.when(repositoryMockService.getRepository(Mockito.anyLong())).thenReturn(repo3);
+		Mockito.when(userMockService.createFavourite(Mockito.anyLong(), Mockito.any(Repository.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+		ResponseEntity<Object> response = userController.createFavourite(id,3L);
+		Assertions.assertEquals(HttpStatus.CREATED,response.getStatusCode());
 		List<Repository> favourites = (ArrayList) response.getBody();
 		Assertions.assertEquals(3,favourites.size());
 		Assertions.assertEquals(1L,favourites.get(0).getId());
@@ -148,12 +200,12 @@ class UserControllerTest {
 	@Test
 	public void createFavouritesError() throws Exception{
 		Long id = 1L;
-		Repository repo2 = new Repository(2L, "repo 2");
+		Long repositoryIdToFave = 3L;
 		Repository repo3 = new Repository(3L, "repo 3");
-		List<Repository> repositoriesToFave = new ArrayList<>(Arrays.asList(repo2, repo3));
-		Mockito.when(userMockService.createFavourites(Mockito.anyLong(), Mockito.anyList())).thenThrow(ServiceException.class);
-		ResponseEntity<Object> response = userController.createFavourites(id,repositoriesToFave);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+		Mockito.when(repositoryMockService.getRepository(Mockito.anyLong())).thenReturn(repo3);
+		Mockito.when(userMockService.createFavourite(Mockito.anyLong(), Mockito.any(Repository.class))).thenThrow(ServiceException.class);
+		ResponseEntity<Object> response = userController.createFavourite(id,repositoryIdToFave);
+		Assertions.assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
 		List<Repository> favourites = (ArrayList) response.getBody();
 		Assertions.assertEquals(null,favourites);
 	}
@@ -162,22 +214,50 @@ class UserControllerTest {
 	public void deleteFavouriteSucess() throws Exception{
 		Long userId = 1L;
 		Long repoId = 22L;
-		Mockito.when(userMockService.deleteFavourite(Mockito.anyLong(), Mockito.anyLong())).thenReturn(new ArrayList<>());
+		Mockito.doNothing().when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.anyLong());
 		ResponseEntity<Object> response = userController.deleteFavourite(userId,repoId);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-		List<Repository> favourites = (ArrayList) response.getBody();
-		Assertions.assertEquals(0,favourites.size());
+		Assertions.assertEquals(HttpStatus.NO_CONTENT,response.getStatusCode());
+		Assertions.assertEquals("Element from list of favourites deleted succesfully",response.getBody());
 	}
 
 	@Test
 	public void deleteFavouriteError() throws Exception{
 		Long userId = 1L;
 		Long repoId = 22L;
-		Mockito.when(userMockService.deleteFavourite(Mockito.anyLong(), Mockito.anyLong())).thenThrow(ServiceException.class);
+		Mockito.doThrow(ServiceException.class).when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.anyLong());
 		ResponseEntity<Object> response = userController.deleteFavourite(userId,repoId);
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+		Assertions.assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
 		List<Repository> favourites = (ArrayList) response.getBody();
 		Assertions.assertEquals(null,favourites);
+	}
+
+	@Test
+	public void compareFavourites() throws Exception{
+		Long id1 = 1L;
+		Long id2 = 2L;
+		List<Repository> favourites1 = new ArrayList<>();
+		Repository repo1 = new Repository(1L, "repo 1");
+		Repository repo2 = new Repository(2L, "repo 2");
+		Repository repo3 = new Repository(3L, "repo 3");
+		favourites1.add(repo1);
+		favourites1.add(repo2);
+		favourites1.add(repo3);
+		List<Repository> favourites2 = new ArrayList<>();
+		Repository cloneRepo2 = new Repository(1L, "repo 2");
+		Repository cloneRepo3 = new Repository(2L, "repo 3");
+		Repository repo4 = new Repository(3L, "repo 4");
+		favourites2.add(cloneRepo2);
+		favourites2.add(cloneRepo3);
+		favourites2.add(repo4);
+		Mockito.when(userMockService.getUserFavouriteRepos(Mockito.anyLong())).thenReturn(favourites1, favourites2);
+		ResponseEntity<Object> response = userController.compareFavourites(id1,id2);
+		Assertions.assertEquals(HttpStatus.OK,response.getStatusCode());
+		List<Repository> favourites = (ArrayList) response.getBody();
+		Assertions.assertEquals(2,favourites.size());
+		Assertions.assertEquals(2L,favourites.get(0).getId());
+		Assertions.assertEquals("repo 2",favourites.get(0).getName());
+		Assertions.assertEquals(3L,favourites.get(0).getId());
+		Assertions.assertEquals("repo 3",favourites.get(0).getName());
 	}
 
 }
