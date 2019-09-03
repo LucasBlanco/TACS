@@ -1,17 +1,20 @@
 package com.tacs.ResstApp.controllers;
 
-import com.tacs.ResstApp.services.exceptions.ServiceException;
-import com.tacs.ResstApp.services.mock.UserMockService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.tacs.ResstApp.model.Filter;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
-
-import java.util.Arrays;
-import java.util.List;
+import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.services.mock.UserMockService;
 
 @RestController
 public class UserController {
@@ -43,16 +46,6 @@ public class UserController {
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
-    }
-
-    @PostMapping("/users/{id}/filters")
-    public ResponseEntity<Object> createFilters(@PathVariable Long id){    	
-    	Filter filter1 = new Filter();
-        Filter filter2 = new Filter();
-        filter1.setCriterios(Arrays.asList("NAME", "AGE", "LANGUAGE", "OWNER", "LOCS"));
-        filter2.setCriterios(Arrays.asList());
-        List<Filter> filters = Arrays.asList(filter1, filter2);
-		return ResponseEntity.ok(filters);
     }
 
     @GetMapping("/users/{id}/favourites")
