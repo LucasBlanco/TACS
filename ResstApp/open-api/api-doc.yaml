@@ -1,0 +1,411 @@
+openapi: 3.0.0
+# Added by API Auto Mocking Plugin
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/LucasBlanco/TP_TACS/1.0.0
+info:
+  description: TP TACS
+  version: "1.0.0"
+  title: API TP TACS
+
+tags:
+  - name: admins
+  - name: users
+paths:
+  /users:
+    post:
+      tags:
+        - users
+      description: Create a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: password1234
+                username:
+                  type: string
+                  example: carlos
+      responses:
+        '201':
+          description: Returns created user
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseUser'
+                  - type: object
+                    properties:
+                      password:
+                        type: string
+                        example: password1234
+        '400':
+          description: bad input parameter
+        '500':
+          description: internal server error
+    get:
+      tags:
+        - admins
+      description: Returns all users
+      parameters:
+        - name: start
+          in: query
+          required: false
+          description: Offset where pagination starts
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          description: Amount of users to fetch
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Returns user
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      users:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/BaseUser'
+                  - type: object
+                    properties:
+                      links:
+                        type: object
+                        properties:
+                          next:
+                            type: string
+                            example: 'http://tacs.com/users?limit=10&start=20'
+                          previous:
+                            type: string
+                            example: 'http://tacs.com/users?limit=10&start=0'
+        '400':
+          description: bad input parameter
+        '500':
+          description: internal server error
+  /users/{id}:
+    get:
+      tags:
+        - admins
+      description: Returns user by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseUser'
+        '400':
+          description: bad input parameter
+        '500':
+          description: internal server error
+  /users/{id}/favorites:
+    post:
+      tags:
+        - users
+      description: Set a favorites list to an user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+      responses:
+        '201':
+          description: Returns created list of favorites
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favorites'
+        '400':
+          description: bad input parameter
+        '500':
+          description: internal server error
+    get:
+      tags:
+        - users
+      description: Returns list of favorites of a particular user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns list of favorites
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favorites'
+        '400':
+          description: bad input parameter
+        '500':
+          description: internal server error
+
+  /users/{idUser}/favorites/{id}:
+    delete:
+      tags:
+        - users
+      description: Deletes an element from a list of favorites
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: idUser
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Element from list of favorites deleted succesfully
+        '400':
+          description: bad input parameter
+        '500':
+          description: internal server error
+  /repositories:
+    get:
+      tags:
+        - admins
+      description: Returns the repositories created between the given dates and the total amount of repositories
+      parameters:
+        - name: since
+          in: query
+          required: true
+          description: Start date
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: true
+          description: End date
+          schema:
+            type: string
+            format: date
+        - name: start
+          in: query
+          required: false
+          description: Offset where pagination starts
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          description: Amount of repositories to fetch
+          schema:
+            type: integer
+
+      responses:
+        '200':
+          description: Returns list of favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalAmount:
+                    type: integer
+                    example: 1230
+                  repositories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Repository'
+                  links:
+                    type: object
+                    properties:
+                      next:
+                        type: string
+                        example: 'http://tacs.com/repositories?since=2019-05-05&to=2019-06-05&limit=10&start=20'
+                      previous:
+                        type: string
+                        example: 'http://tacs.com/repositories?since=2019-05-05&to=2019-06-05&limit=10&start=0'
+
+        '400':
+          description: bad input parameter
+        '500':
+          description: internal server error
+  /repositories/{id}:
+    get:
+      tags:
+        - users
+      description: Returns the repository by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the repository
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repository'
+        '400':
+          description: bad input parameter
+        '500':
+          description: internal server error
+  /login:
+    post:
+      tags:
+        - users
+      description: Creates a new session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: elMejorGrupoDeTacs
+                password:
+                  type: string
+                  example: passwordSegura1234
+      responses:
+        '200':
+          description: Returns token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: e2385gf54875a
+        '400':
+          description: bad input parameter
+        '500':
+          description: internal server error
+  /logout/{token}:
+    delete:
+      tags:
+        - users
+      description: Delete a session
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Logout successful
+        '400':
+          description: bad input parameter
+        '500':
+          description: internal server error
+  /comparison/favorites:
+    get:
+      tags:
+        - admins
+      description: Returns a comparison between favorites
+      parameters:
+        - name: id1
+          in: query
+          required: true
+          description: Id of the first list of favorites
+          schema:
+            type: integer
+        - name: id2
+          in: query
+          required: true
+          description: Id of the second list of favorites
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Returns user
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseUser'
+                  - type: object
+                    properties:
+                      repositories:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Repository'
+                      languages:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Language'
+
+
+        '400':
+          description: bad input parameter
+        '500':
+          description: internal server error
+components:
+  schemas:
+    BaseUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: elMejorGrupoDeTacs
+    User:
+      allOf:
+        - $ref: '#/components/schemas/BaseUser'
+        - type: object
+          properties:
+            favorites:
+              $ref: '#/components/schemas/Favorites'
+    Favorites:
+      type: array
+      items:
+        $ref: '#/components/schemas/Repository'
+    Language:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: javascript
+    Repository:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Respositorio TP TACS
+        registrationDate:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
