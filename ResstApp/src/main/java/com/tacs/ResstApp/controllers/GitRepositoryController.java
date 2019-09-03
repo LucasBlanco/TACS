@@ -49,5 +49,16 @@ public class GitRepositoryController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
+    
+    @GetMapping("/repositories/filters")
+    public ResponseEntity<Object> getRepositoriesFiltered(@RequestParam(name="language", required = false) String language, @RequestParam(name="nofcommits",required = false) Integer nofcommits,
+    		@RequestParam(name="nofstars",required = false) Integer nofstars, @RequestParam(name="nofissues",required = false) Integer nofissues) { 
+    	try{
+            return ResponseEntity.ok(repositoryMockService.getRepositoriesFiltered(language, nofcommits, nofstars, nofissues));
+        }
+        catch(ServiceException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
 
 }
