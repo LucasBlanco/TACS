@@ -17,16 +17,16 @@
 ### Usuario
 * POST    /login - Inicio de sesión del usuario.
 * POST    /logout - Salida de sesión del usuario.
-* POST    /users - 
-* GET     /users
-* GET     /repositories/:id
-* POST    /users/:id/favourites
-* GET     /users/:id/favourites/:id
-* PUT     /users/:id/favourites/:id
-* DELETE  /users/:id/favourites/:id
+* POST    /users - Agregar un usuario nuevo
+* GET     /repositories/:id - Obtener un repositorio particular
+* POST    /users/:id/favourites - Agregar un repositorio a la lista de favoritos
+* GET     /users/:id/favourites - Obtener la lista de repositorios favoritos de un usuario particular
+* GET     /users/:id/favourites/:id - Obtener un repositorio favorito de un usuario particular 
+* DELETE  /users/:id/favourites/:id - Quitar a un repositorio particular de la lista de favoritos de un usuario
 
 ### Admin
-* GET	/users/:id
-* GET /comparison/favourites?id1=1&id2=2
-* GET	/repositories/:id
-* GET	/repositories?since=01012019&to=01012020
+* GET   /users - Obtener una lista de todos los usuarios 
+* GET	/users/:id - Obtener un usuario particular
+* GET   /comparison/favourites?id1=1&id2=2 - Obtener la comparación entre dos listas de favoritos de 2 usuarios diferentes
+* GET	/repositories - Obtener los repositorios en el sistema
+* GET	/repositories?since=01012019&to=01012020 - Obtener los repositorios que se encuentren entre un determinado tiempo
