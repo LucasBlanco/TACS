@@ -2,6 +2,8 @@ package com.tacs.ResstApp.controllers;
 
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.mock.RepositoryMockService;
+import com.tacs.ResstApp.services.mock.UserMockService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ public class GitRepositoryController {
 
     @Autowired
     RepositoryMockService repositoryMockService;
+   
 
     @GetMapping("/repositories/{id}")
     public ResponseEntity<Object> getRepository(@PathVariable Long id){
@@ -41,5 +44,11 @@ public class GitRepositoryController {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
+    
+    @GetMapping("/users")
+    public ResponseEntity<Object> getUsers(){
+    	return ResponseEntity.ok(repositoryMockService.getUsers());
+     }
+
 
 }
