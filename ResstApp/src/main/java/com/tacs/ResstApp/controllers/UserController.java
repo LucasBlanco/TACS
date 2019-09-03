@@ -1,12 +1,10 @@
 package com.tacs.ResstApp.controllers;
 
+import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.services.mock.UserMockService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.tacs.ResstApp.model.Filter;
 import com.tacs.ResstApp.model.Repository;
@@ -17,6 +15,9 @@ import java.util.List;
 
 @RestController
 public class UserController {
+
+    @Autowired
+    UserMockService userMockService;
 
     @PostMapping("/login")
     public String login(){
@@ -29,22 +30,19 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Object> createUsers(){
-        User user1 = new User();
-        User user2 = new User();
-        User user3 = new User();
-        user1.setUsername("user 1");
-        user2.setUsername("user 2");
-        user3.setUsername("user 3");
-		List<User> userList = Arrays.asList(user1 , user2, user3);
-		return ResponseEntity.ok(userList);
+    public ResponseEntity<Object> createUsers(@RequestBody List<User> users){
+		List<User> usersList = userMockService.createUsers(users);
+		return ResponseEntity.ok(usersList);
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<Object> getUserById(@PathVariable Long id){
-    	User user = new User();
-    	user.setUsername("name user");
-        return ResponseEntity.ok(user);
+        try {
+            return ResponseEntity.ok(userMockService.getUser(id));
+        }
+        catch(ServiceException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
     @PostMapping("/users/{id}/filters")
@@ -57,19 +55,35 @@ public class UserController {
 		return ResponseEntity.ok(filters);
     }
 
-    @PostMapping("/users/{id}/favourites")
-    public ResponseEntity<Object> createFavourites(@PathVariable Long id){
-    	List<Repository> repositories = Arrays.asList(new Repository("TACS"), new Repository("TADP"), new Repository("DDS"));
-        return ResponseEntity.ok(repositories);
+    @GetMapping("/users/{id}/favourites")
+    public ResponseEntity<Object> getFavourites(@PathVariable Long id){
+        try {
+            return ResponseEntity.ok(userMockService.getUserFavouriteRepos(id));
+        }
+        catch(ServiceException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
-    @PutMapping("/users/{userId}/favourites/{id}")
-    public ResponseEntity<Object> updateFavourites(@PathVariable Long userId, @PathVariable Long id){
-        return ResponseEntity.ok(new Repository("My new fav repo"));
+    @PostMapping("/users/{id}/favourites")
+    public ResponseEntity<Object> createFavourites(@PathVariable Long id, @RequestBody List<Repository> repositoriesToFave){
+        try{
+            List<Repository> favourites = userMockService.createFavourites(id, repositoriesToFave);
+            return ResponseEntity.ok(favourites);
+        }
+        catch(ServiceException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
     
     @DeleteMapping("/users/{userId}/favourites/{id}")
-    public ResponseEntity<Object> deleteFavourites(@PathVariable Long userId, @PathVariable Long id){
-        return ResponseEntity.ok(new Repository("Removed repo"));
+    public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @PathVariable Long id){
+        try{
+            List<Repository> favourites = userMockService.deleteFavourite(userId, id);
+            return ResponseEntity.ok(favourites);
+        }
+        catch(ServiceException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 }
