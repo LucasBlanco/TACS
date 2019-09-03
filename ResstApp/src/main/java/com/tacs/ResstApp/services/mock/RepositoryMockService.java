@@ -4,6 +4,7 @@ import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -32,6 +33,18 @@ public class RepositoryMockService {
 
     public List<Repository> getRepositories(Date since, Date to){
         return repositories.stream().filter(repository -> !repository.getRegistrationDate().before(since) && !repository.getRegistrationDate().after(to)).collect(Collectors.toList());
+    }
+
+    public Repository findRepository(Long repositoryId) throws ServiceException {
+        return repositories.stream().filter(repo -> repo.getId() == repositoryId).findFirst().orElseThrow(() -> new ServiceException("Repositrio inexistente"));
+    }
+
+    public List<Repository> getRepositoriesBetween(LocalDateTime inicio, LocalDateTime fin) throws ServiceException{
+        if(false){
+            throw new ServiceException("error");
+        }
+        return repositories;
+        //todo
     }
 
 }

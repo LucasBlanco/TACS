@@ -3,16 +3,16 @@ package com.tacs.ResstApp.controllers;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.mock.RepositoryMockService;
 
+import com.tacs.ResstApp.services.mock.UserMockService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @RestController
 public class GitRepositoryController {
@@ -20,27 +20,33 @@ public class GitRepositoryController {
 
     @Autowired
     RepositoryMockService repositoryMockService;
-   
+
+    @Autowired
+    UserMockService userMockService;
 
     @GetMapping("/repositories/{id}")
     public ResponseEntity<Object> getRepository(@PathVariable Long id){
-        try{
-            return ResponseEntity.ok(repositoryMockService.getRepository(id));
+        try {
+            return ResponseEntity.ok(repositoryMockService.findRepository(id));
         }
         catch(ServiceException ex){
-           return ResponseEntity.badRequest().body(ex.getMessage());
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
-    
+
     @GetMapping("/repositories")
-    public ResponseEntity<Object> getRepositories(@RequestParam("since") String since, @RequestParam("to") String to){
-        try{
-            Date sinceDate = since == null ? new Date(Long.MIN_VALUE) : new SimpleDateFormat("ddMMyyyy").parse(since);
-            Date toDate = to == null ? new Date(Long.MAX_VALUE) : new SimpleDateFormat("ddMMyyyy").parse(to);
-            return ResponseEntity.ok(repositoryMockService.getRepositories(sinceDate, toDate));
+    public ResponseEntity<Object> getRepositoryByDate(@RequestParam("since") LocalDateTime since, @RequestParam("to") LocalDateTime to, @RequestParam("start") int start, @RequestParam("limit") int limit){
+        try {
+            return ResponseEntity.ok(repositoryMockService.getRepositoriesBetween(since, to));
         }
-        catch(ParseException ex){
+        catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
 

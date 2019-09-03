@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Object> createUsers(@RequestBody User user) {
+    public ResponseEntity<Object> createUser(@RequestBody User user) {
         try {
             User createdUser = userMockService.createUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
@@ -147,31 +147,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/repositories/{id}")
-    public ResponseEntity<Object> getRepository(@PathVariable Long id){
-        try {
-            return ResponseEntity.ok(userMockService.findRepository(id));
-        }
-        catch(ServiceException ex){
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
-        catch(Exception ex){
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
-        }
-    }
-
-    @GetMapping("/repositories")
-    public ResponseEntity<Object> getRepositoryByDate(@RequestParam("since") LocalDateTime since, @RequestParam("to") LocalDateTime to, @RequestParam("start") int start, @RequestParam("limit") int limit){
-        try {
-            return ResponseEntity.ok(userMockService.getRepositoriesBetween(since, to));
-        }
-        catch(ServiceException ex){
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
-        catch(Exception ex){
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
-        }
-    }
 
     @GetMapping("/comparison/favourites")
     public ResponseEntity<Object> compareFavourites(@RequestParam("id1") Long id1, @RequestParam("id2") Long id2){
