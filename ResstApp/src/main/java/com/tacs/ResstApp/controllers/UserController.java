@@ -1,5 +1,6 @@
 package com.tacs.ResstApp.controllers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.tacs.ResstApp.services.mock.LoggerMockService;
@@ -27,25 +28,57 @@ public class UserController {
     LoggerMockService loggerMockService;
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(){
-        return ResponseEntity.ok(loggerMockService.login());
+    public ResponseEntity<Object> login(@RequestBody User user){
+        try{
+            userMockService.getUser(user.getId());
+            return ResponseEntity.ok("e2385gf54875a");
+        }
+        catch(ServiceException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
+
     }
 
+    @PostMapping("/logout")
     @DeleteMapping("/logout/{token}")
-    public ResponseEntity<Object> logout(@PathVariable String token){
-        loggerMockService.logout(token);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Logout successful");
+    public ResponseEntity logout(@PathVariable String token){
+        try{
+            loggerMockService.logout(token);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Logout successful");
+        }
+        catch(ServiceException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
+
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<Object> createUsers(@RequestBody User user) {
+        try {
+            User createdUser = userMockService.createUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        } catch (ServiceException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
     }
 
     @GetMapping("/users")
     public ResponseEntity<Object> getUsers(){
-        return ResponseEntity.ok(userMockService.getUsers());
-    }
-
-    @PostMapping("/users")
-    public ResponseEntity<Object> createUser(@RequestBody User user){
-		User createdUser = userMockService.createUser(user);
-		return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        try {
+            return ResponseEntity.ok(userMockService.getUsers());
+         } catch (ServiceException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
     }
 
     @GetMapping("/users/{id}")
@@ -55,6 +88,9 @@ public class UserController {
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
 
@@ -66,10 +102,13 @@ public class UserController {
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
     }
 
     @GetMapping("/users/{userId}/favourites/{id}")
-    public ResponseEntity<Object> getFavouriteById(@PathVariable Long userId, @PathVariable Long id){
+    public ResponseEntity<Object> getFavouriteById(@PathVariable Long userId, @RequestBody Long id){
         try {
             return ResponseEntity.ok(userMockService.getUserFavouriteRepoById(userId, id));
         }
@@ -79,6 +118,7 @@ public class UserController {
     }
 
     @PostMapping("/users/{id}/favourites")
+
     public ResponseEntity<Object> createFavourite(@PathVariable Long id, @RequestBody Long repositoryToFaveId){
         try{
             Repository repositoryToFave = repositoryMockService.getRepository(repositoryToFaveId);
@@ -87,6 +127,9 @@ public class UserController {
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
     
@@ -98,6 +141,35 @@ public class UserController {
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
+    }
+
+    @GetMapping("/repositories/{id}")
+    public ResponseEntity<Object> getRepository(@PathVariable Long id){
+        try {
+            return ResponseEntity.ok(userMockService.findRepository(id));
+        }
+        catch(ServiceException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
+    }
+
+    @GetMapping("/repositories")
+    public ResponseEntity<Object> getRepositoryByDate(@RequestParam("since") LocalDateTime since, @RequestParam("to") LocalDateTime to, @RequestParam("start") int start, @RequestParam("limit") int limit){
+        try {
+            return ResponseEntity.ok(userMockService.getRepositoriesBetween(since, to));
+        }
+        catch(ServiceException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
 

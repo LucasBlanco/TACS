@@ -1,5 +1,6 @@
 package com.tacs.ResstApp.services.mock;
 
+import com.tacs.ResstApp.services.exceptions.ServiceException;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
@@ -25,7 +26,7 @@ public class LoggerMockService {
         return token;
     }
 
-    public void logout(String token){
+    public void logout(String token) throws ServiceException {
         this.tokens.removeIf(t -> t.equals(token));
     }
 
