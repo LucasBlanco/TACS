@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/LucasBlanco/TACS/badge.svg)](https://coveralls.io/github/LucasBlanco/TACS)
+
 # TACS
 
 ## Requisitos para ejecución:
