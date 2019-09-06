@@ -3,9 +3,6 @@ jdk: openjdk8
 script: 
   - cd ResstApp/
   - mvn clean verify
-branches: 
- only: 
-  - master
 
 after_success:
   - mvn clean test jacoco:report coveralls:report
