@@ -21,3 +21,6 @@ before_script:
   - sudo systemctl restart mysql
   - sudo mysql_upgrade
   - mysql --version 
+  - mysql -u root -e 'CREATE DATABASE tacs;'
+  - mysql -u root -e "CREATE USER 'tacs'@'localhost' IDENTIFIED BY 'tacs';"
+  - mysql -u root -e "GRANT ALL ON tacs.* TO 'tacs'@'localhost';"
