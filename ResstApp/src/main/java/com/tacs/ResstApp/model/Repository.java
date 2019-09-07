@@ -34,7 +34,7 @@ public class Repository {
 		this.name = name;
 	}
 	
-	public int getNofFaved() {
+	public int getNofFaved() { 
 		return noffaved;
 	}
 	
