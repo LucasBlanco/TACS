@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpServerErrorException.ServiceUnavailable;
 
 import com.tacs.ResstApp.controllers.UserController;
 import com.tacs.ResstApp.model.Repository;
@@ -129,6 +130,19 @@ class UserControllerTest {
 		Mockito.when(userMockService.getUser(Mockito.anyLong())).thenThrow(ServiceException.class);
 		ResponseEntity<Object> response = userController.getUserById(id);
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		User returnedUser = (User) response.getBody();
+		Assertions.assertNull(returnedUser);
+	}
+	
+	@Test
+	public void getUserByIdServiceError() throws Exception {
+		Long id = 1L;
+		User user = new User();
+		user.setId(1L);
+		user.setUsername("Maria");
+		Mockito.when(userMockService.getUser(Mockito.anyLong())).thenThrow(ServiceUnavailable.class);
+		ResponseEntity<Object> response = userController.getUserById(id);
+		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		User returnedUser = (User) response.getBody();
 		Assertions.assertNull(returnedUser);
 	}

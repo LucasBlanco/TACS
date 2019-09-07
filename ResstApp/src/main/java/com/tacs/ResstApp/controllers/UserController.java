@@ -112,7 +112,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/{userId}/favourites/{id}")
+    @GetMapping("/users/{userId}/favourites/{id}") //vuela?
     public ResponseEntity<Object> getFavouriteById(@PathVariable Long userId, @RequestBody Long id){
         try {
             return ResponseEntity.ok(userService.getUserFavouriteRepoById(userId, id));
@@ -123,7 +123,6 @@ public class UserController {
     }
 
     @PostMapping("/users/{id}/favourites")
-
     public ResponseEntity<Object> createFavourite(@PathVariable Long id, @RequestBody Long repositoryToFaveId){
         try{
             Repository repositoryToFave = repositoryMockService.getRepository(repositoryToFaveId);

@@ -89,6 +89,25 @@ class GitRepositoryControllerTest {
 		List<Repository> returnedRepos = (List) response.getBody();
 		Assertions.assertNull(returnedRepos);
 	}
+	
+	@Test
+	public void getRepositoriesFiltered() throws Exception {
+		Repository repo1 = new Repository(1L, "repo 1");
+		Repository repo2 = new Repository(2L, "repo 2");
+		Repository repo3 = new Repository(3L, "repo 3");
+		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(String.class), Mockito.any(Integer.class),
+				Mockito.any(Integer.class), Mockito.any(Integer.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered("spanish",1,1,1);
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+		List<Repository> returnedRepos = (List) response.getBody();
+		Assertions.assertEquals(3, returnedRepos.size());
+		Assertions.assertEquals(1L, returnedRepos.get(0).getId());
+		Assertions.assertEquals("repo 1", returnedRepos.get(0).getName());
+		Assertions.assertEquals(2L, returnedRepos.get(1).getId());
+		Assertions.assertEquals("repo 2", returnedRepos.get(1).getName());
+		Assertions.assertEquals(3L, returnedRepos.get(2).getId());
+		Assertions.assertEquals("repo 3", returnedRepos.get(2).getName());
+	}
 
 
 }
