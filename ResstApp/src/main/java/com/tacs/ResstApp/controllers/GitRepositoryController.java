@@ -27,7 +27,7 @@ public class GitRepositoryController {
     @GetMapping("/repositories/{id}")
     public ResponseEntity<Object> getRepository(@PathVariable Long id){
         try {
-            return ResponseEntity.ok(repositoryMockService.findRepository(id));
+            return ResponseEntity.ok(repositoryMockService.getRepository(id));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());

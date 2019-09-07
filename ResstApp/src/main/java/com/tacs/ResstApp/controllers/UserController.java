@@ -1,18 +1,23 @@
 package com.tacs.ResstApp.controllers;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import com.tacs.ResstApp.services.mock.LoggerMockService;
-import com.tacs.ResstApp.services.mock.RepositoryMockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.services.mock.LoggerMockService;
+import com.tacs.ResstApp.services.mock.RepositoryMockService;
 import com.tacs.ResstApp.services.mock.UserMockService;
 
 @RestController
@@ -151,9 +156,7 @@ public class UserController {
     @GetMapping("/comparison/favourites")
     public ResponseEntity<Object> compareFavourites(@RequestParam("id1") Long id1, @RequestParam("id2") Long id2){
         try{
-            List<Repository> favourites1 = userMockService.getUserFavouriteRepos(id1);
-            List<Repository> favourites2 = userMockService.getUserFavouriteRepos(id2);
-            return ResponseEntity.ok(favourites1);
+            return ResponseEntity.ok(userMockService.getFavouritesComparison(id1, id2));
         }
         catch(ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());

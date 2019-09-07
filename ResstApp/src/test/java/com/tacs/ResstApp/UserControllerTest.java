@@ -82,7 +82,7 @@ class UserControllerTest {
 		Mockito.when(userMockService.getUsers()).thenReturn(new ArrayList<>(Arrays.asList(user1, user2, user3)));
 		ResponseEntity<Object> response = userController.getUsers();
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-		List<User> updatedUsers = (ArrayList) response.getBody();
+		List<User> updatedUsers = (List) response.getBody();
 		Assertions.assertEquals(3,updatedUsers.size());
 		Assertions.assertEquals(1L,updatedUsers.get(0).getId());
 		Assertions.assertEquals("Jose",updatedUsers.get(0).getUsername());
@@ -140,7 +140,7 @@ class UserControllerTest {
 		Mockito.when(userMockService.getUserFavouriteRepos(Mockito.anyLong())).thenReturn(new ArrayList<>(Arrays.asList(repo)));
 		ResponseEntity<Object> response = userController.getFavourites(id);
 		Assertions.assertEquals(HttpStatus.OK,response.getStatusCode());
-		List<Repository> favourites = (ArrayList)response.getBody();
+		List<Repository> favourites = (List)response.getBody();
 		Assertions.assertEquals(1, favourites.size());
 		Assertions.assertEquals(1L, favourites.get(0).getId());
 		Assertions.assertEquals("repo 1",favourites.get(0).getName());
@@ -152,7 +152,7 @@ class UserControllerTest {
 		Mockito.when(userMockService.getUserFavouriteRepos(Mockito.anyLong())).thenThrow(ServiceException.class);
 		ResponseEntity<Object> response = userController.getFavourites(id);
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
-		List<Repository> returnedFaves = (ArrayList)response.getBody();
+		List<Repository> returnedFaves = (List)response.getBody();
 		Assertions.assertEquals(null, returnedFaves);
 	}
 
@@ -190,7 +190,7 @@ class UserControllerTest {
 		Mockito.when(userMockService.createFavourite(Mockito.anyLong(), Mockito.any(Repository.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
 		ResponseEntity<Object> response = userController.createFavourite(id,3L);
 		Assertions.assertEquals(HttpStatus.CREATED,response.getStatusCode());
-		List<Repository> favourites = (ArrayList) response.getBody();
+		List<Repository> favourites = (List) response.getBody();
 		Assertions.assertEquals(3,favourites.size());
 		Assertions.assertEquals(1L,favourites.get(0).getId());
 		Assertions.assertEquals("repo 1",favourites.get(0).getName());
@@ -209,7 +209,7 @@ class UserControllerTest {
 		Mockito.when(userMockService.createFavourite(Mockito.anyLong(), Mockito.any(Repository.class))).thenThrow(ServiceException.class);
 		ResponseEntity<Object> response = userController.createFavourite(id,repositoryIdToFave);
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
-		List<Repository> favourites = (ArrayList) response.getBody();
+		List<Repository> favourites = (List) response.getBody();
 		Assertions.assertEquals(null,favourites);
 	}
 
@@ -230,7 +230,7 @@ class UserControllerTest {
 		Mockito.doThrow(ServiceException.class).when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.anyLong());
 		ResponseEntity<Object> response = userController.deleteFavourite(userId,repoId);
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
-		List<Repository> favourites = (ArrayList) response.getBody();
+		List<Repository> favourites = (List) response.getBody();
 		Assertions.assertEquals(null,favourites);
 	}
 
@@ -255,7 +255,7 @@ class UserControllerTest {
 		Mockito.when(userMockService.getUserFavouriteRepos(Mockito.anyLong())).thenReturn(favourites1, favourites2);
 		ResponseEntity<Object> response = userController.compareFavourites(id1,id2);
 		Assertions.assertEquals(HttpStatus.OK,response.getStatusCode());
-		List<Repository> favourites = (ArrayList) response.getBody();
+		List<Repository> favourites = (List) response.getBody();
 		Assertions.assertEquals(3,favourites1.size());
 	}
 

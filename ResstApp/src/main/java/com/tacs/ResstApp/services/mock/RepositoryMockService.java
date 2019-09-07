@@ -1,55 +1,46 @@
 package com.tacs.ResstApp.services.mock;
 
-import com.tacs.ResstApp.model.Repository;
-import com.tacs.ResstApp.services.exceptions.ServiceException;
-import org.springframework.stereotype.Component;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
+
+import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.services.exceptions.ServiceException;
 
 @Component
 public class RepositoryMockService {
 
-    private List<Repository> repositories;
+	private List<Repository> repositories;
 
-    public RepositoryMockService() {
+	public RepositoryMockService() {
+		Repository repo1 = new Repository(1L, "TACS");
+		Repository repo2 = new Repository(2L, "TADP");
+		Repository repo3 = new Repository(3L, "DDS");
+		Repository repo4 = new Repository(4L, "PDP");
+		Repository repo5 = new Repository(5L, "SO");
+		Repository repo6 = new Repository(6L, "GDD");
+		this.repositories = new ArrayList<>(Arrays.asList(repo1, repo2, repo3, repo4, repo5, repo6));
+	}
 
-        Repository repository1 = new Repository(1L,"TACS");
-        Repository repository2 = new Repository(2L,"TADP");
-        Repository repository3 = new Repository(3L,"DDS");
-        Repository repository4 = new Repository(4L,"PDP");
-        Repository repository5 = new Repository(5L,"SO");
-        Repository repository6 = new Repository(6L,"GDD");
-        this.repositories = new ArrayList<>(Arrays.asList(repository1, repository2, repository3, repository4, repository5, repository6));
-    }
+	public Repository getRepository(Long id) throws ServiceException {
+		return repositories.stream().filter(r -> r.getId() == id).findFirst()
+				.orElseThrow(() -> new ServiceException("Repository does not exist"));
+	}
 
-    public Repository getRepository(Long id) throws ServiceException{
-        return repositories.stream().filter(repo -> repo.getId() == id).findFirst().orElseThrow(()-> new ServiceException("Repository does not exist"));
-    }
+	public List<Repository> getRepositoriesBetween(LocalDateTime since, LocalDateTime to) throws ServiceException {
+		return repositories.stream()
+				.filter(r -> r.getRegistrationDate().isAfter(since) && r.getRegistrationDate().isBefore(to))
+				.collect(Collectors.toList());
+	}
 
-    public List<Repository> getRepositories(Date since, Date to){
-        return repositories.stream().filter(repository -> !repository.getRegistrationDate().before(since) && !repository.getRegistrationDate().after(to)).collect(Collectors.toList());
-    }
-    public Repository findRepository(Long repositoryId) throws ServiceException {
-        return repositories.stream().filter(repo -> repo.getId() == repositoryId).findFirst().orElseThrow(() -> new ServiceException("Repositrio inexistente"));
-    }
+	public List<Repository> getRepositoriesFiltered(String language, Integer nofcommits, Integer nofstars,
+			Integer nofissues) throws ServiceException {
+		return repositories;
+	}
 
-    public List<Repository> getRepositoriesBetween(LocalDateTime inicio, LocalDateTime fin) throws ServiceException{
-        if(false){
-            throw new ServiceException("error");
-        }
-        return repositories;
-        //todo
-    }
-    
-    public  List<Repository> getRepositoriesFiltered(String language, Integer nofcommits, Integer nofstars, Integer nofissues) throws ServiceException{
-       return repositories;
-    }
 }
-    
-
-

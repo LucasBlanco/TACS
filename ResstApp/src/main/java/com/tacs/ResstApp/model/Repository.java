@@ -1,6 +1,6 @@
 package com.tacs.ResstApp.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Repository {
 
@@ -8,12 +8,12 @@ public class Repository {
 
 	private String name;
 
-	private Date registrationDate;
+	private LocalDateTime registrationDate;
 
-	public Repository(Long id, String name){
+	public Repository(Long id, String name) {
 		this.id = id;
 		this.name = name;
-		this.registrationDate = new Date();
+		this.registrationDate = LocalDateTime.now();
 	}
 
 	public Long getId() {
@@ -32,14 +32,12 @@ public class Repository {
 		this.name = name;
 	}
 
-	public Date getRegistrationDate() {
+	public LocalDateTime getRegistrationDate() {
 		return registrationDate;
 	}
 
-	public void setRegistrationDate(Date registrationDate) {
+	public void setRegistrationDate(LocalDateTime registrationDate) {
 		this.registrationDate = registrationDate;
 	}
-
-
 
 }
