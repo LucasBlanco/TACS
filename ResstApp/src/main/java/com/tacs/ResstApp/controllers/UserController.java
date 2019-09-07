@@ -16,18 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.services.impl.RepositoryService;
+import com.tacs.ResstApp.services.impl.UserService;
 import com.tacs.ResstApp.services.mock.LoggerMockService;
-import com.tacs.ResstApp.services.mock.RepositoryMockService;
-import com.tacs.ResstApp.services.mock.UserMockService;
 
 @RestController
 public class UserController {
 
     @Autowired
-    UserMockService userMockService;
+    UserService userService;
 
     @Autowired
-    RepositoryMockService repositoryMockService;
+    RepositoryService repositoryMockService;
 
     @Autowired
     LoggerMockService loggerMockService;
@@ -35,7 +35,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user){
         try{
-            userMockService.getUser(user.getId());
+            userService.getUser(user.getId());
             return ResponseEntity.ok("e2385gf54875a");
         }
         catch(ServiceException ex){
@@ -66,7 +66,7 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
         try {
-            User createdUser = userMockService.createUser(user);
+            User createdUser = userService.createUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         } catch (ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -78,7 +78,7 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<Object> getUsers(){
         try {
-            return ResponseEntity.ok(userMockService.getUsers());
+            return ResponseEntity.ok(userService.getUsers());
          } catch (ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch (Exception ex) {
@@ -89,7 +89,7 @@ public class UserController {
     @GetMapping("/users/{id}")
     public ResponseEntity<Object> getUserById(@PathVariable Long id){
         try {
-            return ResponseEntity.ok(userMockService.getUser(id));
+            return ResponseEntity.ok(userService.getUser(id));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -102,7 +102,7 @@ public class UserController {
     @GetMapping("/users/{id}/favourites")
     public ResponseEntity<Object> getFavourites(@PathVariable Long id){
         try {
-            return ResponseEntity.ok(userMockService.getUserFavouriteRepos(id));
+            return ResponseEntity.ok(userService.getUserFavouriteRepos(id));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -115,7 +115,7 @@ public class UserController {
     @GetMapping("/users/{userId}/favourites/{id}")
     public ResponseEntity<Object> getFavouriteById(@PathVariable Long userId, @RequestBody Long id){
         try {
-            return ResponseEntity.ok(userMockService.getUserFavouriteRepoById(userId, id));
+            return ResponseEntity.ok(userService.getUserFavouriteRepoById(userId, id));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -127,7 +127,7 @@ public class UserController {
     public ResponseEntity<Object> createFavourite(@PathVariable Long id, @RequestBody Long repositoryToFaveId){
         try{
             Repository repositoryToFave = repositoryMockService.getRepository(repositoryToFaveId);
-            List<Repository> favourites = userMockService.createFavourite(id, repositoryToFave);
+            List<Repository> favourites = userService.createFavourite(id, repositoryToFave);
             return ResponseEntity.status(HttpStatus.CREATED).body(favourites);
         }
         catch(ServiceException ex){
@@ -141,7 +141,7 @@ public class UserController {
     @DeleteMapping("/users/{userId}/favourites/{id}")
     public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @PathVariable Long id){
         try{
-            userMockService.deleteFavourite(userId, id);
+            userService.deleteFavourite(userId, id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Element from list of favourites deleted succesfully");
         }
         catch(ServiceException ex){
@@ -156,7 +156,7 @@ public class UserController {
     @GetMapping("/comparison/favourites")
     public ResponseEntity<Object> compareFavourites(@RequestParam("id1") Long id1, @RequestParam("id2") Long id2){
         try{
-            return ResponseEntity.ok(userMockService.getFavouritesComparison(id1, id2));
+            return ResponseEntity.ok(userService.getFavouritesComparison(id1, id2));
         }
         catch(ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());

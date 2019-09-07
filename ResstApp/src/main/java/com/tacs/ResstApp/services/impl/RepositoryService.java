@@ -1,9 +1,7 @@
-package com.tacs.ResstApp.services.mock;
+package com.tacs.ResstApp.services.impl;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,18 +11,12 @@ import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 
 @Component
-public class RepositoryMockService {
+public class RepositoryService {
 
-	private List<Repository> repositories;
+	private List<Repository> repositories = new ArrayList<Repository>();
 
-	public RepositoryMockService() {
-		Repository repo1 = new Repository(1L, "TACS");
-		Repository repo2 = new Repository(2L, "TADP");
-		Repository repo3 = new Repository(3L, "DDS");
-		Repository repo4 = new Repository(4L, "PDP");
-		Repository repo5 = new Repository(5L, "SO");
-		Repository repo6 = new Repository(6L, "GDD");
-		this.repositories = new ArrayList<>(Arrays.asList(repo1, repo2, repo3, repo4, repo5, repo6));
+	public List<Repository> getRepositories() {
+		return repositories;
 	}
 
 	public Repository getRepository(Long id) throws ServiceException {

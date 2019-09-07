@@ -20,8 +20,8 @@ import org.springframework.http.ResponseEntity;
 import com.tacs.ResstApp.controllers.GitRepositoryController;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
-import com.tacs.ResstApp.services.mock.RepositoryMockService;
-import com.tacs.ResstApp.services.mock.UserMockService;
+import com.tacs.ResstApp.services.impl.RepositoryService;
+import com.tacs.ResstApp.services.impl.UserService;
 
 @SpringBootTest
 class GitRepositoryControllerTest {
@@ -30,10 +30,7 @@ class GitRepositoryControllerTest {
 	GitRepositoryController gitRepositoryController;
 
 	@Mock
-	RepositoryMockService repositoryMockService;
-
-	@Autowired
-	UserMockService userMockService;
+	RepositoryService repositoryMockService;
 
 	@BeforeEach
 	public void before() {
@@ -49,7 +46,7 @@ class GitRepositoryControllerTest {
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
 		Repository returnedRepo = (Repository) response.getBody();
 		Assertions.assertEquals(1L, returnedRepo.getId());
-		Assertions.assertEquals("Repo 1", returnedRepo.getName());
+		Assertions.assertEquals(returnedRepo.getName(), "Repo 1");
 	}
 
 	@Test
@@ -59,7 +56,7 @@ class GitRepositoryControllerTest {
 		ResponseEntity<Object> response = gitRepositoryController.getRepository(id);
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		Repository returnedRepo = (Repository) response.getBody();
-		Assertions.assertEquals(null, returnedRepo);
+		Assertions.assertNull(returnedRepo);
 	}
 
 	@Test
@@ -82,5 +79,16 @@ class GitRepositoryControllerTest {
 		Assertions.assertEquals(3L, returnedRepos.get(2).getId());
 		Assertions.assertEquals("repo 3", returnedRepos.get(2).getName());
 	}
+	
+	@Test
+	public void getRepositoriesError() throws Exception {
+		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDateTime.class),
+				Mockito.any(LocalDateTime.class))).thenThrow(ServiceException.class);
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate(LocalDateTime.now(), LocalDateTime.now(), 1, 1);
+		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		List<Repository> returnedRepos = (List) response.getBody();
+		Assertions.assertNull(returnedRepos);
+	}
+
 
 }
