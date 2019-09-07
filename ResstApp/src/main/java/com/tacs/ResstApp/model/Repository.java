@@ -9,6 +9,8 @@ public class Repository {
 	private String name;
 
 	private LocalDateTime registrationDate;
+	
+	private int noffaved;
 
 	public Repository(Long id, String name) {
 		this.id = id;
@@ -30,6 +32,14 @@ public class Repository {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public int getNofFaved() {
+		return noffaved;
+	}
+	
+	public void setNofFaved(int n) {
+		noffaved = n;
 	}
 
 	public LocalDateTime getRegistrationDate() {
