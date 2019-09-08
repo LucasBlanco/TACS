@@ -1,5 +1,6 @@
 package com.tacs.ResstApp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,8 +65,8 @@ class GitRepositoryControllerTest {
 		Repository repo1 = new Repository(1L, "repo 1");
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
-		LocalDateTime since = LocalDateTime.now();
-		LocalDateTime to = LocalDateTime.now();
+		LocalDate since = LocalDate.now();
+		LocalDate to = LocalDate.now();
 		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDateTime.class),
 				Mockito.any(LocalDateTime.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
 		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate(since, to, 1, 1);
@@ -84,7 +85,7 @@ class GitRepositoryControllerTest {
 	public void getRepositoriesError() throws Exception {
 		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDateTime.class),
 				Mockito.any(LocalDateTime.class))).thenThrow(ServiceException.class);
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate(LocalDateTime.now(), LocalDateTime.now(), 1, 1);
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate(LocalDate.now(), LocalDate.now(), 1, 1);
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		List<Repository> returnedRepos = (List) response.getBody();
 		Assertions.assertNull(returnedRepos);
