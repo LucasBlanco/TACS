@@ -25,10 +25,13 @@ public class UserService {
         User user4 = new User();
         User user5 = new User();
         User user6 = new User();
+        Repository repository1 = new Repository(1L,"TACS");
         user1.setId(1L);
         user1.setUsername("Juam");
+        user1.setFavourites(new ArrayList<>(Arrays.asList(repository1)));
         user2.setId(2L);
         user2.setUsername("LucasBlanco");
+        user2.setFavourites(new ArrayList<>(Arrays.asList(repository1)));
         user3.setId(3L);
         user3.setUsername("LucasMCenturion");
         user4.setId(4L);
@@ -72,13 +75,13 @@ public class UserService {
 		return getUserFavouriteRepos(userId).stream().filter(repo -> repo.getId() == id).findFirst()
 				.orElseThrow(() -> new ServiceException("Favourite does not exist"));
 	}
-
-	public List<Repository> createFavourite(Long id, Repository repositoryToFave) throws ServiceException {
+	
+	/*public List<Repository> createFavourite(Long id, Repository repositoryToFave) throws ServiceException {
 		List<Repository> favouriteRepos = getUserFavouriteRepos(id);
 		favouriteRepos.add(repositoryToFave);
 		getUser(id).setFavourites(favouriteRepos);
 		return getUserFavouriteRepos(id);
-	}
+	}*/
 
 	public void deleteFavourite(Long userId, Long id) throws ServiceException {
 		List<Repository> favouriteRepos = getUserFavouriteRepos(userId);

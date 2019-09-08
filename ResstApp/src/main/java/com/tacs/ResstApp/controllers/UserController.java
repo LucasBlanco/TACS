@@ -125,9 +125,8 @@ public class UserController {
     @PostMapping("/users/{id}/favourites")
     public ResponseEntity<Object> createFavourite(@PathVariable Long id, @RequestBody Long repositoryToFaveId){
         try{
-            Repository repositoryToFave = repositoryMockService.getRepository(repositoryToFaveId);
-            List<Repository> favourites = userService.createFavourite(id, repositoryToFave);
-            return ResponseEntity.status(HttpStatus.CREATED).body(favourites);
+            List<Repository> favourites = userService.addFavourite(id, repositoryToFaveId);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Successfully added to favourites. " + favourites);
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
