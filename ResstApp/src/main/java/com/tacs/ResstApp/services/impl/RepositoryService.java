@@ -38,7 +38,6 @@ public class RepositoryService {
 	}
 
 	public List<Repository> getRepositoriesBetween(LocalDateTime since, LocalDateTime to) throws ServiceException {
-		System.out.print("en repo service");
 		return repositories.stream()
 				.filter(r -> r.getRegistrationDate().isAfter(since) && r.getRegistrationDate().isBefore(to))
 				.collect(Collectors.toList());

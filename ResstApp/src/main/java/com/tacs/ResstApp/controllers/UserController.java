@@ -3,6 +3,7 @@ package com.tacs.ResstApp.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,8 +36,8 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user){
         try{
-            userService.getUser(user.getId());
-            return ResponseEntity.ok("e2385gf54875a");
+            userService.getUserByUsername(user.getUsername());
+            return ResponseEntity.ok("token1");
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -48,11 +49,14 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    @DeleteMapping("/logout/{token}")
-    public ResponseEntity logout(@PathVariable String token){
+    //@DeleteMapping("/logout/{token}")
+    public ResponseEntity logout(@RequestBody String token){
         try{
             loggerMockService.logout(token);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Logout successful");
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(org.springframework.http.MediaType.TEXT_PLAIN);
+            return new ResponseEntity("Logout Successful", httpHeaders, HttpStatus.OK);
+            //return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Logout successful");
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -112,7 +116,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/{userId}/favourites/{id}") //vuela?
+    /*@GetMapping("/users/{userId}/favourites/{id}") //vuela?
     public ResponseEntity<Object> getFavouriteById(@PathVariable Long userId, @RequestBody Long id){
         try {
             return ResponseEntity.ok(userService.getUserFavouriteRepoById(userId, id));
@@ -120,13 +124,13 @@ public class UserController {
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
-    }
+    }*/
 
     @PostMapping("/users/{id}/favourites")
-    public ResponseEntity<Object> createFavourite(@PathVariable Long id, @RequestBody Long repositoryToFaveId){
+    public ResponseEntity<Object> createFavourite(@PathVariable Long id, @RequestBody Repository repo){
         try{
-            List<Repository> favourites = userService.addFavourite(id, repositoryToFaveId);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Successfully added to favourites. " + favourites);
+            List<Repository> favourites = userService.addFavourite(id, repo.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(favourites);
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());

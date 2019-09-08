@@ -3,6 +3,7 @@ package com.tacs.ResstApp.services.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,11 @@ public class UserService {
 
 	public User getUser(Long id) throws ServiceException {
 		return users.stream().filter(user -> user.getId() == id).findFirst()
+				.orElseThrow(() -> new ServiceException("User does not exist"));
+	}
+	
+	public User getUserByUsername(String username) throws ServiceException {
+		return users.stream().filter(u -> Objects.equals(u.getUsername(), username)).findFirst()
 				.orElseThrow(() -> new ServiceException("User does not exist"));
 	}
 
