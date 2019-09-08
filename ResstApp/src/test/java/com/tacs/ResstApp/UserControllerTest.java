@@ -203,7 +203,7 @@ class UserControllerTest {
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
 		Mockito.when(repositoryMockService.getRepository(Mockito.anyLong())).thenReturn(repo3);
-		Mockito.when(userMockService.createFavourite(Mockito.anyLong(), Mockito.any(Repository.class)))
+		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.anyLong()))
 				.thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
 		ResponseEntity<Object> response = userController.createFavourite(id, 3L);
 		Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -223,7 +223,7 @@ class UserControllerTest {
 		Long repositoryIdToFave = 3L;
 		Repository repo3 = new Repository(3L, "repo 3");
 		Mockito.when(repositoryMockService.getRepository(Mockito.anyLong())).thenReturn(repo3);
-		Mockito.when(userMockService.createFavourite(Mockito.anyLong(), Mockito.any(Repository.class)))
+		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.anyLong()))
 				.thenThrow(ServiceException.class);
 		ResponseEntity<Object> response = userController.createFavourite(id, repositoryIdToFave);
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
