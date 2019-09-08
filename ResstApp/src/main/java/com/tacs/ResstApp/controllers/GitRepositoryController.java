@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 public class GitRepositoryController {
@@ -38,9 +39,13 @@ public class GitRepositoryController {
     }
 
     @GetMapping("/repositories")
-    public ResponseEntity<Object> getRepositoryByDate(@RequestParam("since") LocalDateTime since, @RequestParam("to") LocalDateTime to, @RequestParam("start") int start, @RequestParam("limit") int limit){
+    public ResponseEntity<Object> getRepositoryByDate(@RequestParam("since") String since, @RequestParam("to") String to, @RequestParam("start") int start, @RequestParam("limit") int limit){
         try {
-            return ResponseEntity.ok(repositoryMockService.getRepositoriesBetween(since, to));
+        	System.out.print(since);
+        	DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    	    LocalDateTime sinceParsed = LocalDateTime.parse(since, DATEFORMATTER);
+    	    LocalDateTime toParsed = LocalDateTime.parse(to, DATEFORMATTER);
+            return ResponseEntity.ok(repositoryMockService.getRepositoriesBetween(sinceParsed, toParsed));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
