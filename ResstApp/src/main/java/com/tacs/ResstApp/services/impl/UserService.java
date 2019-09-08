@@ -1,6 +1,7 @@
 package com.tacs.ResstApp.services.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,29 @@ public class UserService {
 
 	private List<User> users = new ArrayList<User>();
 
+	//para mockear
+	public UserService() {
+        User user1 = new User();
+        User user2 = new User();
+        User user3 = new User();
+        User user4 = new User();
+        User user5 = new User();
+        User user6 = new User();
+        user1.setId(1L);
+        user1.setUsername("Juam");
+        user2.setId(2L);
+        user2.setUsername("LucasBlanco");
+        user3.setId(3L);
+        user3.setUsername("LucasMCenturion");
+        user4.setId(4L);
+        user4.setUsername("LuciaRoldan");
+        user5.setId(5L);
+        user5.setUsername("MatiGiorda");
+        user6.setId(6L);
+        user6.setUsername("RocioChipian");
+        this.users = new ArrayList<>(Arrays.asList(user1, user2, user3, user4, user5, user6));
+    }
+	
 	@Autowired
 	RepositoryService repositoryService;
 

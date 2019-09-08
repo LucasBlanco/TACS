@@ -59,7 +59,7 @@ class GitRepositoryControllerTest {
 		Assertions.assertNull(returnedRepo);
 	}
 
-	@Test
+	/*@Test
 	public void getRepositories() throws Exception {
 		Repository repo1 = new Repository(1L, "repo 1");
 		Repository repo2 = new Repository(2L, "repo 2");
@@ -88,7 +88,39 @@ class GitRepositoryControllerTest {
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		List<Repository> returnedRepos = (List) response.getBody();
 		Assertions.assertNull(returnedRepos);
+	}*/
+	
+	@Test
+	public void getRepositories() throws Exception {
+		Repository repo1 = new Repository(1L, "repo 1");
+		Repository repo2 = new Repository(2L, "repo 2");
+		Repository repo3 = new Repository(3L, "repo 3");
+		String since = "09082019";
+		String to = "09082019";
+		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDateTime.class),
+				Mockito.any(LocalDateTime.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate(since, to, 1, 1);
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+		List<Repository> returnedRepos = (List) response.getBody();
+		Assertions.assertEquals(3, returnedRepos.size());
+		Assertions.assertEquals(1L, returnedRepos.get(0).getId());
+		Assertions.assertEquals("repo 1", returnedRepos.get(0).getName());
+		Assertions.assertEquals(2L, returnedRepos.get(1).getId());
+		Assertions.assertEquals("repo 2", returnedRepos.get(1).getName());
+		Assertions.assertEquals(3L, returnedRepos.get(2).getId());
+		Assertions.assertEquals("repo 3", returnedRepos.get(2).getName());
 	}
+	
+	@Test
+	public void getRepositoriesError() throws Exception {
+		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDateTime.class),
+				Mockito.any(LocalDateTime.class))).thenThrow(ServiceException.class);
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate("09082019", "09082019", 1, 1);
+		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		List<Repository> returnedRepos = (List) response.getBody();
+		Assertions.assertNull(returnedRepos);
+	}	
+	
 	
 	@Test
 	public void getRepositoriesFiltered() throws Exception {
