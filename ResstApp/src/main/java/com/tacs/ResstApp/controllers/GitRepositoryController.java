@@ -41,7 +41,6 @@ public class GitRepositoryController {
     @GetMapping("/repositories")
     public ResponseEntity<Object> getRepositoryByDate(@RequestParam("since") String since, @RequestParam("to") String to, @RequestParam("start") int start, @RequestParam("limit") int limit){
         try {
-        	System.out.print(since);
         	DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     	    LocalDateTime sinceParsed = LocalDateTime.parse(since, DATEFORMATTER);
     	    LocalDateTime toParsed = LocalDateTime.parse(to, DATEFORMATTER);
