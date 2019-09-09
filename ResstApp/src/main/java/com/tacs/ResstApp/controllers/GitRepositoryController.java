@@ -56,9 +56,9 @@ public class GitRepositoryController {
     
     @GetMapping("/repositories/filters")
     public ResponseEntity<Object> getRepositoriesFiltered(@RequestParam(name="language", required = false) String language, @RequestParam(name="nofcommits",required = false) Integer nofcommits,
-    		@RequestParam(name="nofstars",required = false) Integer nofstars, @RequestParam(name="nofissues",required = false) Integer nofissues) { 
+    		@RequestParam(name="nofstars",required = false) Integer nofstars, @RequestParam(name="nofissues",required = false) Integer nofissues, @RequestParam(name="nofsubscribers",required = false) Integer nofsubscribers) { 
     	try{
-            return ResponseEntity.ok(repositoryMockService.getRepositoriesFiltered(language, nofcommits, nofstars, nofissues));
+            return ResponseEntity.ok(repositoryMockService.getRepositoriesFiltered(language, nofcommits, nofstars, nofissues, nofsubscribers));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
