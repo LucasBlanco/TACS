@@ -95,8 +95,8 @@ class GitRepositoryControllerTest {
 		Repository repo1 = new Repository(1L, "repo 1");
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
-		String since = "09082019";
-		String to = "09082019";
+		String since = "2019-08-09 00:00:00";
+		String to = "2019-08-09 23:59:59";
 		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDateTime.class),
 				Mockito.any(LocalDateTime.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
 		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate(since, to, 1, 1);
@@ -115,7 +115,7 @@ class GitRepositoryControllerTest {
 	public void getRepositoriesError() throws Exception {
 		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDateTime.class),
 				Mockito.any(LocalDateTime.class))).thenThrow(ServiceException.class);
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate("09082019", "09082019", 1, 1);
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate("2019-08-09 00:00:00", "2019-08-09 23:59:59", 1, 1);
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		List<Repository> returnedRepos = (List) response.getBody();
 		Assertions.assertNull(returnedRepos);

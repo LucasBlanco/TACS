@@ -26,6 +26,7 @@ public class RepositoryServiceTest {
 		repo1.setRegistrationDate(referenceTime.minusHours(2));
 		repo2.setRegistrationDate(referenceTime.plusHours(2));
 		List<Repository> repositories = new ArrayList<>(Arrays.asList(repo1, repo2));
+		repositoryService.getRepositories().clear();
 		repositoryService.getRepositories().addAll(repositories);
 	}
 

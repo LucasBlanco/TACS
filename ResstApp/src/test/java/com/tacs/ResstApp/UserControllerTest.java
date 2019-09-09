@@ -53,7 +53,7 @@ class UserControllerTest {
 		ResponseEntity<Object> response = userController.login(user);
 		String token = (String) response.getBody();
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-		Assertions.assertEquals("e2385gf54875a", token);
+		Assertions.assertEquals("token1", token);
 
 	}
 
@@ -62,8 +62,8 @@ class UserControllerTest {
 		String token = "soyeltoken";
 		Mockito.doNothing().when(loggerMockService).logout(Mockito.anyString());
 		ResponseEntity<Object> response = userController.logout(token);
-		Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-		Assertions.assertEquals("Logout successful", response.getBody());
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+		Assertions.assertEquals("Logout Successful", response.getBody());
 	}
 
 	@Test
