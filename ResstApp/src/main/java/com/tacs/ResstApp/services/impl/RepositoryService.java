@@ -44,7 +44,7 @@ public class RepositoryService {
 	}
 
 	public List<Repository> getRepositoriesFiltered(String language, Integer nofcommits, Integer nofstars,
-			Integer nofissues) throws ServiceException {
+			Integer nofissues, Integer nofsubscribers) throws ServiceException {
 		return repositories;
 	}
 

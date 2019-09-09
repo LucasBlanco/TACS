@@ -128,8 +128,8 @@ class GitRepositoryControllerTest {
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
 		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(String.class), Mockito.any(Integer.class),
-				Mockito.any(Integer.class), Mockito.any(Integer.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered("spanish",1,1,1);
+				Mockito.any(Integer.class), Mockito.any(Integer.class), Mockito.any(Integer.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered("spanish",1,1,1,1);
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 		List<Repository> returnedRepos = (List) response.getBody();
 		Assertions.assertEquals(3, returnedRepos.size());
