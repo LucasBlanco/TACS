@@ -306,10 +306,10 @@ paths:
         '500':
           description: internal server error
   /logout/{token}:
-    delete:
+    post:
       tags:
         - users
-      description: Delete a session
+      description: Finishes a user session
       parameters:
         - name: token
           in: path
