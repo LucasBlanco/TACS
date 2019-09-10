@@ -63,6 +63,9 @@ public class GitRepositoryController {
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
     }
 
 }
