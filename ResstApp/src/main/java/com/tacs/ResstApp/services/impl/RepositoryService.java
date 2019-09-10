@@ -1,15 +1,14 @@
 package com.tacs.ResstApp.services.impl;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.tacs.ResstApp.model.*;
 import org.springframework.stereotype.Component;
 
-import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 
 @Component
@@ -45,6 +44,14 @@ public class RepositoryService {
 
 	public List<Repository> getRepositoriesFiltered(String language, Integer nofcommits, Integer nofstars,
 			Integer nofissues, Integer nofsubscribers) throws ServiceException {
+		new LanguageFilter(language);
+		new CommitsFilter(nofcommits);
+		new StarsFilter(nofstars);
+		new IssuesFilter(nofissues);
+		new SubscribersFilter(nofsubscribers);
+
+//te mando algo? que hago con los cambios?
+
 		return repositories;
 	}
 
