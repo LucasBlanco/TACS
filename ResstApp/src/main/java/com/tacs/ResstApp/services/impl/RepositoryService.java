@@ -50,8 +50,6 @@ public class RepositoryService {
 		new IssuesFilter(nofissues);
 		new SubscribersFilter(nofsubscribers);
 
-//te mando algo? que hago con los cambios?
-
 		return repositories;
 	}
 
