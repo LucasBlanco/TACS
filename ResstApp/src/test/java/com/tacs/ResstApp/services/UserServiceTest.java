@@ -1,4 +1,4 @@
-package com.tacs.ResstApp;
+package com.tacs.ResstApp.services;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +46,7 @@ public class UserServiceTest {
 		user2.setFavourites(favourites2);
 		user3.setFavourites(Arrays.asList());
 
+		userService.getUsers().clear();
 		userService.getUsers().addAll(Arrays.asList(user1, user2, user3));
 	}
 	

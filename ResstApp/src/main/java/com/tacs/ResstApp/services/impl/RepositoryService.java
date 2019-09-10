@@ -1,7 +1,9 @@
 package com.tacs.ResstApp.services.impl;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +16,17 @@ import com.tacs.ResstApp.services.exceptions.ServiceException;
 public class RepositoryService {
 
 	private List<Repository> repositories = new ArrayList<Repository>();
+	
+	//para mockear
+    public RepositoryService() {
+        Repository repository1 = new Repository(1L,"TACS");
+        Repository repository2 = new Repository(2L,"TADP");
+        Repository repository3 = new Repository(3L,"DDS");
+        Repository repository4 = new Repository(4L,"PDP");
+        Repository repository5 = new Repository(5L,"SO");
+        Repository repository6 = new Repository(6L,"GDD");
+        this.repositories = new ArrayList<>(Arrays.asList(repository1, repository2, repository3, repository4, repository5, repository6));
+    }
 
 	public List<Repository> getRepositories() {
 		return repositories;
@@ -31,7 +44,7 @@ public class RepositoryService {
 	}
 
 	public List<Repository> getRepositoriesFiltered(String language, Integer nofcommits, Integer nofstars,
-			Integer nofissues) throws ServiceException {
+			Integer nofissues, Integer nofsubscribers) throws ServiceException {
 		return repositories;
 	}
 

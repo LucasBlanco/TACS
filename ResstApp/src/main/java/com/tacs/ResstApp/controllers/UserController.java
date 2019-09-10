@@ -3,6 +3,7 @@ package com.tacs.ResstApp.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +19,6 @@ import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
-import com.tacs.ResstApp.services.mock.LoggerMockService;
 
 @RestController
 public class UserController {
@@ -29,14 +29,11 @@ public class UserController {
     @Autowired
     RepositoryService repositoryMockService;
 
-    @Autowired
-    LoggerMockService loggerMockService;
-
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user){
         try{
-            userService.getUser(user.getId());
-            return ResponseEntity.ok("e2385gf54875a");
+            userService.getUserByUsername(user.getUsername());
+            return ResponseEntity.ok("token1");
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -48,10 +45,11 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    @DeleteMapping("/logout/{token}")
-    public ResponseEntity logout(@PathVariable String token){
+    public ResponseEntity logout(@RequestBody String token){
         try{
-            loggerMockService.logout(token);
+            userService.logout(token);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(org.springframework.http.MediaType.TEXT_PLAIN);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Logout successful");
         }
         catch(ServiceException ex){
@@ -63,6 +61,7 @@ public class UserController {
 
     }
 
+    //Faltan tests
     @PostMapping("/users")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
         try {
@@ -79,9 +78,11 @@ public class UserController {
     public ResponseEntity<Object> getUsers(){
         try {
             return ResponseEntity.ok(userService.getUsers());
-         } catch (ServiceException ex) {
+        }
+        catch (ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
@@ -112,7 +113,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/{userId}/favourites/{id}") //vuela?
+    /*@GetMapping("/users/{userId}/favourites/{id}") //vuela? no
     public ResponseEntity<Object> getFavouriteById(@PathVariable Long userId, @RequestBody Long id){
         try {
             return ResponseEntity.ok(userService.getUserFavouriteRepoById(userId, id));
@@ -120,13 +121,12 @@ public class UserController {
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
-    }
+    }*/
 
     @PostMapping("/users/{id}/favourites")
-    public ResponseEntity<Object> createFavourite(@PathVariable Long id, @RequestBody Long repositoryToFaveId){
+    public ResponseEntity<Object> createFavourite(@PathVariable Long id, @RequestBody Repository repo){
         try{
-            Repository repositoryToFave = repositoryMockService.getRepository(repositoryToFaveId);
-            List<Repository> favourites = userService.createFavourite(id, repositoryToFave);
+            List<Repository> favourites = userService.addFavourite(id, repo.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(favourites);
         }
         catch(ServiceException ex){
@@ -159,6 +159,9 @@ public class UserController {
         }
         catch(ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
 }
