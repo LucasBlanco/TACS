@@ -19,7 +19,6 @@ import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
-import com.tacs.ResstApp.services.mock.LoggerMockService;
 
 @RestController
 public class UserController {
@@ -29,9 +28,6 @@ public class UserController {
 
     @Autowired
     RepositoryService repositoryMockService;
-
-    @Autowired
-    LoggerMockService loggerMockService;
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user){
@@ -49,14 +45,12 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    //@DeleteMapping("/logout/{token}")
     public ResponseEntity logout(@RequestBody String token){
         try{
-            loggerMockService.logout(token);
+            userService.logout(token);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(org.springframework.http.MediaType.TEXT_PLAIN);
-            return new ResponseEntity("Logout Successful", httpHeaders, HttpStatus.OK);
-            //return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Logout successful");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Logout successful");
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -67,6 +61,7 @@ public class UserController {
 
     }
 
+    //Faltan tests
     @PostMapping("/users")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
         try {
@@ -83,9 +78,11 @@ public class UserController {
     public ResponseEntity<Object> getUsers(){
         try {
             return ResponseEntity.ok(userService.getUsers());
-         } catch (ServiceException ex) {
+        }
+        catch (ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
@@ -116,7 +113,7 @@ public class UserController {
         }
     }
 
-    /*@GetMapping("/users/{userId}/favourites/{id}") //vuela?
+    /*@GetMapping("/users/{userId}/favourites/{id}") //vuela? no
     public ResponseEntity<Object> getFavouriteById(@PathVariable Long userId, @RequestBody Long id){
         try {
             return ResponseEntity.ok(userService.getUserFavouriteRepoById(userId, id));
@@ -162,6 +159,9 @@ public class UserController {
         }
         catch(ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+        catch(Exception ex){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
 }
