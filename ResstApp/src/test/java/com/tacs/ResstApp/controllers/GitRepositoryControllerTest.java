@@ -1,4 +1,4 @@
-package com.tacs.ResstApp;
+package com.tacs.ResstApp.controllers;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
