@@ -1,4 +1,4 @@
-package com.tacs.ResstApp;
+package com.tacs.ResstApp.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
