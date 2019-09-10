@@ -101,4 +101,7 @@ public class UserService {
 		return favs1.stream().filter(favs2::contains).collect(Collectors.toList());
 	}
 
+	public void logout(String token) throws ServiceException{
+		//TODO
+	}
 }
