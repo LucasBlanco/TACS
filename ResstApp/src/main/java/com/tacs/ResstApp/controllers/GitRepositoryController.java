@@ -1,6 +1,7 @@
 package com.tacs.ResstApp.controllers;
 
 import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.services.impl.GithubOauthService;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
 
@@ -12,8 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class GitRepositoryController {

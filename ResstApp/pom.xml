@@ -80,7 +80,7 @@
 		<dependency>
 			<groupId>com.github.scribejava</groupId>
 			<artifactId>scribejava-apis</artifactId>
-			<version>6.4.1</version> // please use always the latest version
+			<version>6.4.1</version>
 		</dependency>
 	</dependencies>
 
