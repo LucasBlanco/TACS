@@ -22,9 +22,11 @@ public class GitOauthController {
     /*
     TODO: 1) Desde el front (www.tacs.com/github/login) se deberia hacer un get a http:localhost:8090/githubOauth/authorizationUrl que retorna una url
           2) La url se abre en el explorador
-          3) El usuario da su permiso y github redirecciona al back (http://localhost:8090/githubOauth/callback) con un query param ?code
-          4) Con el code, el back hace un post a github y retorna el token
-          5) Se guarda el token encriptado asociandolo a un usuario
+          3) El usuario da su permiso y github redirecciona al front (www.tacs.com/github/code) con un query param ?code
+          4) El front muestra una pantalla de exito y hace un get al back enviando el code
+          4) Con el code, el back hace un post a github y retorna el token al front
+          5) Se guarda el token en el localstorage, que sera usado en el header de todas las futuras request
+          5.1) Se guarda en la base el token encriptado asociado a un usuario?????
     */
 
     @GetMapping("/githubOauth/authorizationUrl")
