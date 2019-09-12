@@ -42,13 +42,7 @@ public class RepositoryService {
 				.collect(Collectors.toList());
 	}
 
-	public List<Repository> getRepositoriesFiltered(String language, Integer nofcommits, Integer nofstars,
-			Integer nofissues, Integer nofsubscribers) throws ServiceException {
-		new LanguageFilter(language);
-		new CommitsFilter(nofcommits);
-		new StarsFilter(nofstars);
-		new IssuesFilter(nofissues);
-		new SubscribersFilter(nofsubscribers);
+	public List<Repository> getRepositoriesFiltered(Search search) throws ServiceException {
 
 		return repositories;
 	}

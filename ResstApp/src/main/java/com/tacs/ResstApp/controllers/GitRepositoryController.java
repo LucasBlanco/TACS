@@ -1,5 +1,6 @@
 package com.tacs.ResstApp.controllers;
 
+import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
@@ -55,10 +56,9 @@ public class GitRepositoryController {
     }
     
     @GetMapping("/repositories/filters")
-    public ResponseEntity<Object> getRepositoriesFiltered(@RequestParam(name="language", required = false) String language, @RequestParam(name="nofcommits",required = false) Integer nofcommits,
-    		@RequestParam(name="nofstars",required = false) Integer nofstars, @RequestParam(name="nofissues",required = false) Integer nofissues, @RequestParam(name="nofsubscribers",required = false) Integer nofsubscribers) { 
+    public ResponseEntity<Object> getRepositoriesFiltered(@RequestParam Search search) {
     	try{
-    	    return ResponseEntity.ok(repositoryMockService.getRepositoriesFiltered(language, nofcommits, nofstars, nofissues, nofsubscribers));
+    	    return ResponseEntity.ok(repositoryMockService.getRepositoriesFiltered(search));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());

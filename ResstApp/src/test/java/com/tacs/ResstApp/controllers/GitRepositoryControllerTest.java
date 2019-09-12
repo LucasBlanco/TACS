@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.tacs.ResstApp.model.Search;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -128,10 +129,10 @@ class GitRepositoryControllerTest {
 		Repository repo1 = new Repository(1L, "repo 1");
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
-		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(String.class), Mockito.any(Integer.class),
-				Mockito.any(Integer.class), Mockito.any(Integer.class), Mockito.any(Integer.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+		Search search = new Search();
+		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered("spanish",1,1,1,1);
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(search);
 		List<Repository> returnedRepos = (List) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -146,10 +147,9 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoriesFilteredReturnsUserError() throws Exception {
-		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(String.class), Mockito.any(Integer.class),
-				Mockito.any(Integer.class), Mockito.any(Integer.class), Mockito.any(Integer.class))).thenThrow(ServiceException.class);
+		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered("spanish",1,1,1,1);
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(new Search());
 		List<Repository> returnedRepos = (List) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -158,10 +158,9 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoriesFilteredReturnsServerError() throws Exception {
-		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(String.class), Mockito.any(Integer.class),
-				Mockito.any(Integer.class), Mockito.any(Integer.class), Mockito.any(Integer.class))).thenThrow(RuntimeException.class);
+		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered("spanish",1,1,1,1);
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(new Search());
 		List<Repository> returnedRepos = (List) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
