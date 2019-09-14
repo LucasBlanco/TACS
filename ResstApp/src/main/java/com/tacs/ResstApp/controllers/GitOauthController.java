@@ -1,6 +1,7 @@
 package com.tacs.ResstApp.controllers;
 
 import com.github.scribejava.core.model.OAuth2AccessToken;
+import com.tacs.ResstApp.services.impl.GitTokenSingleton;
 import com.tacs.ResstApp.services.impl.GithubOauthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +39,9 @@ public class GitOauthController {
     }
 
     @GetMapping("/githubOauth/callback")
-    public void getOauthCallback(@RequestParam(name="code") String code) throws InterruptedException, ExecutionException, IOException {
+    public ResponseEntity getOauthCallback(@RequestParam(name="code") String code) throws InterruptedException, ExecutionException, IOException {
         OAuth2AccessToken token = githubOauthService.getToken(code);
-        System.out.println("Access Token:" + token.getAccessToken());
+        GitTokenSingleton.setToken(token.getAccessToken());
+        return ResponseEntity.ok("Token guardado con exito!");
     }
 }
