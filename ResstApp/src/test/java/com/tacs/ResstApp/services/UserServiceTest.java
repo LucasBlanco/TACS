@@ -1,13 +1,17 @@
 package com.tacs.ResstApp.services;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.tacs.ResstApp.model.ComparisonDTO;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.impl.UserService;
@@ -33,6 +37,8 @@ public class UserServiceTest {
 		repo2 = new Repository(2L, "repo 2");
 		repo3 = new Repository(3L, "repo 3");
 		repo4 = new Repository(4L, "repo 4");
+		repo2.setLanguages(Stream.of("C", "JAVA").collect(Collectors.toCollection(HashSet::new)));
+		repo3.setLanguages(Stream.of("PYTHON", "C").collect(Collectors.toCollection(HashSet::new)));
 		user1 = new User();
 		user2 = new User();
 		user3 = new User();
@@ -52,13 +58,15 @@ public class UserServiceTest {
 	
 	@Test
 	public void compareFavourites() throws Exception {
-		List<Repository> favouritesComparison = userService.getFavouritesComparison(userId1, userId2);
-		Assertions.assertEquals(2, favouritesComparison.size());
+		ComparisonDTO favouritesComparison = userService.getFavouritesComparison(userId1, userId2);
+		Assertions.assertEquals(2, favouritesComparison.getCommonRepositories().size());
+		Assertions.assertEquals(3, favouritesComparison.getCommonLanguages().size());
 	}
 	
 	@Test
 	public void compareFavouritesWithEmptyUserList() throws Exception {
-		List<Repository> favouritesComparison = userService.getFavouritesComparison(userId1, userId3);
-		Assertions.assertEquals(0, favouritesComparison.size());
+		ComparisonDTO favouritesComparison = userService.getFavouritesComparison(userId1, userId3);
+		Assertions.assertEquals(0, favouritesComparison.getCommonRepositories().size());
+		Assertions.assertEquals(0, favouritesComparison.getCommonLanguages().size());
 	}
 }
