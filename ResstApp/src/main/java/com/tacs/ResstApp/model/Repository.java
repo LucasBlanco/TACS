@@ -1,6 +1,7 @@
 package com.tacs.ResstApp.model;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 public class Repository {
 
@@ -11,6 +12,8 @@ public class Repository {
 	private LocalDateTime registrationDate;
 	
 	private int noffaved;
+	
+	private Set<String> languages;
 
 	public Repository(Long id, String name) {
 		this.id = id;
@@ -50,4 +53,13 @@ public class Repository {
 		this.registrationDate = registrationDate;
 	}
 
+	public Set<String> getLanguages() {
+		return languages;
+	}
+
+	public void setLanguages(Set<String> languages) {
+		this.languages = languages;
+	}
+
+	
 }

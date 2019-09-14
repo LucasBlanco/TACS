@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.tacs.ResstApp.model.ComparisonDTO;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
@@ -95,10 +97,16 @@ public class UserService {
 		getUser(id).setFavourites(favouriteRepos);
 	}
 	
-	public List<Repository> getFavouritesComparison(Long id1, Long id2) throws ServiceException {
+	public ComparisonDTO getFavouritesComparison(Long id1, Long id2) throws ServiceException {
+		
 		List<Repository> favs1 = this.getUserFavouriteRepos(id1);
 		List<Repository> favs2 = this.getUserFavouriteRepos(id2);
-		return favs1.stream().filter(favs2::contains).collect(Collectors.toList());
+		List<Repository> commonRepos = favs1==null?null:favs1.stream().filter(favs2::contains).collect(Collectors.toList());
+		Set<String> favs1Languages = favs1==null?null:favs1.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(Set::stream).collect(Collectors.toSet());
+		Set<String> favs2Languages = favs2==null?null:favs2.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(Set::stream).collect(Collectors.toSet());
+		Set<String> commonLanguages = favs1Languages==null?null:favs1Languages.stream().filter(favs2Languages::contains).collect(Collectors.toSet());
+		
+		return new ComparisonDTO(id1, id2, commonRepos, commonLanguages);
 	}
 
 	public void logout(String token) throws ServiceException{

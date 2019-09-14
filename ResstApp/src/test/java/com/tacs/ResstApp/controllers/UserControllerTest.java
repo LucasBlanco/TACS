@@ -2,7 +2,11 @@ package com.tacs.ResstApp.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException.ServiceUnavailable;
 
+import com.tacs.ResstApp.model.ComparisonDTO;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
@@ -376,14 +381,17 @@ class UserControllerTest {
 		Long id1 = 1L;
 		Long id2 = 2L;
 		Repository repo1 = new Repository(id1, "Repo1");
-		List<Repository> favouritesComparison = Arrays.asList(repo1);
+		List<Repository> commonFavourites = Arrays.asList(repo1);
+		Set<String> commonLanguages = Stream.of("PYTHON", "C").collect(Collectors.toCollection(HashSet::new));
+		ComparisonDTO favouritesComparison = new ComparisonDTO(id1, id2, commonFavourites, commonLanguages); 
 		Mockito.when(userMockService.getFavouritesComparison(id1, id2)).thenReturn(favouritesComparison);
 
 		ResponseEntity<Object> response = userController.compareFavourites(id1, id2);
-		List<Repository> favourites = (List) response.getBody();
+		ComparisonDTO responseDTO = (ComparisonDTO) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-		Assertions.assertEquals(1, favourites.size());
+		Assertions.assertEquals(1, responseDTO.getCommonRepositories().size());
+		Assertions.assertEquals(2, responseDTO.getCommonLanguages().size());
 	}
 
 	@Test
