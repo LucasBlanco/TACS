@@ -11,6 +11,8 @@ public class Repository {
 	private LocalDateTime registrationDate;
 	
 	private int noffaved;
+	
+	private int nofCommits;
 
 	public Repository(Long id, String name) {
 		this.id = id;
@@ -48,6 +50,14 @@ public class Repository {
 
 	public void setRegistrationDate(LocalDateTime registrationDate) {
 		this.registrationDate = registrationDate;
+	}
+
+	public int getNofCommits() {
+		return nofCommits;
+	}
+
+	public void setNofCommits(int nofCommits) {
+		this.nofCommits = nofCommits;
 	}
 
 }
