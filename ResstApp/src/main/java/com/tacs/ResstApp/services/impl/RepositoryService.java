@@ -43,8 +43,7 @@ public class RepositoryService {
 	}
 
 	public List<Repository> getRepositoriesFiltered(Search search) throws ServiceException {
-
-		return repositories;
+		return search.filter(this.getRepositories());
 	}
 
 }

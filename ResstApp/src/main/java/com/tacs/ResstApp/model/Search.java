@@ -1,6 +1,9 @@
 package com.tacs.ResstApp.model;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Search {
     private List<CommitsFilter> commitsFilters;
@@ -48,4 +51,18 @@ public class Search {
     public void setSubscribersFilters(List<SubscribersFilter> subscribersFilters) {
         this.subscribersFilters = subscribersFilters;
     }
+
+	public List<Repository> filter(List<Repository> repositories) {
+		return repositories.stream().filter(r -> validateByFilters(r)).collect(Collectors.toList());
+	}
+
+	private boolean validateByFilters(Repository repository) {
+		return this.getFiltersAttributes()
+				.allMatch(a -> a.stream().allMatch(f -> f.filter(repository)));
+	}
+
+	private Stream<List<? extends Filter>> getFiltersAttributes() {
+		return Stream.of(commitsFilters, issuesFilters, languageFilters, starsFilters, subscribersFilters)
+				.filter(Objects::nonNull);
+	}
 }
