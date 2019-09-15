@@ -1,6 +1,7 @@
 package com.tacs.ResstApp.services.impl;
 
 import com.google.gson.Gson;
+import com.tacs.ResstApp.model.GitRepository;
 import com.tacs.ResstApp.model.Repository;
 import org.apache.http.client.fluent.Request;
 import org.springframework.stereotype.Component;
@@ -27,14 +28,9 @@ public class GitService {
 
         GitRepository[] repos = gson.fromJson(result, GitRepository[].class);
         List<Repository> listaRepos = Arrays.stream(repos)
-                .map( repo -> new Repository(repo.id, repo.name))
+                .map( repo -> new Repository(repo.getId(), repo.getName()))
                 .collect(toList());
 
         return listaRepos;
     }
-}
-
-abstract class GitRepository{
-    Long id;
-    String name;
 }

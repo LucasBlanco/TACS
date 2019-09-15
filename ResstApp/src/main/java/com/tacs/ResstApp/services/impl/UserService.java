@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.tacs.ResstApp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,9 @@ import com.tacs.ResstApp.services.exceptions.ServiceException;
 
 @Component
 public class UserService {
+
+	@Autowired
+	private UserRepository userRepository;
 
 	private List<User> users = new ArrayList<User>();
 
@@ -70,11 +74,11 @@ public class UserService {
 		return getUser(id).getFavourites();
 	}
 
-	public List<Repository> addFavourite(Long userId, Long repositoryId) throws ServiceException {
-		List<Repository> favouriteRepos = getUserFavouriteRepos(userId);
-		favouriteRepos.add(repositoryService.getRepository(repositoryId));
-		getUser(userId).setFavourites(favouriteRepos);
-		return getUserFavouriteRepos(userId);
+	public List<Repository> addFavourite(Long userId, Repository repository) throws ServiceException {
+		User user = userRepository.getOne(userId);
+		user.getFavourites().add(repository);
+		userRepository.save(user);
+		return user.getFavourites();
 	}
 
 	public Repository getUserFavouriteRepoById(Long userId, Long id) throws ServiceException {

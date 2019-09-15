@@ -1,21 +1,35 @@
 package com.tacs.ResstApp.services;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.tacs.ResstApp.repositories.UserRepository;
+import com.tacs.ResstApp.services.exceptions.ServiceException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.impl.UserService;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
+
 @SpringBootTest
 public class UserServiceTest {
-	
-	private UserService userService = new UserService();
+
+	@Mock
+	UserRepository userRepository;
+
+	@InjectMocks
+	UserService userService;
+
 	private Long userId1 = 1L;
 	private Long userId2 = 2L;
 	private Long userId3 = 3L;
@@ -60,5 +74,32 @@ public class UserServiceTest {
 	public void compareFavouritesWithEmptyUserList() throws Exception {
 		List<Repository> favouritesComparison = userService.getFavouritesComparison(userId1, userId3);
 		Assertions.assertEquals(0, favouritesComparison.size());
+	}
+
+	@Test
+	public void addRepoToFavouritesAddsRepoToUsersFavourites() throws ServiceException {
+		User user = getUserWithFavourites();
+		Repository repository = new Repository(3L, "Third repo");
+		when(userRepository.getOne(user.getId())).thenReturn(user);
+
+		userService.addFavourite(user.getId(),repository);
+
+		assertThat(user.getFavourites().size()).isEqualTo(3);
+		verify(userRepository, times(1)).save(user);
+	}
+
+
+
+
+	private User getUserWithFavourites() {
+		Repository repository1 = new Repository(1L,"First repo");
+		List<Repository> repositories = new ArrayList<>();
+		Repository repository2 = new Repository(2L,"Second repo");
+		List<Repository> someRepositories = new ArrayList<>();
+		someRepositories.add(repository1);
+		someRepositories.add(repository2);
+		User user = new User();
+		user.setFavourites(someRepositories);
+		return user;
 	}
 }
