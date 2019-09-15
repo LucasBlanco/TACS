@@ -158,6 +158,7 @@
 			<exclude>*Test</exclude>
 			<exclude>**/*com/tacs/ResstApp/ResstAppApplication.class</exclude>
 			<exclude>**/*com/tacs/ResstApp/model/*</exclude>
+			<exclude>**/*com/tacs/ResstApp/repositories/*</exclude>
 		</excludes>
 	</configuration>
 </plugin>

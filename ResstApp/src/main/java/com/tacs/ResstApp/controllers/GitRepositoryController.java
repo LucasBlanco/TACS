@@ -1,5 +1,6 @@
 package com.tacs.ResstApp.controllers;
 
+import com.tacs.ResstApp.model.GitRepositoriesResponse;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.GithubOauthService;
@@ -77,14 +78,4 @@ public class GitRepositoryController {
         }
     }
 
-}
-
-class GitRepositoriesResponse{
-    Integer totalAmount;
-    List<Repository> repositories;
-
-    public GitRepositoriesResponse(Integer size, List<Repository> repositories){
-        this.totalAmount = size;
-        this.repositories = repositories;
-    }
 }
