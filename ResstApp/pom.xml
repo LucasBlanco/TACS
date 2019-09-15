@@ -156,6 +156,8 @@
 	<configuration>
 		<excludes>
 			<exclude>*Test</exclude>
+			<exclude>**/*com/tacs/ResstApp/ResstAppApplication.class</exclude>
+			<exclude>**/*com/tacs/ResstApp/model/*</exclude>
 		</excludes>
 	</configuration>
 </plugin>
