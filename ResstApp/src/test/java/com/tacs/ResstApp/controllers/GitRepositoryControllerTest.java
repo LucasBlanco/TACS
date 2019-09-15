@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.tacs.ResstApp.model.GitRepositoriesResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -95,7 +96,7 @@ class GitRepositoryControllerTest {
 
 		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate(since, to, 1, 1);
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-		List<Repository> returnedRepos = ((GitRepositoriesResponse) response.getBody()).repositories;
+		List<Repository> returnedRepos = ((GitRepositoriesResponse) response.getBody()).getRepositories();
 
 		Assertions.assertEquals(3, returnedRepos.size());
 		Assertions.assertEquals(1L, returnedRepos.get(0).getId());
