@@ -1,5 +1,6 @@
 package com.tacs.ResstApp.controllers;
 
+import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.GithubOauthService;
 import com.tacs.ResstApp.services.impl.RepositoryService;
@@ -14,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -44,10 +48,12 @@ public class GitRepositoryController {
     @GetMapping("/repositories")
     public ResponseEntity<Object> getRepositoryByDate(@RequestParam("since") String since, @RequestParam("to") String to, @RequestParam("start") int start, @RequestParam("limit") int limit){
         try {
-        	DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    	    LocalDateTime sinceParsed = LocalDateTime.parse(since, DATEFORMATTER);
-    	    LocalDateTime toParsed = LocalDateTime.parse(to, DATEFORMATTER);
-            return ResponseEntity.ok(repositoryMockService.getRepositoriesBetween(sinceParsed, toParsed));
+        	DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    	    LocalDate sinceParsed = LocalDate.parse(since , DATEFORMATTER);
+    	    LocalDate toParsed = LocalDate.parse(to , DATEFORMATTER);
+            List<Repository> repos = repositoryMockService.getRepositoriesBetween(sinceParsed, toParsed);
+            GitRepositoriesResponse response = new GitRepositoriesResponse(repos.size(), repos);
+            return ResponseEntity.ok(response);
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -71,6 +77,14 @@ public class GitRepositoryController {
         }
     }
 
+}
 
+class GitRepositoriesResponse{
+    Integer totalAmount;
+    List<Repository> repositories;
 
+    public GitRepositoriesResponse(Integer size, List<Repository> repositories){
+        this.totalAmount = size;
+        this.repositories = repositories;
+    }
 }
