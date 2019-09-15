@@ -48,7 +48,7 @@ public class RepositoryService {
 
     public Repository getRepository(Long id) throws ServiceException {
         Optional<Repository> repository = repositoryRepository.findById(id);
-        if(repository.isPresent()){
+        if (repository.isPresent()) {
             return repository.get();
         }
         //TODO aca se deberia buscar si el repositorio exite en github
