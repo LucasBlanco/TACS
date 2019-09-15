@@ -112,16 +112,6 @@ public class UserController {
         }
     }
 
-    /*@GetMapping("/users/{userId}/favourites/{id}") //vuela? no
-    public ResponseEntity<Object> getFavouriteById(@PathVariable Long userId, @RequestBody Long id){
-        try {
-            return ResponseEntity.ok(userService.getUserFavouriteRepoById(userId, id));
-        }
-        catch(ServiceException ex){
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
-    }*/
-
     @PostMapping("/users/{id}/favourites")
     public ResponseEntity<Object> addFavourite(@PathVariable Long id, @RequestBody Repository repo){
         try{

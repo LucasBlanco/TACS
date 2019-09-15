@@ -3,9 +3,11 @@ package com.tacs.ResstApp.services;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import com.tacs.ResstApp.repositories.UserRepository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.services.impl.RepositoryService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.impl.UserService;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.*;
 
@@ -26,6 +29,9 @@ public class UserServiceTest {
 
 	@Mock
 	UserRepository userRepository;
+
+    @Mock
+    RepositoryService repositoryService;
 
 	@InjectMocks
 	UserService userService;
@@ -66,12 +72,16 @@ public class UserServiceTest {
 	
 	@Test
 	public void compareFavourites() throws Exception {
+	    when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
+        when(userRepository.findById(userId2)).thenReturn(Optional.of(user2));
 		List<Repository> favouritesComparison = userService.getFavouritesComparison(userId1, userId2);
 		Assertions.assertEquals(2, favouritesComparison.size());
 	}
 	
 	@Test
 	public void compareFavouritesWithEmptyUserList() throws Exception {
+        when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
+        when(userRepository.findById(userId3)).thenReturn(Optional.of(user3));
 		List<Repository> favouritesComparison = userService.getFavouritesComparison(userId1, userId3);
 		Assertions.assertEquals(0, favouritesComparison.size());
 	}
@@ -80,13 +90,58 @@ public class UserServiceTest {
 	public void addRepoToFavouritesAddsRepoToUsersFavourites() throws ServiceException {
 		User user = getUserWithFavourites();
 		Repository repository = new Repository(3L, "Third repo");
-		when(userRepository.getOne(user.getId())).thenReturn(user);
+		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
 		userService.addFavourite(user.getId(),repository);
 
 		assertThat(user.getFavourites().size()).isEqualTo(3);
 		verify(userRepository, times(1)).save(user);
 	}
+
+    @Test
+    public void addRepoToFavouritesThrowserrorBecauseUserDoesNotExist() throws ServiceException {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        Throwable thrown = catchThrowable(() -> { userService.addFavourite(1L,new Repository(3L,"")); });
+
+        assertThat(thrown).isInstanceOf(ServiceException.class)
+                .hasMessageContaining("User does not exist");
+    }
+
+    @Test
+    public void removeRepoFromFavouritesRemovesRepoFromUsersFavourites() throws ServiceException {
+        User user = getUserWithFavourites();
+        Repository repositoryToRemove = new Repository(3L, "Third repo");
+        user.getFavourites().add(repositoryToRemove);
+        when(userRepository.findById(user.getId())).thenReturn(java.util.Optional.of(user));
+        when(repositoryService.getRepository(2L)).thenReturn(repositoryToRemove);
+
+        userService.deleteFavourite(user.getId(),2L);
+
+        assertThat(user.getFavourites().size()).isEqualTo(2);
+        verify(userRepository, times(1)).save(user);
+    }
+
+    @Test
+    public void removeRepoFromFavouritesThrowserrorBecauseRepoDoesNotExist() throws ServiceException {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(getUserWithFavourites()));
+        when(repositoryService.getRepository(2L)).thenThrow(ServiceException.class);
+
+        Throwable thrown = catchThrowable(() -> { userService.deleteFavourite(3L,2L); });
+
+        assertThat(thrown).isInstanceOf(ServiceException.class);
+    }
+
+    @Test
+    public void removeRepoFromFavouritesThrowserrorUserDoesNotHaveRepoInFavouritest() throws ServiceException {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(getUserWithFavourites()));
+        when(repositoryService.getRepository(2L)).thenReturn(new Repository(4L,""));
+
+        Throwable thrown = catchThrowable(() -> { userService.deleteFavourite(3L,2L); });
+
+        assertThat(thrown).isInstanceOf(ServiceException.class)
+                .hasMessageContaining("User does not have repository in favourites");
+    }
 
 
 

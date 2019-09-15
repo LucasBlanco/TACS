@@ -268,31 +268,6 @@ class UserControllerTest {
 		Assertions.assertNull(response.getBody());
 	}
 
-	/*@Test
-	public void getFavouriteByIdSuccess() throws Exception { vuela?
-		Long userId = 1L;
-		Long id = 22L;
-		Repository repo = new Repository(22L, "repo 1");
-		Mockito.when(userMockService.getUserFavouriteRepoById(Mockito.anyLong(), Mockito.anyLong())).thenReturn(repo);
-		ResponseEntity<Object> response = userController.getFavourite(userId, id);
-		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-		Repository favourite = (Repository) response.getBody();
-		Assertions.assertEquals(22L, favourite.getId());
-		Assertions.assertEquals("repo 1", favourite.getName());
-	}*/
-
-	/*@Test
-	public void getFavouriteByIdError() throws Exception { vuela?
-		Long userId = 1L;
-		Long id = 22L;
-		Mockito.when(userMockService.getUserFavouriteRepoById(Mockito.anyLong(), Mockito.anyLong()))
-				.thenThrow(ServiceException.class);
-		ResponseEntity<Object> response = userController.getFavouriteById(userId, id);
-		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-		Repository returnedFave = (Repository) response.getBody();
-		Assertions.assertNull(returnedFave);
-	}*/
-
 	@Test
 	public void addFavouritesReturns3RepositoriesSuccessfully() throws Exception {
 		Long id = 1L;
