@@ -1,5 +1,6 @@
 package com.tacs.ResstApp.services.impl;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tacs.ResstApp.model.Repository;
@@ -14,6 +16,9 @@ import com.tacs.ResstApp.services.exceptions.ServiceException;
 
 @Component
 public class RepositoryService {
+
+	@Autowired
+	GitService gitService;
 
 	private List<Repository> repositories = new ArrayList<Repository>();
 	
@@ -28,8 +33,9 @@ public class RepositoryService {
         this.repositories = new ArrayList<>(Arrays.asList(repository1, repository2, repository3, repository4, repository5, repository6));
     }
 
-	public List<Repository> getRepositories() {
-		return repositories;
+	public List<Repository> getRepositories() throws IOException {
+		// return repositories;
+		return gitService.getRepositories();
 	}
 
 	public Repository getRepository(Long id) throws ServiceException {
@@ -37,10 +43,11 @@ public class RepositoryService {
 				.orElseThrow(() -> new ServiceException("Repository does not exist"));
 	}
 
-	public List<Repository> getRepositoriesBetween(LocalDateTime since, LocalDateTime to) throws ServiceException {
-		return repositories.stream()
+	public List<Repository> getRepositoriesBetween(LocalDateTime since, LocalDateTime to) throws ServiceException, IOException {
+		/*return repositories.stream()
 				.filter(r -> r.getRegistrationDate().isAfter(since) && r.getRegistrationDate().isBefore(to))
-				.collect(Collectors.toList());
+				.collect(Collectors.toList());*/
+		return gitService.getRepositories();
 	}
 
 	public List<Repository> getRepositoriesFiltered(String language, Integer nofcommits, Integer nofstars,

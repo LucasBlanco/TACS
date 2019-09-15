@@ -32,7 +32,6 @@ public class GithubOauthService {
                 .callback("http://localhost:8090/githubOauth/callback")
                 .build(GitHubApi.instance());
         return service.getAuthorizationUrl(secretState);
-
     }
 
     public OAuth2AccessToken getToken(String code) throws InterruptedException, ExecutionException, IOException {

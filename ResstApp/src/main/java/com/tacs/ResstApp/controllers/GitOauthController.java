@@ -42,6 +42,6 @@ public class GitOauthController {
     public ResponseEntity getOauthCallback(@RequestParam(name="code") String code) throws InterruptedException, ExecutionException, IOException {
         OAuth2AccessToken token = githubOauthService.getToken(code);
         GitTokenSingleton.setToken(token.getAccessToken());
-        return ResponseEntity.ok("Token guardado con exito!");
+        return ResponseEntity.ok("Token "+ token.getAccessToken() +" guardado con exito!");
     }
 }
