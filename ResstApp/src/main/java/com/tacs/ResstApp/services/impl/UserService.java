@@ -1,11 +1,9 @@
 package com.tacs.ResstApp.services.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.tacs.ResstApp.repositories.RepositoryRepository;
 import com.tacs.ResstApp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +17,9 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private RepositoryService repositoryService;
 
 	private List<User> users = new ArrayList<User>();
 
@@ -47,9 +48,6 @@ public class UserService {
         user6.setUsername("RocioChipian");
         this.users = new ArrayList<>(Arrays.asList(user1, user2, user3, user4, user5, user6));
     }
-	
-	@Autowired
-	RepositoryService repositoryService;
 
 	public User createUser(User newUser) throws ServiceException {
 		users.add(newUser);
@@ -61,8 +59,11 @@ public class UserService {
 	}
 
 	public User getUser(Long id) throws ServiceException {
-		return users.stream().filter(user -> user.getId() == id).findFirst()
-				.orElseThrow(() -> new ServiceException("User does not exist"));
+		Optional<User> user = userRepository.findById(id);
+		if(user.isPresent()){
+			return user.get();
+		}
+		throw new ServiceException("User does not exist");
 	}
 	
 	public User getUserByUsername(String username) throws ServiceException {
@@ -75,7 +76,7 @@ public class UserService {
 	}
 
 	public List<Repository> addFavourite(Long userId, Repository repository) throws ServiceException {
-		User user = userRepository.getOne(userId);
+		User user = getUser(userId);
 		user.getFavourites().add(repository);
 		userRepository.save(user);
 		return user.getFavourites();
@@ -94,9 +95,15 @@ public class UserService {
 	}*/
 
 	public void deleteFavourite(Long userId, Long id) throws ServiceException {
-		List<Repository> favouriteRepos = getUserFavouriteRepos(userId);
-		favouriteRepos.removeIf(repository -> repository.getId() == id);
-		getUser(id).setFavourites(favouriteRepos);
+		User user = getUser(userId);
+		Repository repoToRemove = repositoryService.getRepository(id);
+
+		if(user.getFavourites().contains(repoToRemove)){
+			user.getFavourites().remove(repoToRemove);
+			userRepository.save(user);
+		} else {
+			throw new ServiceException("User does not have repository in favourites");
+		}
 	}
 	
 	public List<Repository> getFavouritesComparison(Long id1, Long id2) throws ServiceException {
