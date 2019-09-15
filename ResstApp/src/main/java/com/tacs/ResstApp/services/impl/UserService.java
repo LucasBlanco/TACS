@@ -86,13 +86,6 @@ public class UserService {
 		return getUserFavouriteRepos(userId).stream().filter(repo -> repo.getId() == id).findFirst()
 				.orElseThrow(() -> new ServiceException("Favourite does not exist"));
 	}
-	
-	/*public List<Repository> createFavourite(Long id, Repository repositoryToFave) throws ServiceException {
-		List<Repository> favouriteRepos = getUserFavouriteRepos(id);
-		favouriteRepos.add(repositoryToFave);
-		getUser(id).setFavourites(favouriteRepos);
-		return getUserFavouriteRepos(id);
-	}*/
 
 	public void deleteFavourite(Long userId, Long id) throws ServiceException {
 		User user = getUser(userId);
