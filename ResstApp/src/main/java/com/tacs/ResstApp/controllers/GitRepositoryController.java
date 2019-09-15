@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -47,13 +48,11 @@ public class GitRepositoryController {
     @GetMapping("/repositories")
     public ResponseEntity<Object> getRepositoryByDate(@RequestParam("since") String since, @RequestParam("to") String to, @RequestParam("start") int start, @RequestParam("limit") int limit){
         try {
-        	DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    	    LocalDateTime sinceParsed = LocalDateTime.parse(since + " 00:00:00", DATEFORMATTER);
-    	    LocalDateTime toParsed = LocalDateTime.parse(to + " 00:00:00", DATEFORMATTER);
+        	DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    	    LocalDate sinceParsed = LocalDate.parse(since , DATEFORMATTER);
+    	    LocalDate toParsed = LocalDate.parse(to , DATEFORMATTER);
             List<Repository> repos = repositoryMockService.getRepositoriesBetween(sinceParsed, toParsed);
-            HashMap<String, Object> response = new HashMap<>();
-            response.put("totalAmount", repos.size());
-            response.put("repositories", repos);
+            GitRepositoriesResponse response = new GitRepositoriesResponse(repos.size(), repos);
             return ResponseEntity.ok(response);
         }
         catch(ServiceException ex){
@@ -78,6 +77,14 @@ public class GitRepositoryController {
         }
     }
 
+}
 
+class GitRepositoriesResponse{
+    Integer totalAmount;
+    List<Repository> repositories;
 
+    public GitRepositoriesResponse(Integer size, List<Repository> repositories){
+        this.totalAmount = size;
+        this.repositories = repositories;
+    }
 }

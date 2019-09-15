@@ -34,7 +34,7 @@ public class GitService {
     }
 }
 
-class GitRepository{
+abstract class GitRepository{
     Long id;
     String name;
 }
