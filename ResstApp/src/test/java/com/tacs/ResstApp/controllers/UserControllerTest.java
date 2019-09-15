@@ -294,15 +294,18 @@ class UserControllerTest {
 	}*/
 
 	@Test
-	public void createFavouritesReturns3RepositoriesSuccessfully() throws Exception {
+	public void addFavouritesReturns3RepositoriesSuccessfully() throws Exception {
 		Long id = 1L;
 		Repository repo1 = new Repository(1L, "repo 1");
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
-		Mockito.when(repositoryMockService.getRepository(Mockito.anyLong())).thenReturn(repo3);
-		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.anyLong())).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+		List<Repository> repositories = new ArrayList<>();
+		repositories.add(repo1);
+		repositories.add(repo2);
+		repositories.add(repo3);
+		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any(Repository.class))).thenReturn(repositories);
 
-		ResponseEntity<Object> response = userController.createFavourite(id, repo3);
+		ResponseEntity<Object> response = userController.addFavourite(id, repo3);
 		List<Repository> favourites = (List) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -319,9 +322,9 @@ class UserControllerTest {
 	public void createFavouritesReturnsUserError() throws ServiceException {
 		Long id = 1L;
 		Repository repository = new Repository(3L, "repo 3");
-		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.anyLong())).thenThrow(ServiceException.class);
+		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any(Repository.class))).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = userController.createFavourite(id, repository);
+		ResponseEntity<Object> response = userController.addFavourite(id, repository);
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		Assertions.assertNull(response.getBody());
@@ -333,7 +336,7 @@ class UserControllerTest {
 		Repository repository = new Repository(3L, "repo 3");
 		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any())).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = userController.createFavourite(id, repository);
+		ResponseEntity<Object> response = userController.addFavourite(id, repository);
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(response.getBody());
