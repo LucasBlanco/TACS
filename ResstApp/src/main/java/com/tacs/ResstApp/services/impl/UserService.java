@@ -20,6 +20,9 @@ public class UserService {
 	@Autowired
 	private RepositoryService repositoryService;
 
+	@Autowired
+	private UserTokenService userTokenService;
+
 	//para mockear
 	public UserService() {
     }
@@ -82,7 +85,7 @@ public class UserService {
 	}
 
 	public void logout(String token) throws ServiceException{
-		//TODO
+		userTokenService.destroyToken(token);
 	}
 
 	public void updateUser(User user) throws ServiceException{
@@ -100,5 +103,13 @@ public class UserService {
 		List<String> languages = new ArrayList<>();
 		repositoriesWithData.forEach(repo -> languages.addAll(repo.getLanguages()));
 		user.setLanguages(languages);
+	}
+
+	public String login(User user) throws ServiceException {
+		User foundUser = this.getUserByUsername(user.getUsername());
+		if(foundUser.getPassword() == user.getPassword()){
+			return userTokenService.generateToken(foundUser);
+		}
+		throw new ServiceException("Incorrect password");
 	}
 }
