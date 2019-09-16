@@ -1,20 +1,20 @@
 package com.tacs.ResstApp.services.impl;
 
-import com.google.gson.Gson;
-import com.tacs.ResstApp.model.GitRepository;
-import com.tacs.ResstApp.model.Repository;
+import static java.util.stream.Collectors.toList;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.http.client.fluent.Request;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
+import com.google.gson.Gson;
+import com.tacs.ResstApp.model.GitRepository;
+import com.tacs.ResstApp.model.Repository;
 
 @Component
 public class GitService {
-
 
     private String baseUrl = "https://api.github.com";
     private Gson gson = new Gson();

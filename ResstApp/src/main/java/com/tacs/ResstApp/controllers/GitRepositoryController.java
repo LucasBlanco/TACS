@@ -1,11 +1,8 @@
 package com.tacs.ResstApp.controllers;
 
-import com.tacs.ResstApp.model.GitRepositoriesResponse;
-import com.tacs.ResstApp.model.Repository;
-import com.tacs.ResstApp.services.exceptions.ServiceException;
-import com.tacs.ResstApp.services.impl.GithubOauthService;
-import com.tacs.ResstApp.services.impl.RepositoryService;
-import com.tacs.ResstApp.services.impl.UserService;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,13 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
+import com.tacs.ResstApp.model.GitRepositoriesResponse;
+import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.model.Search;
+import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.services.impl.RepositoryService;
+import com.tacs.ResstApp.services.impl.UserService;
 
 @RestController
 public class GitRepositoryController {
@@ -65,10 +61,9 @@ public class GitRepositoryController {
     }
     
     @GetMapping("/repositories/filters")
-    public ResponseEntity<Object> getRepositoriesFiltered(@RequestParam(name="language", required = false) String language, @RequestParam(name="nofcommits",required = false) Integer nofcommits,
-    		@RequestParam(name="nofstars",required = false) Integer nofstars, @RequestParam(name="nofissues",required = false) Integer nofissues, @RequestParam(name="nofsubscribers",required = false) Integer nofsubscribers) { 
+    public ResponseEntity<Object> getRepositoriesFiltered(Search search) {
     	try{
-            return ResponseEntity.ok(repositoryMockService.getRepositoriesFiltered(language, nofcommits, nofstars, nofissues, nofsubscribers));
+    	    return ResponseEntity.ok(repositoryMockService.getRepositoriesFiltered(search));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());

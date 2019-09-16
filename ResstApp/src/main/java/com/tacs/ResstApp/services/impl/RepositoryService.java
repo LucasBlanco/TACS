@@ -1,23 +1,17 @@
 package com.tacs.ResstApp.services.impl;
 
 import java.io.IOException;
-import java.io.PushbackReader;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.tacs.ResstApp.model.User;
-import com.tacs.ResstApp.repositories.RepositoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.model.Search;
+import com.tacs.ResstApp.repositories.RepositoryRepository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 
 @Component
@@ -29,9 +23,9 @@ public class RepositoryService {
     @Autowired
     private RepositoryRepository repositoryRepository;
 
-    //para mockear
-    public RepositoryService() {
-    }
+	public List<Repository> getRepositoriesFiltered(Search search) throws ServiceException, IOException {
+		return search.filter(this.getRepositories());
+	}
 
     public List<Repository> getRepositories() throws IOException {
         return repositoryRepository.findAll();
@@ -53,11 +47,6 @@ public class RepositoryService {
                 .stream()
                 .filter(r -> r.getRegistrationDate().isAfter(since) && r.getRegistrationDate().isBefore(to))
                 .collect(Collectors.toList());
-    }
-
-    public List<Repository> getRepositoriesFiltered(String language, Integer nofcommits, Integer nofstars,
-                                                    Integer nofissues, Integer nofsubscribers) throws ServiceException {
-        return repositoryRepository.findAll();
     }
 
 }

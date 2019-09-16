@@ -18,7 +18,15 @@ public class Repository {
 	private LocalDate registrationDate;
 
 	@Transient
-	private int noffaved;
+	private int nofFaved;
+	
+	private int totalCommits;
+	
+	private String mainLanguage;
+	
+	private Integer totalIssues;
+	
+	private Double score;
 
 	@Transient
 	private List<String> languages;
@@ -53,19 +61,44 @@ public class Repository {
 		this.registrationDate = registrationDate;
 	}
 
-	public int getNoffaved() {
-		return noffaved;
+	public int getTotalCommits() {
+		return totalCommits;
 	}
 
-	public void setNoffaved(int noffaved) {
-		this.noffaved = noffaved;
+	public void setTotalCommits(int totalCommits) {
+		this.totalCommits = totalCommits;
 	}
 
-	public List<String> getLanguages() {
-		return languages;
+	public String getMainLanguage() {
+		return mainLanguage;
 	}
 
-	public void setLanguages(List<String> languages) {
-		this.languages = languages;
+	public void setMainLanguage(String mainLanguage) {
+		this.mainLanguage = mainLanguage;
 	}
+
+	public Integer getTotalIssues() {
+		return totalIssues;
+	}
+
+	public void setTotalIssues(Integer totalIssues) {
+		this.totalIssues = totalIssues;
+	}
+
+	public Double getScore() {
+		return score;
+	}
+
+	public void setScore(Double score) {
+		this.score = score;
+	}
+
+	public int getNofFaved() {
+		return nofFaved;
+	}
+
+	public void setNofFaved(int noffaved) {
+		this.nofFaved = noffaved;
+	}
+
 }

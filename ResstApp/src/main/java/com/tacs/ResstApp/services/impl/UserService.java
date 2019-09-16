@@ -1,14 +1,16 @@
 package com.tacs.ResstApp.services.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.tacs.ResstApp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
+import com.tacs.ResstApp.repositories.UserRepository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 
 @Component
@@ -101,7 +103,7 @@ public class UserService {
 		});
 
 		List<String> languages = new ArrayList<>();
-		repositoriesWithData.forEach(repo -> languages.addAll(repo.getLanguages()));
+		repositoriesWithData.forEach(repo -> languages.add(repo.getMainLanguage()));
 		user.setLanguages(languages);
 	}
 
