@@ -20,11 +20,9 @@ public class UserService {
 	@Autowired
 	private RepositoryService repositoryService;
 
-	private List<User> users = new ArrayList<User>();
-
 	//para mockear
 	public UserService() {
-        User user1 = new User();
+       /*User user1 = new User();
         User user2 = new User();
         User user3 = new User();
         User user4 = new User();
@@ -45,16 +43,16 @@ public class UserService {
         user5.setUsername("MatiGiorda");
         user6.setId(6L);
         user6.setUsername("RocioChipian");
-        this.users = new ArrayList<>(Arrays.asList(user1, user2, user3, user4, user5, user6));
+        this.users = new ArrayList<>(Arrays.asList(user1, user2, user3, user4, user5, user6));*/
     }
 
 	public User createUser(User newUser) throws ServiceException {
-		users.add(newUser);
-		return newUser;
+		User user = userRepository.save(newUser);
+		return user;
 	}
 
 	public List<User> getUsers() throws ServiceException {
-		return users;
+		return userRepository.findAll();
 	}
 
 	public User getUser(Long id) throws ServiceException {
@@ -66,8 +64,11 @@ public class UserService {
 	}
 	
 	public User getUserByUsername(String username) throws ServiceException {
-		return users.stream().filter(u -> Objects.equals(u.getUsername(), username)).findFirst()
-				.orElseThrow(() -> new ServiceException("User does not exist"));
+		Optional<User> user = userRepository.findByUsername(username);
+		if(user.isPresent()){
+			return user.get();
+		}
+		throw new ServiceException("User does not exist");
 	}
 
 	public List<Repository> getUserFavouriteRepos(Long id) throws ServiceException {
