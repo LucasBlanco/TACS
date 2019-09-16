@@ -1,15 +1,14 @@
 package com.tacs.ResstApp.model;
 
 import java.util.List;
-import java.util.Set;
 
 public class ComparisonDTO {
 	private Long favId1;
 	private Long favId2;
 	private List<Repository> commonRepositories;
-	private Set<String> commonLanguages;
+	private List<String> commonLanguages;
 	
-	public ComparisonDTO(Long favId1, Long favId2, List<Repository> commonRepositories, Set<String> commonLanguages) {
+	public ComparisonDTO(Long favId1, Long favId2, List<Repository> commonRepositories, List<String> commonLanguages) {
 		super();
 		this.favId1 = favId1;
 		this.favId2 = favId2;
@@ -35,10 +34,10 @@ public class ComparisonDTO {
 	public void setCommonRepositories(List<Repository> commonRepositories) {
 		this.commonRepositories = commonRepositories;
 	}
-	public Set<String> getCommonLanguages() {
+	public List<String> getCommonLanguages() {
 		return commonLanguages;
 	}
-	public void setCommonLanguages(Set<String> commonLanguages) {
+	public void setCommonLanguages(List<String> commonLanguages) {
 		this.commonLanguages = commonLanguages;
 	}
 }

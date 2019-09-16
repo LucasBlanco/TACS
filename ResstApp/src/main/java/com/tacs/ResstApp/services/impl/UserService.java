@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,9 +101,9 @@ public class UserService {
 		List<Repository> favs1 = this.getUserFavouriteRepos(id1);
 		List<Repository> favs2 = this.getUserFavouriteRepos(id2);
 		List<Repository> commonRepos = favs1==null?null:favs1.stream().filter(favs2::contains).collect(Collectors.toList());
-		Set<String> favs1Languages = favs1==null?null:favs1.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(Set::stream).collect(Collectors.toSet());
-		Set<String> favs2Languages = favs2==null?null:favs2.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(Set::stream).collect(Collectors.toSet());
-		Set<String> commonLanguages = favs1Languages==null?null:favs1Languages.stream().filter(favs2Languages::contains).collect(Collectors.toSet());
+		List<String> favs1Languages = favs1==null?null:favs1.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(List::stream).distinct().collect(Collectors.toList());
+		List<String> favs2Languages = favs2==null?null:favs2.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(List::stream).distinct().collect(Collectors.toList());
+		List<String> commonLanguages = favs1Languages==null?null:favs1Languages.stream().filter(favs2Languages::contains).collect(Collectors.toList());
 		
 		return new ComparisonDTO(id1, id2, commonRepos, commonLanguages);
 	}

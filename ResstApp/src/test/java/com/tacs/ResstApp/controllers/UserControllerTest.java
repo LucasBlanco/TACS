@@ -382,7 +382,7 @@ class UserControllerTest {
 		Long id2 = 2L;
 		Repository repo1 = new Repository(id1, "Repo1");
 		List<Repository> commonFavourites = Arrays.asList(repo1);
-		Set<String> commonLanguages = Stream.of("PYTHON", "C").collect(Collectors.toCollection(HashSet::new));
+		List<String> commonLanguages = Stream.of("PYTHON", "C").collect(Collectors.toCollection(ArrayList::new));
 		ComparisonDTO favouritesComparison = new ComparisonDTO(id1, id2, commonFavourites, commonLanguages); 
 		Mockito.when(userMockService.getFavouritesComparison(id1, id2)).thenReturn(favouritesComparison);
 

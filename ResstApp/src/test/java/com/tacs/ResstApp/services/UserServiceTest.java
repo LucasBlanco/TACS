@@ -1,7 +1,7 @@
 package com.tacs.ResstApp.services;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,8 +37,8 @@ public class UserServiceTest {
 		repo2 = new Repository(2L, "repo 2");
 		repo3 = new Repository(3L, "repo 3");
 		repo4 = new Repository(4L, "repo 4");
-		repo2.setLanguages(Stream.of("C", "JAVA").collect(Collectors.toCollection(HashSet::new)));
-		repo3.setLanguages(Stream.of("PYTHON", "C").collect(Collectors.toCollection(HashSet::new)));
+		repo2.setLanguages(Stream.of("C", "JAVA").collect(Collectors.toCollection(ArrayList::new)));
+		repo3.setLanguages(Stream.of("PYTHON", "C").collect(Collectors.toCollection(ArrayList::new)));
 		user1 = new User();
 		user2 = new User();
 		user3 = new User();
