@@ -22,28 +22,6 @@ public class UserService {
 
 	//para mockear
 	public UserService() {
-       /*User user1 = new User();
-        User user2 = new User();
-        User user3 = new User();
-        User user4 = new User();
-        User user5 = new User();
-        User user6 = new User();
-        Repository repository1 = new Repository(1L,"TACS");
-        user1.setId(1L);
-        user1.setUsername("Juam");
-        user1.setFavourites(new ArrayList<>(Arrays.asList(repository1)));
-        user2.setId(2L);
-        user2.setUsername("LucasBlanco");
-        user2.setFavourites(new ArrayList<>(Arrays.asList(repository1)));
-        user3.setId(3L);
-        user3.setUsername("LucasMCenturion");
-        user4.setId(4L);
-        user4.setUsername("LuciaRoldan");
-        user5.setId(5L);
-        user5.setUsername("MatiGiorda");
-        user6.setId(6L);
-        user6.setUsername("RocioChipian");
-        this.users = new ArrayList<>(Arrays.asList(user1, user2, user3, user4, user5, user6));*/
     }
 
 	public User createUser(User newUser) throws ServiceException {
@@ -80,11 +58,6 @@ public class UserService {
 		user.getFavourites().add(repository);
 		userRepository.save(user);
 		return user.getFavourites();
-	}
-
-	public Repository getUserFavouriteRepoById(Long userId, Long id) throws ServiceException {
-		return getUserFavouriteRepos(userId).stream().filter(repo -> repo.getId() == id).findFirst()
-				.orElseThrow(() -> new ServiceException("Favourite does not exist"));
 	}
 
 	public void deleteFavourite(Long userId, Long id) throws ServiceException {

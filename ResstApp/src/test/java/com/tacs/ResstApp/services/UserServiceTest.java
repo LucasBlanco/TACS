@@ -46,6 +46,7 @@ public class UserServiceTest {
 	private User user1;
 	private User user2;
 	private User user3;
+	private List<User> users = new ArrayList<>();
 	
 	@BeforeEach
 	public void before() throws Exception {
@@ -66,8 +67,9 @@ public class UserServiceTest {
 		user2.setFavourites(favourites2);
 		user3.setFavourites(Arrays.asList());
 
-		userService.getUsers().clear();
-		userService.getUsers().addAll(Arrays.asList(user1, user2, user3));
+		users.add(user1);
+		users.add(user2);
+		users.add(user3);
 	}
 	
 	@Test
@@ -143,8 +145,81 @@ public class UserServiceTest {
                 .hasMessageContaining("User does not have repository in favourites");
     }
 
+    @Test
+	public void createUserCreatesUser() throws ServiceException {
+		User user = new User();
+		when(userRepository.save(user)).thenReturn(user);
 
+		User returnedUser = userService.createUser(user);
 
+		assertThat(returnedUser).isEqualTo(user);
+
+	}
+
+	@Test
+	public void getUsersReturnsAllUsers() throws ServiceException {
+		when(userRepository.findAll()).thenReturn(users);
+
+		List<User> foundUsers = userService.getUsers();
+
+		assertThat(foundUsers).isEqualTo(users);
+	}
+
+	@Test
+	public void getUserReturnsExistentUser() throws ServiceException {
+		User user = new User();
+		user.setId(1L);
+		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+		User foundUser = userService.getUser(user.getId());
+
+		assertThat(foundUser).isEqualTo(user);
+	}
+
+	@Test
+	public void getUserReturnsThrowsEceptionWhenUserDoesNotExist() throws ServiceException {
+		User user = new User();
+		user.setId(1L);
+		when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+
+		Throwable thrown = catchThrowable(() -> { userService.getUser(user.getId()); });
+
+		assertThat(thrown).isInstanceOf(ServiceException.class)
+				.hasMessageContaining("User does not exist");
+	}
+
+	@Test
+	public void getUserByUsernameReturnsExistentUser() throws ServiceException {
+		User user = new User();
+		user.setUsername("Mariana");
+		when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+
+		User foundUser = userService.getUserByUsername(user.getUsername());
+
+		assertThat(foundUser).isEqualTo(user);
+	}
+
+	@Test
+	public void getUserByUsernameReturnsThrowsEceptionWhenUserDoesNotExist() throws ServiceException {
+		User user = new User();
+		user.setUsername("Mariana");
+		when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.empty());
+
+		Throwable thrown = catchThrowable(() -> { userService.getUserByUsername(user.getUsername()); });
+
+		assertThat(thrown).isInstanceOf(ServiceException.class)
+				.hasMessageContaining("User does not exist");
+	}
+
+	@Test
+	public void getUserReposReturnUsersRepos() throws ServiceException {
+		User user = getUserWithFavourites();
+		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+		List<Repository> foundFavourites = userService.getUserFavouriteRepos(user.getId());
+
+		assertThat(foundFavourites).isEqualTo(user.getFavourites());
+	}
 
 	private User getUserWithFavourites() {
 		Repository repository1 = new Repository(1L,"First repo");
