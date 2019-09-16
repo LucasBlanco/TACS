@@ -1,11 +1,10 @@
 package com.tacs.ResstApp.services.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.tacs.ResstApp.repositories.RepositoryRepository;
+import com.tacs.ResstApp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +14,12 @@ import com.tacs.ResstApp.services.exceptions.ServiceException;
 
 @Component
 public class UserService {
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private RepositoryService repositoryService;
 
 	private List<User> users = new ArrayList<User>();
 
@@ -43,9 +48,6 @@ public class UserService {
         user6.setUsername("RocioChipian");
         this.users = new ArrayList<>(Arrays.asList(user1, user2, user3, user4, user5, user6));
     }
-	
-	@Autowired
-	RepositoryService repositoryService;
 
 	public User createUser(User newUser) throws ServiceException {
 		users.add(newUser);
@@ -57,8 +59,11 @@ public class UserService {
 	}
 
 	public User getUser(Long id) throws ServiceException {
-		return users.stream().filter(user -> user.getId() == id).findFirst()
-				.orElseThrow(() -> new ServiceException("User does not exist"));
+		Optional<User> user = userRepository.findById(id);
+		if(user.isPresent()){
+			return user.get();
+		}
+		throw new ServiceException("User does not exist");
 	}
 	
 	public User getUserByUsername(String username) throws ServiceException {
@@ -70,29 +75,28 @@ public class UserService {
 		return getUser(id).getFavourites();
 	}
 
-	public List<Repository> addFavourite(Long userId, Long repositoryId) throws ServiceException {
-		List<Repository> favouriteRepos = getUserFavouriteRepos(userId);
-		favouriteRepos.add(repositoryService.getRepository(repositoryId));
-		getUser(userId).setFavourites(favouriteRepos);
-		return getUserFavouriteRepos(userId);
+	public List<Repository> addFavourite(Long userId, Repository repository) throws ServiceException {
+		User user = getUser(userId);
+		user.getFavourites().add(repository);
+		userRepository.save(user);
+		return user.getFavourites();
 	}
 
 	public Repository getUserFavouriteRepoById(Long userId, Long id) throws ServiceException {
 		return getUserFavouriteRepos(userId).stream().filter(repo -> repo.getId() == id).findFirst()
 				.orElseThrow(() -> new ServiceException("Favourite does not exist"));
 	}
-	
-	/*public List<Repository> createFavourite(Long id, Repository repositoryToFave) throws ServiceException {
-		List<Repository> favouriteRepos = getUserFavouriteRepos(id);
-		favouriteRepos.add(repositoryToFave);
-		getUser(id).setFavourites(favouriteRepos);
-		return getUserFavouriteRepos(id);
-	}*/
 
 	public void deleteFavourite(Long userId, Long id) throws ServiceException {
-		List<Repository> favouriteRepos = getUserFavouriteRepos(userId);
-		favouriteRepos.removeIf(repository -> repository.getId() == id);
-		getUser(id).setFavourites(favouriteRepos);
+		User user = getUser(userId);
+		Repository repoToRemove = repositoryService.getRepository(id);
+
+		if(user.getFavourites().contains(repoToRemove)){
+			user.getFavourites().remove(repoToRemove);
+			userRepository.save(user);
+		} else {
+			throw new ServiceException("User does not have repository in favourites");
+		}
 	}
 	
 	public List<Repository> getFavouritesComparison(Long id1, Long id2) throws ServiceException {
