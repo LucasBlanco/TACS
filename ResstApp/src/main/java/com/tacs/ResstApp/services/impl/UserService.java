@@ -3,7 +3,6 @@ package com.tacs.ResstApp.services.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.tacs.ResstApp.repositories.RepositoryRepository;
 import com.tacs.ResstApp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,41 +20,20 @@ public class UserService {
 	@Autowired
 	private RepositoryService repositoryService;
 
-	private List<User> users = new ArrayList<User>();
-
 	//para mockear
 	public UserService() {
-        User user1 = new User();
-        User user2 = new User();
-        User user3 = new User();
-        User user4 = new User();
-        User user5 = new User();
-        User user6 = new User();
-        Repository repository1 = new Repository(1L,"TACS");
-        user1.setId(1L);
-        user1.setUsername("Juam");
-        user1.setFavourites(new ArrayList<>(Arrays.asList(repository1)));
-        user2.setId(2L);
-        user2.setUsername("LucasBlanco");
-        user2.setFavourites(new ArrayList<>(Arrays.asList(repository1)));
-        user3.setId(3L);
-        user3.setUsername("LucasMCenturion");
-        user4.setId(4L);
-        user4.setUsername("LuciaRoldan");
-        user5.setId(5L);
-        user5.setUsername("MatiGiorda");
-        user6.setId(6L);
-        user6.setUsername("RocioChipian");
-        this.users = new ArrayList<>(Arrays.asList(user1, user2, user3, user4, user5, user6));
     }
 
 	public User createUser(User newUser) throws ServiceException {
-		users.add(newUser);
-		return newUser;
+	    if(userRepository.findByUsername(newUser.getUsername()).isPresent()){
+	        throw new ServiceException("Username already taken");
+        }
+		User user = userRepository.save(newUser);
+		return user;
 	}
 
 	public List<User> getUsers() throws ServiceException {
-		return users;
+		return userRepository.findAll();
 	}
 
 	public User getUser(Long id) throws ServiceException {
@@ -67,8 +45,11 @@ public class UserService {
 	}
 	
 	public User getUserByUsername(String username) throws ServiceException {
-		return users.stream().filter(u -> Objects.equals(u.getUsername(), username)).findFirst()
-				.orElseThrow(() -> new ServiceException("User does not exist"));
+		Optional<User> user = userRepository.findByUsername(username);
+		if(user.isPresent()){
+			return user.get();
+		}
+		throw new ServiceException("User does not exist");
 	}
 
 	public List<Repository> getUserFavouriteRepos(Long id) throws ServiceException {
@@ -80,11 +61,6 @@ public class UserService {
 		user.getFavourites().add(repository);
 		userRepository.save(user);
 		return user.getFavourites();
-	}
-
-	public Repository getUserFavouriteRepoById(Long userId, Long id) throws ServiceException {
-		return getUserFavouriteRepos(userId).stream().filter(repo -> repo.getId() == id).findFirst()
-				.orElseThrow(() -> new ServiceException("Favourite does not exist"));
 	}
 
 	public void deleteFavourite(Long userId, Long id) throws ServiceException {
@@ -107,5 +83,22 @@ public class UserService {
 
 	public void logout(String token) throws ServiceException{
 		//TODO
+	}
+
+	public void updateUser(User user) throws ServiceException{
+		List<Repository> repositoriesWithNoData = user.getFavourites();
+		List<Repository> repositoriesWithData = new ArrayList<>();
+
+		repositoriesWithData.forEach(repo -> {
+			try {
+				repositoriesWithData.add(repositoryService.getRepository(repo.getId()));
+			} catch (ServiceException e) {
+				//Queria que quede la excepcion lanzada pero no me deja :(
+			}
+		});
+
+		List<String> languages = new ArrayList<>();
+		repositoriesWithData.forEach(repo -> languages.addAll(repo.getLanguages()));
+		user.setLanguages(languages);
 	}
 }
