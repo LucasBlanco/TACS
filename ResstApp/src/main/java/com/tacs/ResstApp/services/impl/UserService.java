@@ -99,8 +99,8 @@ public class UserService {
 
 		repositoriesWithData.forEach(repo -> {
 			try {
-				repositoriesWithData.add(repositoryService.getRepository(repo.getId()));
-			} catch (ServiceException e) {
+				repositoriesWithData.add(repositoryService.getRepository(repo.getName()));
+			} catch (ServiceException | IOException e) {
 				//Queria que quede la excepcion lanzada pero no me deja :(
 			}
 		});
