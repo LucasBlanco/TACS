@@ -1,5 +1,6 @@
 package com.tacs.ResstApp.services.impl;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,7 @@ public class UserService {
 
 	@Autowired
 	private RepositoryService repositoryService;
+
 
 	private List<User> users = new ArrayList<User>();
 
@@ -87,9 +89,9 @@ public class UserService {
 				.orElseThrow(() -> new ServiceException("Favourite does not exist"));
 	}
 
-	public void deleteFavourite(Long userId, Long id) throws ServiceException {
+	public void deleteFavourite(Long userId, String repoName) throws ServiceException, IOException {
 		User user = getUser(userId);
-		Repository repoToRemove = repositoryService.getRepository(id);
+		Repository repoToRemove = repositoryService.getRepository(repoName);
 
 		if(user.getFavourites().contains(repoToRemove)){
 			user.getFavourites().remove(repoToRemove);
