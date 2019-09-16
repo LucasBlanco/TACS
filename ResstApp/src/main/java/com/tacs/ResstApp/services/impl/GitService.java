@@ -16,7 +16,6 @@ import com.tacs.ResstApp.model.Repository;
 @Component
 public class GitService {
 
-
     private String baseUrl = "https://api.github.com";
     private Gson gson = new Gson();
 

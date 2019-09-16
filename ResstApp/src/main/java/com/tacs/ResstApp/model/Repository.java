@@ -1,10 +1,8 @@
 package com.tacs.ResstApp.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 public class Repository {
@@ -13,11 +11,14 @@ public class Repository {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	@Transient
 	private String name;
 
+	@Transient
 	private LocalDate registrationDate;
-	
-	private int noffaved;
+
+	@Transient
+	private int nofFaved;
 	
 	private int totalCommits;
 	
@@ -26,6 +27,9 @@ public class Repository {
 	private Integer totalIssues;
 	
 	private Double score;
+
+	@Transient
+	private List<String> languages;
 
 	public Repository(Long id, String name) {
 		this.id = id;
@@ -47,14 +51,6 @@ public class Repository {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	public int getNofFaved() { 
-		return noffaved;
-	}
-	
-	public void setNofFaved(int n) {
-		noffaved = n;
 	}
 
 	public LocalDate getRegistrationDate() {
@@ -95,6 +91,14 @@ public class Repository {
 
 	public void setScore(Double score) {
 		this.score = score;
+	}
+
+	public int getNofFaved() {
+		return nofFaved;
+	}
+
+	public void setNofFaved(int noffaved) {
+		this.nofFaved = noffaved;
 	}
 
 }

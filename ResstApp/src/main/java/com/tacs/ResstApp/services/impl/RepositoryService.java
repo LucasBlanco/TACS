@@ -2,8 +2,6 @@ package com.tacs.ResstApp.services.impl;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,31 +18,17 @@ import com.tacs.ResstApp.services.exceptions.ServiceException;
 public class RepositoryService {
 
     @Autowired
-    GitService gitService;
+    private GitService gitService;
 
     @Autowired
     private RepositoryRepository repositoryRepository;
-
-    private List<Repository> repositories = new ArrayList<Repository>();
-
-    //para mockear
-    public RepositoryService() {
-        Repository repository1 = new Repository(1L,"TACS");
-        repository1.setTotalCommits(20);
-        Repository repository2 = new Repository(2L,"TADP");
-        Repository repository3 = new Repository(3L,"DDS");
-        Repository repository4 = new Repository(4L,"PDP");
-        Repository repository5 = new Repository(5L,"SO");
-        Repository repository6 = new Repository(6L,"GDD");
-        this.repositories = new ArrayList<>(Arrays.asList(repository1, repository2, repository3, repository4, repository5, repository6));
-    }
 
 	public List<Repository> getRepositoriesFiltered(Search search) throws ServiceException, IOException {
 		return search.filter(this.getRepositories());
 	}
 
     public List<Repository> getRepositories() throws IOException {
-        return repositories;
+        return repositoryRepository.findAll();
     }
 
     public Repository getRepository(Long id) throws ServiceException {
@@ -52,6 +36,7 @@ public class RepositoryService {
         if(repository.isPresent()){
             return repository.get();
         }
+
         //TODO aca se deberia buscar si el repositorio exite en github
         throw new ServiceException("Repository does not exist");
     }
