@@ -45,7 +45,7 @@ class UserControllerTest {
 		User user = new User();
 		user.setId(1L);
 		user.setUsername("Pedro");
-		Mockito.when(userMockService.getUserByUsername(user.getUsername())).thenReturn(user);
+		Mockito.when(userMockService.login(user)).thenReturn("token1");
 
 		ResponseEntity<Object> response = userController.login(user);
 		String token = (String) response.getBody();
@@ -59,7 +59,7 @@ class UserControllerTest {
 		User user = new User();
 		user.setId(1L);
 		user.setUsername("Pedro");
-		Mockito.when(userMockService.getUserByUsername(user.getUsername())).thenThrow(ServiceException.class);
+		Mockito.when(userMockService.login(user)).thenThrow(ServiceException.class);
 
 		ResponseEntity<Object> response = userController.login(user);
 		String token = (String) response.getBody();
@@ -73,7 +73,7 @@ class UserControllerTest {
 		User user = new User();
 		user.setId(1L);
 		user.setUsername("Pedro");
-		Mockito.when(userMockService.getUserByUsername(user.getUsername())).thenThrow(RuntimeException.class);
+		Mockito.when(userMockService.login(user)).thenThrow(RuntimeException.class);
 
 		ResponseEntity<Object> response = userController.login(user);
 		String token = (String) response.getBody();
