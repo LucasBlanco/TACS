@@ -31,14 +31,14 @@ class SearchTest {
 	@Test
 	public void aSearchOfRepositoriesByCommitsReturnsOnlyRepositoryWithLotsOfCommits() {
 		CommitsFilter commitsFilter = new CommitsFilter();
-		commitsFilter.setNofcommits(50);
+		commitsFilter.setTotalCommits(50);
 		search.setCommitsFilters(commitsFilter);
 		Repository repoWithLotsOfCommits = new Repository(1L, "TACS");
-		repoWithLotsOfCommits.setNofCommits(100);
+		repoWithLotsOfCommits.setTotalCommits(100);
 		Repository repoWithLittleCommits = new Repository(2L, "TADP");
-		repoWithLittleCommits.setNofCommits(5);
+		repoWithLittleCommits.setTotalCommits(5);
 		Repository repoWithoutCommits = new Repository(3L, "GDD");
-		repoWithoutCommits.setNofCommits(0);
+		repoWithoutCommits.setTotalCommits(0);
 		List<Repository> repositories = Arrays.asList(repoWithLotsOfCommits, repoWithLittleCommits, repoWithoutCommits);
 		Assertions.assertThat(search.filter(repositories)).containsExactly(repoWithLotsOfCommits);
 	}

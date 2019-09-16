@@ -1,13 +1,10 @@
 package com.tacs.ResstApp.services;
 
-import java.lang.reflect.Field;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.tacs.ResstApp.services.impl.GitService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +14,8 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.services.impl.GitService;
 import com.tacs.ResstApp.services.impl.RepositoryService;
-import org.springframework.data.util.ReflectionUtils;
 
 @SpringBootTest
 public class RepositoryServiceTest {
@@ -33,17 +30,12 @@ public class RepositoryServiceTest {
 	private Repository repo2 = new Repository(2L, "TADP");
     private LocalDate referenceTime = LocalDate.now();
 
-
-
     @BeforeEach
     public void before() throws Exception {
-
         repo1.setRegistrationDate(referenceTime.minusDays(2));
         repo2.setRegistrationDate(referenceTime.plusDays(2));
         this.repositories = new ArrayList<>(Arrays.asList(repo1, repo2));
 		Mockito.when(gitService.getRepositories()).thenReturn(this.repositories);
-        /*repositoryService.getRepositories().clear();
-        repositoryService.getRepositories().addAll(repositories);*/
     }
 
     @Test

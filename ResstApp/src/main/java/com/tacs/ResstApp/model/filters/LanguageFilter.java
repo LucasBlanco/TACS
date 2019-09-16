@@ -3,15 +3,19 @@ package com.tacs.ResstApp.model.filters;
 import com.tacs.ResstApp.model.Repository;
 
 public class LanguageFilter implements Filter {
-    private String language;
+    private String mainLanguage;
 
-    public LanguageFilter(String language) {
-        this.language = language;
+    public String getMainLanguage() {
+    	return mainLanguage;
+    }
+    
+    public void setMainLanguage(String mainLanguage) {
+    	this.mainLanguage = mainLanguage;
     }
 
-	@Override
+    @Override
 	public boolean filter(Repository repository) {
-		// TODO Auto-generated method stub
-		return false;
+		return this.getMainLanguage().equalsIgnoreCase(repository.getMainLanguage());
 	}
+
 }

@@ -30,7 +30,7 @@ public class RepositoryService {
     //para mockear
     public RepositoryService() {
         Repository repository1 = new Repository(1L,"TACS");
-        repository1.setNofCommits(20);
+        repository1.setTotalCommits(20);
         Repository repository2 = new Repository(2L,"TADP");
         Repository repository3 = new Repository(3L,"DDS");
         Repository repository4 = new Repository(4L,"PDP");

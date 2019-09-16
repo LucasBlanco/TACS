@@ -3,15 +3,18 @@ package com.tacs.ResstApp.model.filters;
 import com.tacs.ResstApp.model.Repository;
 
 public class IssuesFilter implements Filter {
-    private Integer nofissues;
+    private Integer totalIssues;
 
-    public IssuesFilter(Integer nofissues) {
-        this.nofissues = nofissues;
+    public Integer getTotalIssues() {
+    	return totalIssues;
+    }
+    
+    public void setTotalIssues(Integer totalIssues) {
+    	this.totalIssues = totalIssues;
     }
 
 	@Override
 	public boolean filter(Repository repository) {
-		// TODO Auto-generated method stub
-		return false;
+		return repository.getTotalIssues() >= this.getTotalIssues(); 
 	}
 }

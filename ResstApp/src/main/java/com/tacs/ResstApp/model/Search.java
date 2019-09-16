@@ -9,14 +9,14 @@ import com.tacs.ResstApp.model.filters.CommitsFilter;
 import com.tacs.ResstApp.model.filters.Filter;
 import com.tacs.ResstApp.model.filters.IssuesFilter;
 import com.tacs.ResstApp.model.filters.LanguageFilter;
-import com.tacs.ResstApp.model.filters.StarsFilter;
+import com.tacs.ResstApp.model.filters.ScoreFilter;
 import com.tacs.ResstApp.model.filters.SubscribersFilter;
 
 public class Search {
     private CommitsFilter commitsFilters;
     private IssuesFilter issuesFilters;
     private LanguageFilter languageFilters;
-    private StarsFilter starsFilters;
+    private ScoreFilter starsFilters;
     private SubscribersFilter subscribersFilters;
 
     public CommitsFilter getCommitsFilters() {
@@ -43,11 +43,11 @@ public class Search {
     	this.languageFilters = languageFilters;
     }
     
-    public StarsFilter getStarsFilters() {
+    public ScoreFilter getStarsFilters() {
     	return starsFilters;
     }
     
-    public void setStarsFilters(StarsFilter starsFilters) {
+    public void setStarsFilters(ScoreFilter starsFilters) {
     	this.starsFilters = starsFilters;
     }
     
@@ -69,7 +69,8 @@ public class Search {
 	}
 
 	private Stream<Filter> getFiltersAttributes() {
-		return Stream.of(commitsFilters, issuesFilters, languageFilters, starsFilters, subscribersFilters)
+		return Stream
+				.of(commitsFilters, issuesFilters, languageFilters, starsFilters, subscribersFilters)
 				.filter(Objects::nonNull);
 	}
 

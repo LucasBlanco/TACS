@@ -19,7 +19,13 @@ public class Repository {
 	
 	private int noffaved;
 	
-	private int nofCommits;
+	private int totalCommits;
+	
+	private String mainLanguage;
+	
+	private Integer totalIssues;
+	
+	private Double score;
 
 	public Repository(Long id, String name) {
 		this.id = id;
@@ -59,12 +65,36 @@ public class Repository {
 		this.registrationDate = registrationDate;
 	}
 
-	public int getNofCommits() {
-		return nofCommits;
+	public int getTotalCommits() {
+		return totalCommits;
 	}
 
-	public void setNofCommits(int nofCommits) {
-		this.nofCommits = nofCommits;
+	public void setTotalCommits(int totalCommits) {
+		this.totalCommits = totalCommits;
+	}
+
+	public String getMainLanguage() {
+		return mainLanguage;
+	}
+
+	public void setMainLanguage(String mainLanguage) {
+		this.mainLanguage = mainLanguage;
+	}
+
+	public Integer getTotalIssues() {
+		return totalIssues;
+	}
+
+	public void setTotalIssues(Integer totalIssues) {
+		this.totalIssues = totalIssues;
+	}
+
+	public Double getScore() {
+		return score;
+	}
+
+	public void setScore(Double score) {
+		this.score = score;
 	}
 
 }
