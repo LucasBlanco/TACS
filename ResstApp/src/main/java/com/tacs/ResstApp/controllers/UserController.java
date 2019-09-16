@@ -26,14 +26,11 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    RepositoryService repositoryMockService;
-
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user){
         try{
-            userService.getUserByUsername(user.getUsername());
-            return ResponseEntity.ok("token1");
+            String generatedToken = userService.login(user);
+            return ResponseEntity.ok(generatedToken);
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -89,7 +86,9 @@ public class UserController {
     @GetMapping("/users/{id}")
     public ResponseEntity<Object> getUserById(@PathVariable Long id){
         try {
-            return ResponseEntity.ok(userService.getUser(id));
+            User user = userService.getUser(id);
+            userService.updateUser(user);
+            return ResponseEntity.ok(user);
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
