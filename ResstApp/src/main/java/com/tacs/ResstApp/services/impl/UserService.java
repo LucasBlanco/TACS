@@ -101,4 +101,12 @@ public class UserService {
 		repositoriesWithData.forEach(repo -> languages.addAll(repo.getLanguages()));
 		user.setLanguages(languages);
 	}
+
+	public String login(User user) throws ServiceException {
+		User foundUser = this.getUserByUsername(user.getUsername());
+		if(foundUser.getPassword() == user.getPassword()){
+			return "token";
+		}
+		throw new ServiceException("Incorrect password");
+	}
 }

@@ -14,6 +14,8 @@ public class User {
 
 	private String username;
 
+	private String password;
+
 	@ManyToMany
 	private List<Repository> favourites;
 	
@@ -72,4 +74,11 @@ public class User {
 		return this.favourites.size();
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 }
