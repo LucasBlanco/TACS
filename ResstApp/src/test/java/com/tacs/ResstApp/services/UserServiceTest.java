@@ -157,6 +157,19 @@ public class UserServiceTest {
 	}
 
 	@Test
+	public void createUserWithRepetedUsernameThrowsError() throws ServiceException {
+		User user = new User();
+		user.setUsername("Billie");
+		when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+
+		Throwable thrown = catchThrowable(() -> { userService.createUser(user); });
+
+		assertThat(thrown).isInstanceOf(ServiceException.class)
+				.hasMessageContaining("Username already taken");
+
+	}
+
+	@Test
 	public void getUsersReturnsAllUsers() throws ServiceException {
 		when(userRepository.findAll()).thenReturn(users);
 

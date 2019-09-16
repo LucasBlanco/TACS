@@ -25,6 +25,9 @@ public class UserService {
     }
 
 	public User createUser(User newUser) throws ServiceException {
+	    if(userRepository.findByUsername(newUser.getUsername()).isPresent()){
+	        throw new ServiceException("Username already taken");
+        }
 		User user = userRepository.save(newUser);
 		return user;
 	}
