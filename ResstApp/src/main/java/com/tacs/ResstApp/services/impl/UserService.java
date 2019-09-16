@@ -85,7 +85,7 @@ public class UserService {
 	}
 
 	public void logout(String token) throws ServiceException{
-		//TODO
+		userTokenService.destroyToken(token);
 	}
 
 	public void updateUser(User user) throws ServiceException{

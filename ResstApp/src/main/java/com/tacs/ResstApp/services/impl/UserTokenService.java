@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class UserTokenService {
 
     //Long es el id de usuario y string su token
-    private HashMap<Long, String> tokenMap = new HashMap<>();
+    private HashMap<String, Long> tokenMap = new HashMap<>();
 
     public String generateToken(User user){
         SecureRandom random = new SecureRandom();
@@ -18,8 +18,16 @@ public class UserTokenService {
         random.nextBytes(bytes);
         String token = bytes.toString();
 
-        tokenMap.put(user.getId(), token);
+        tokenMap.put(token, user.getId());
 
         return token;
+    }
+
+    public void destroyToken(String token) {
+        tokenMap.remove(token);
+    }
+
+    public HashMap<String, Long> getTokenMap() {
+        return tokenMap;
     }
 }
