@@ -1,6 +1,6 @@
 package com.tacs.ResstApp.model;
 
-public abstract class GitRepository{
+public class GitRepository{
     private Long id;
     private String name;
 

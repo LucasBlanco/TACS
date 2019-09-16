@@ -1,5 +1,8 @@
 package com.tacs.ResstApp.services.impl;
 
+
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +25,12 @@ public class UserService {
 	@Autowired
 	private RepositoryService repositoryService;
 
-	@Autowired
+
+
+	private List<User> users = new ArrayList<User>();
+
 	private UserTokenService userTokenService;
+
 
 	//para mockear
 	public UserService() {
@@ -68,9 +75,9 @@ public class UserService {
 		return user.getFavourites();
 	}
 
-	public void deleteFavourite(Long userId, Long id) throws ServiceException {
+	public void deleteFavourite(Long userId, String repoName) throws ServiceException, IOException {
 		User user = getUser(userId);
-		Repository repoToRemove = repositoryService.getRepository(id);
+		Repository repoToRemove = repositoryService.getRepository(repoName);
 
 		if(user.getFavourites().contains(repoToRemove)){
 			user.getFavourites().remove(repoToRemove);
@@ -96,8 +103,8 @@ public class UserService {
 
 		repositoriesWithData.forEach(repo -> {
 			try {
-				repositoriesWithData.add(repositoryService.getRepository(repo.getId()));
-			} catch (ServiceException e) {
+				repositoriesWithData.add(repositoryService.getRepository(repo.getName()));
+			} catch (ServiceException | IOException e) {
 				//Queria que quede la excepcion lanzada pero no me deja :(
 			}
 		});

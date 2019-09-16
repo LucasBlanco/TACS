@@ -28,7 +28,6 @@ class GitRepositoryControllerTest {
 	@InjectMocks
 	GitRepositoryController gitRepositoryController;
 
-
 	@Mock
 	RepositoryService repositoryMockService;
 
@@ -39,11 +38,11 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoryReturnsOneRepositorySuccessfully() throws Exception {
-		Long id = 1L;
+		String repoName = "Repo";
 		Repository repository = new Repository(1L, "Repo 1");
-		Mockito.when(repositoryMockService.getRepository(Mockito.anyLong())).thenReturn(repository);
+		Mockito.when(repositoryMockService.getRepository(Mockito.anyString())).thenReturn(repository);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepository(id);
+		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
 		Repository returnedRepo = (Repository) response.getBody();
 
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
@@ -53,10 +52,10 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoryReturnsUserError() throws Exception {
-		Long id = 1L;
-		Mockito.when(repositoryMockService.getRepository(Mockito.anyLong())).thenThrow(ServiceException.class);
+		String repoName = "Repo";
+		Mockito.when(repositoryMockService.getRepository(Mockito.anyString())).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepository(id);
+		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
 		Repository returnedRepo = (Repository) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -65,10 +64,10 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoryReturnsServiceError() throws Exception {
-		Long id = 1L;
-		Mockito.when(repositoryMockService.getRepository(Mockito.anyLong())).thenThrow(RuntimeException.class);
+		String repoName = "Repo";
+		Mockito.when(repositoryMockService.getRepository(Mockito.anyString())).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepository(id);
+		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
 		Repository returnedRepo = (Repository) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());

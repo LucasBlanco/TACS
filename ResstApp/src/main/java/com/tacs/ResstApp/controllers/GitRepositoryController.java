@@ -1,8 +1,15 @@
 package com.tacs.ResstApp.controllers;
 
+import com.tacs.ResstApp.model.GitRepositoriesResponse;
+import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.services.impl.RepositoryService;
+import com.tacs.ResstApp.services.impl.UserService;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,33 +19,30 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tacs.ResstApp.model.GitRepositoriesResponse;
-import com.tacs.ResstApp.model.Repository;
+
 import com.tacs.ResstApp.model.Search;
-import com.tacs.ResstApp.services.exceptions.ServiceException;
-import com.tacs.ResstApp.services.impl.RepositoryService;
-import com.tacs.ResstApp.services.impl.UserService;
+
 
 @RestController
 public class GitRepositoryController {
 
 
     @Autowired
-    RepositoryService repositoryMockService;
+    RepositoryService repositoryService;
 
     @Autowired
-    UserService userMockService;
+    UserService userService;
 
-    @GetMapping("/repositories/{id}")
-    public ResponseEntity<Object> getRepository(@PathVariable Long id){
+    @GetMapping("/repositories/{name}")
+    public ResponseEntity<Object> getRepository(@PathVariable String name){
         try {
-            return ResponseEntity.ok(repositoryMockService.getRepository(id));
+            return ResponseEntity.ok(repositoryService.getRepository(name));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
         catch(Exception ex){
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
         }
     }
 
@@ -48,7 +52,7 @@ public class GitRepositoryController {
         	DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     	    LocalDate sinceParsed = LocalDate.parse(since , DATEFORMATTER);
     	    LocalDate toParsed = LocalDate.parse(to , DATEFORMATTER);
-            List<Repository> repos = repositoryMockService.getRepositoriesBetween(sinceParsed, toParsed);
+            List<Repository> repos = repositoryService.getRepositoriesBetween(sinceParsed, toParsed);
             GitRepositoriesResponse response = new GitRepositoriesResponse(repos.size(), repos);
             return ResponseEntity.ok(response);
         }
@@ -63,7 +67,7 @@ public class GitRepositoryController {
     @GetMapping("/repositories/filters")
     public ResponseEntity<Object> getRepositoriesFiltered(Search search) {
     	try{
-    	    return ResponseEntity.ok(repositoryMockService.getRepositoriesFiltered(search));
+    	    return ResponseEntity.ok(repositoryService.getRepositoriesFiltered(search));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());

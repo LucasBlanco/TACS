@@ -251,13 +251,13 @@ paths:
           description: bad input parameter
         '500':
           description: internal server error
-  /repositories/{id}:
+  /repositories/{name}:
     get:
       tags:
         - users
-      description: Returns the repository by id
+      description: Returns the repository by name
       parameters:
-        - name: id
+        - name: name
           in: path
           required: true
           schema:

@@ -31,14 +31,14 @@ public class RepositoryService {
         return repositoryRepository.findAll();
     }
 
-    public Repository getRepository(Long id) throws ServiceException {
-        Optional<Repository> repository = repositoryRepository.findById(id);
-        if(repository.isPresent()){
+    public Repository getRepository(String name) throws ServiceException, IOException {
+        /*Optional<Repository> repository = repositoryRepository.findById(id);
+        if (repository.isPresent()) {
             return repository.get();
         }
-
-        //TODO aca se deberia buscar si el repositorio exite en github
         throw new ServiceException("Repository does not exist");
+        */
+        return gitService.getRepositoryById(name);
     }
 
     public List<Repository> getRepositoriesBetween(LocalDate since, LocalDate to) throws ServiceException, IOException {
