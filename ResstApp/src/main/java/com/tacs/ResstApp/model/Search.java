@@ -5,51 +5,58 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.tacs.ResstApp.model.filters.CommitsFilter;
+import com.tacs.ResstApp.model.filters.Filter;
+import com.tacs.ResstApp.model.filters.IssuesFilter;
+import com.tacs.ResstApp.model.filters.LanguageFilter;
+import com.tacs.ResstApp.model.filters.StarsFilter;
+import com.tacs.ResstApp.model.filters.SubscribersFilter;
+
 public class Search {
-    private List<CommitsFilter> commitsFilters;
-    private List<IssuesFilter> issuesFilters;
-    private List<LanguageFilter> languageFilters;
-    private List<StarsFilter> starsFilters;
-    private List<SubscribersFilter> subscribersFilters;
+    private CommitsFilter commitsFilters;
+    private IssuesFilter issuesFilters;
+    private LanguageFilter languageFilters;
+    private StarsFilter starsFilters;
+    private SubscribersFilter subscribersFilters;
 
-    public List<CommitsFilter> getCommitsFilters() {
-        return commitsFilters;
+    public CommitsFilter getCommitsFilters() {
+    	return commitsFilters;
     }
-
-    public void setCommitsFilters(List<CommitsFilter> commitsFilters) {
-        this.commitsFilters = commitsFilters;
+    
+    public void setCommitsFilters(CommitsFilter commitsFilters) {
+    	this.commitsFilters = commitsFilters;
     }
-
-    public List<IssuesFilter> getIssuesFilters() {
-        return issuesFilters;
+    
+    public IssuesFilter getIssuesFilters() {
+    	return issuesFilters;
     }
-
-    public void setIssuesFilters(List<IssuesFilter> issuesFilters) {
-        this.issuesFilters = issuesFilters;
+    
+    public void setIssuesFilters(IssuesFilter issuesFilters) {
+    	this.issuesFilters = issuesFilters;
     }
-
-    public List<LanguageFilter> getLanguageFilters() {
-        return languageFilters;
+    
+    public LanguageFilter getLanguageFilters() {
+    	return languageFilters;
     }
-
-    public void setLanguageFilters(List<LanguageFilter> languageFilters) {
-        this.languageFilters = languageFilters;
+    
+    public void setLanguageFilters(LanguageFilter languageFilters) {
+    	this.languageFilters = languageFilters;
     }
-
-    public List<StarsFilter> getStarsFilters() {
-        return starsFilters;
+    
+    public StarsFilter getStarsFilters() {
+    	return starsFilters;
     }
-
-    public void setStarsFilters(List<StarsFilter> starsFilters) {
-        this.starsFilters = starsFilters;
+    
+    public void setStarsFilters(StarsFilter starsFilters) {
+    	this.starsFilters = starsFilters;
     }
-
-    public List<SubscribersFilter> getSubscribersFilters() {
-        return subscribersFilters;
+    
+    public SubscribersFilter getSubscribersFilters() {
+    	return subscribersFilters;
     }
-
-    public void setSubscribersFilters(List<SubscribersFilter> subscribersFilters) {
-        this.subscribersFilters = subscribersFilters;
+    
+    public void setSubscribersFilters(SubscribersFilter subscribersFilters) {
+    	this.subscribersFilters = subscribersFilters;
     }
 
 	public List<Repository> filter(List<Repository> repositories) {
@@ -58,11 +65,12 @@ public class Search {
 
 	private boolean validateByFilters(Repository repository) {
 		return this.getFiltersAttributes()
-				.allMatch(a -> a.stream().allMatch(f -> f.filter(repository)));
+				.allMatch(f -> f.filter(repository));
 	}
 
-	private Stream<List<? extends Filter>> getFiltersAttributes() {
+	private Stream<Filter> getFiltersAttributes() {
 		return Stream.of(commitsFilters, issuesFilters, languageFilters, starsFilters, subscribersFilters)
 				.filter(Objects::nonNull);
 	}
+
 }

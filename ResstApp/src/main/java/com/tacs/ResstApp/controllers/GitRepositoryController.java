@@ -5,6 +5,7 @@ import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
 
+import org.hibernate.annotations.MetaValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,7 +57,7 @@ public class GitRepositoryController {
     }
     
     @GetMapping("/repositories/filters")
-    public ResponseEntity<Object> getRepositoriesFiltered(@RequestParam Search search) {
+    public ResponseEntity<Object> getRepositoriesFiltered(Search search) {
     	try{
     	    return ResponseEntity.ok(repositoryMockService.getRepositoriesFiltered(search));
         }

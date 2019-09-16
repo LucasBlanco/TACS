@@ -1,4 +1,6 @@
-package com.tacs.ResstApp.model;
+package com.tacs.ResstApp.model.filters;
+
+import com.tacs.ResstApp.model.Repository;
 
 public class SubscribersFilter implements Filter{
     private Integer nofsubscribers;
