@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.tacs.ResstApp.model.filters.CommitsFilter;
+
 @SpringBootTest
 class SearchTest {
 	
@@ -24,12 +26,14 @@ class SearchTest {
 		Repository repo2 = new Repository(2L, "TADP");
 		Repository repo3 = new Repository(3L, "GDD");
 		List<Repository> repositories = Arrays.asList(repo1, repo2, repo3);
-		Assertions.assertThat(search.filter(repositories)).contains(repo1, repo2, repo3);
+		Assertions.assertThat(search.filter(repositories)).containsExactly(repo1, repo2, repo3);
 	}
 	
 	@Test
 	public void aSearchOfRepositoriesByCommitsReturnsOnlyRepositoryWithLotsOfCommits() {
-		search.setCommitsFilters(Arrays.asList(new CommitsFilter(50)));
+		CommitsFilter commitsFilter = new CommitsFilter();
+		commitsFilter.setNofcommits(50);
+		search.setCommitsFilters(commitsFilter);
 		Repository repoWithLotsOfCommits = new Repository(1L, "TACS");
 		repoWithLotsOfCommits.setNofCommits(100);
 		Repository repoWithLittleCommits = new Repository(2L, "TADP");
@@ -37,7 +41,7 @@ class SearchTest {
 		Repository repoWithoutCommits = new Repository(3L, "GDD");
 		repoWithoutCommits.setNofCommits(0);
 		List<Repository> repositories = Arrays.asList(repoWithLotsOfCommits, repoWithLittleCommits, repoWithoutCommits);
-		Assertions.assertThat(search.filter(repositories)).contains(repoWithLotsOfCommits);
+		Assertions.assertThat(search.filter(repositories)).containsExactly(repoWithLotsOfCommits);
 	}
 
 }
