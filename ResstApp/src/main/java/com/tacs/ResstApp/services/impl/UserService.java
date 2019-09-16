@@ -3,7 +3,6 @@ package com.tacs.ResstApp.services.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.tacs.ResstApp.repositories.RepositoryRepository;
 import com.tacs.ResstApp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -107,5 +106,22 @@ public class UserService {
 
 	public void logout(String token) throws ServiceException{
 		//TODO
+	}
+
+	public void updateUser(User user) throws ServiceException{
+		List<Repository> repositoriesWithNoData = user.getFavourites();
+		List<Repository> repositoriesWithData = new ArrayList<>();
+
+		repositoriesWithData.forEach(repo -> {
+			try {
+				repositoriesWithData.add(repositoryService.getRepository(repo.getId()));
+			} catch (ServiceException e) {
+				//Queria que quede la excepcion lanzada pero no me deja :(
+			}
+		});
+
+		List<String> languages = new ArrayList<>();
+		repositoriesWithData.forEach(repo -> languages.addAll(repo.getLanguages()));
+		user.setLanguages(languages);
 	}
 }
