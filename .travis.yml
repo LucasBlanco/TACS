@@ -2,7 +2,7 @@ language: java
 jdk: openjdk8
 script: 
   - cd ResstApp/
-  - mvn clean verify | egrep -v 'Download(ing|ed) '
+  - mvn clean verify | egrep -v 'Download(ing|ed): '
 
 after_success:
   - mvn clean test jacoco:report coveralls:report
