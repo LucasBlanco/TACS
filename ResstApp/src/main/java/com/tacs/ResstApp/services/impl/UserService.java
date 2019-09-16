@@ -20,6 +20,9 @@ public class UserService {
 	@Autowired
 	private RepositoryService repositoryService;
 
+	@Autowired
+	private UserTokenService userTokenService;
+
 	//para mockear
 	public UserService() {
     }
@@ -105,7 +108,7 @@ public class UserService {
 	public String login(User user) throws ServiceException {
 		User foundUser = this.getUserByUsername(user.getUsername());
 		if(foundUser.getPassword() == user.getPassword()){
-			return "token";
+			return userTokenService.generateToken(foundUser);
 		}
 		throw new ServiceException("Incorrect password");
 	}
