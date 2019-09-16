@@ -33,7 +33,6 @@ class GitRepositoryControllerTest {
 	@InjectMocks
 	GitRepositoryController gitRepositoryController;
 
-
 	@Mock
 	RepositoryService repositoryMockService;
 

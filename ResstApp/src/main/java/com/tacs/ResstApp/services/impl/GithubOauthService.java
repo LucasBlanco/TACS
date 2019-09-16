@@ -38,8 +38,8 @@ public class GithubOauthService {
         return service.getAuthorizationUrl(secretState);
     }
 
-    public OAuth2AccessToken getToken(String code) throws InterruptedException, ExecutionException, IOException {
-        return service.getAccessToken(code);
+    public String getToken(String code) throws InterruptedException, ExecutionException, IOException {
+        return service.getAccessToken(code).getAccessToken();
     }
 
     public void initialiceRequestsPayload(String token) throws IOException {
