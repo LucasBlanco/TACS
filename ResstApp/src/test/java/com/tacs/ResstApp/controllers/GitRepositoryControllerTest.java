@@ -94,17 +94,17 @@ class GitRepositoryControllerTest {
 				)
 		).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate(since, to, 1, 1);
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate(since, to, 0, 2);
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-		List<Repository> returnedRepos = ((GitRepositoriesResponse) response.getBody()).getRepositories();
+		GitRepositoriesResponse gitResponse = ((GitRepositoriesResponse) response.getBody());
+		List<Repository> returnedRepos = gitResponse.getRepositories();
 
-		Assertions.assertEquals(3, returnedRepos.size());
+		Assertions.assertEquals(3, gitResponse.getTotalAmount());
+		Assertions.assertEquals(2, returnedRepos.size());
 		Assertions.assertEquals(1L, returnedRepos.get(0).getId());
 		Assertions.assertEquals("repo 1", returnedRepos.get(0).getName());
 		Assertions.assertEquals(2L, returnedRepos.get(1).getId());
 		Assertions.assertEquals("repo 2", returnedRepos.get(1).getName());
-		Assertions.assertEquals(3L, returnedRepos.get(2).getId());
-		Assertions.assertEquals("repo 3", returnedRepos.get(2).getName());
 	}
 	
 	@Test
@@ -124,11 +124,8 @@ class GitRepositoryControllerTest {
 		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDate.class),
 				Mockito.any(LocalDate.class))).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate("2019-08-09 00:00:00", "2019-08-09 23:59:59", 1, 1);
-		List<Repository> returnedRepos = (List) response.getBody();
-
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate("2019-08-09", "2019-08-10", 1, 1);
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
-		Assertions.assertNull(returnedRepos);
 	}
 	
 	@Test
