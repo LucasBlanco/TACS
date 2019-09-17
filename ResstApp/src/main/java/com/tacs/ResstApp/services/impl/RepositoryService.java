@@ -49,4 +49,8 @@ public class RepositoryService {
                 .collect(Collectors.toList());
     }
 
+	public void save(Repository repository) {
+		repositoryRepository.save(repository);
+	}
+
 }

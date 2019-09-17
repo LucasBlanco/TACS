@@ -73,7 +73,7 @@ public class UserService {
 	public List<Repository> addFavourite(Long userId, String repoId) throws ServiceException, IOException {
 		User user = getUser(userId);
 		Repository repository = repositoryService.getRepository(repoId);
-		System.out.println(repository.getMainLanguage());
+		repositoryService.save(repository);
 		user.getFavourites().add(repository);
 		userRepository.save(user);
 		return user.getFavourites();
