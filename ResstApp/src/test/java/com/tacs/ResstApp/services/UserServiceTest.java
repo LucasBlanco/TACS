@@ -97,12 +97,12 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void addRepoToFavouritesAddsRepoToUsersFavourites() throws ServiceException {
+	public void addRepoToFavouritesAddsRepoToUsersFavourites() throws ServiceException, IOException {
 		User user = getUserWithFavourites();
 		Repository repository = new Repository(3L, "Third repo");
 		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
-		userService.addFavourite(user.getId(),repository);
+		userService.addFavourite(user.getId(),"Third repo");
 
 		assertThat(user.getFavourites().size()).isEqualTo(3);
 		verify(userRepository, times(1)).save(user);
@@ -112,7 +112,7 @@ public class UserServiceTest {
     public void addRepoToFavouritesThrowserrorBecauseUserDoesNotExist() throws ServiceException {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Throwable thrown = catchThrowable(() -> { userService.addFavourite(1L,new Repository(3L,"")); });
+        Throwable thrown = catchThrowable(() -> { userService.addFavourite(1L,"repo"); });
 
         assertThat(thrown).isInstanceOf(ServiceException.class)
                 .hasMessageContaining("User does not exist");

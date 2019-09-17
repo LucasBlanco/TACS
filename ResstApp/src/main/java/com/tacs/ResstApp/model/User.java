@@ -17,7 +17,7 @@ public class User {
 	private String password;
 
 	@ManyToMany
-	private List<Repository> favourites;
+	private List<Repository> favourites = new ArrayList<>();
 	
 	private LocalDateTime lastLoginDate;
 

@@ -17,7 +17,6 @@ public class UserTokenService {
         byte bytes[] = new byte[20];
         random.nextBytes(bytes);
         String token = bytes.toString();
-
         tokenMap.put(token, user.getId());
 
         return token;
