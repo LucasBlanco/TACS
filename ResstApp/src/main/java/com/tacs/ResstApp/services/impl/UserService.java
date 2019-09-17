@@ -93,7 +93,7 @@ public class UserService {
 	
 	public ComparisonDTO getFavouritesComparison(Long id1, Long id2) throws ServiceException {
 		User user1 = userRepository.findById(id1).get();
-		User user2 = userRepository.findById(id1).get();
+		User user2 = userRepository.findById(id2).get();
 		updateUser(user1);
 		updateUser(user2);
 		List<Repository> favs1 = user1.getFavourites();
