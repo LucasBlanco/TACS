@@ -3,9 +3,10 @@ package com.tacs.ResstApp.services.impl;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.tacs.ResstApp.model.User;
+import com.tacs.ResstApp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,9 @@ public class RepositoryService {
 
     @Autowired
     private RepositoryRepository repositoryRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
 	public List<Repository> getRepositoriesFiltered(Search search) throws ServiceException, IOException {
 		return search.filter(this.getRepositories());
@@ -53,4 +57,11 @@ public class RepositoryService {
 		repositoryRepository.save(repository);
 	}
 
+    public Repository getUpdatedRepository(String name) throws ServiceException, IOException {
+        Repository repository = gitService.getRepositoryById(name);
+        System.out.println(repository.getMainLanguage());
+        List<User> users = userRepository.findByFavourites(repository);
+        repository.setFavs(users.size());
+	    return repository;
+    }
 }

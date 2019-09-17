@@ -36,7 +36,8 @@ public class GitRepositoryController {
     @GetMapping("/repositories/{name}")
     public ResponseEntity<Object> getRepository(@PathVariable String name){
         try {
-            return ResponseEntity.ok(repositoryService.getRepository(name));
+            System.out.println(name);
+            return ResponseEntity.ok(repositoryService.getUpdatedRepository(name));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
