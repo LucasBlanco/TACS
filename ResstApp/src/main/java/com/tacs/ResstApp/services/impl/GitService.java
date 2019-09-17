@@ -1,6 +1,7 @@
 package com.tacs.ResstApp.services.impl;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -50,10 +51,7 @@ public class GitService {
     }
 
     public List<Repository> getRepositories() throws IOException {
-        System.out.println("###################");
-        System.out.println(baseUrl + "/user/repos" + GithubOauthService.getAuthentication());
         String result = executeRequest(Request.Get(baseUrl + "/user/repos" + GithubOauthService.getAuthentication()));
-        System.out.println(baseUrl + "/user/repos" + GithubOauthService.getAuthentication());
         GitRepository[] repos = gson.fromJson(result, GitRepository[].class);
         List<Repository> listaRepos = Arrays.stream(repos)
                 .map(repo -> new Repository(repo.getId(), repo.getName()))
@@ -64,18 +62,8 @@ public class GitService {
 
     public List<Repository> getUserRepositories() throws IOException {
         String result = executeRequest(Request.Get(baseUrl + "/users/" + "tptacs" + "/repos"));
-        /*GitRepository[] repos = gson.fromJson(result, GitRepository[].class);
-        List<Repository> listaRepos = Arrays.stream(repos)
-                .map(repo -> new Repository(repo.getId(), repo.getName()))
-                .collect(toList());
-        List<Repository> reposParseados = new ArrayList<>();
-        Arrays.stream(repos).forEach(repo -> reposParseados.add(parseRepository(repo)));*/
-        System.out.println(result);
-        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^");
-        ObjectMapper mapper = new ObjectMapper();
-        List<Repository> ppl2 = Arrays.asList(mapper.readValue(result, Repository.class));
-        System.out.println(ppl2.size());
-        return ppl2;
+        List<Repository> repos = Arrays.stream(gson.fromJson(result, Repository[].class)).collect(toList());
+        return repos;
 
     }
 
