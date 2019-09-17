@@ -28,7 +28,7 @@ public class RepositoryService {
 	}
 
     public List<Repository> getRepositories() throws IOException {
-        return repositoryRepository.findAll();
+        return gitService.getUserRepositories();
     }
 
     public Repository getRepository(String name) throws ServiceException, IOException {

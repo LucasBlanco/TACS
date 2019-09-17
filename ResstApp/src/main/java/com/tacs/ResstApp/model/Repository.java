@@ -1,5 +1,7 @@
 package com.tacs.ResstApp.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -39,6 +41,8 @@ public class Repository {
 		this.registrationDate = LocalDate.now();
 	}
 
+	public Repository() {}
+
 	public Long getId() {
 		return id;
 	}
@@ -59,6 +63,7 @@ public class Repository {
 		return registrationDate;
 	}
 
+	@JsonProperty("created_at")
 	public void setRegistrationDate(LocalDate registrationDate) {
 		this.registrationDate = registrationDate;
 	}
@@ -75,6 +80,7 @@ public class Repository {
 		return totalCommits;
 	}
 
+	@JsonProperty("size")
 	public void setTotalCommits(int totalCommits) {
 		this.totalCommits = totalCommits;
 	}
@@ -83,6 +89,7 @@ public class Repository {
 		return mainLanguage;
 	}
 
+	@JsonProperty("language")
 	public void setMainLanguage(String mainLanguage) {
 		this.mainLanguage = mainLanguage;
 	}
@@ -91,6 +98,7 @@ public class Repository {
 		return totalIssues;
 	}
 
+	@JsonProperty("open_issues_count")
 	public void setTotalIssues(Integer totalIssues) {
 		this.totalIssues = totalIssues;
 	}
@@ -107,6 +115,7 @@ public class Repository {
 		return nofFaved;
 	}
 
+	@JsonProperty("stargazers_count")
 	public void setNofFaved(int noffaved) {
 		this.nofFaved = noffaved;
 	}
@@ -115,6 +124,7 @@ public class Repository {
 		return nofForks;
 	}
 
+	@JsonProperty("forks_count")
 	public void setNofForks(Integer nofForks) {
 		this.nofForks = nofForks;
 	}
