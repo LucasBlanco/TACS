@@ -76,15 +76,20 @@ public class GitService {
         repo.setNofForks(obj.get("forks_count").isJsonNull()?null:obj.get("forks_count").getAsInt());
         repo.setTotalIssues(obj.get("open_issues_count").isJsonNull()?null:obj.get("open_issues_count").getAsInt());
         
-        /*String resultCommits = executeRequest(Request.Get(obj.get("commits_url").getAsString().replace("{/sha}", "") + GithubOauthService.getAuthentication()));
-        JsonArray objCommits = new JsonParser().parse(resultCommits).getAsJsonArray();
-        repo.setTotalCommits(objCommits.size());*/
+        /*
+        if (!obj.get("commits_url").isJsonNull()) {
+	        String resultCommits = executeRequest(Request.Get(obj.get("commits_url").getAsString().replace("{/sha}", "") + GithubOauthService.getAuthentication()));
+	        JsonArray objCommits = new JsonParser().parse(resultCommits).getAsJsonArray();
+	        repo.setTotalCommits(objCommits.size());
+	    }*/
         
-        String resultLanguages = executeRequest(Request.Get(obj.get("languages_url").getAsString() + GithubOauthService.getAuthentication()));
-        JsonObject objLanguages = new JsonParser().parse(resultLanguages).getAsJsonObject();
         List<String> languages = new ArrayList<String>();
-        for(Map.Entry<String, JsonElement> entry : objLanguages.entrySet()) {
-        	languages.add(entry.getKey());
+        if (obj.get("languages_url") != null) {
+	        String resultLanguages = executeRequest(Request.Get(obj.get("languages_url").getAsString() + GithubOauthService.getAuthentication()));
+	        JsonObject objLanguages = new JsonParser().parse(resultLanguages).getAsJsonObject();
+	        for(Map.Entry<String, JsonElement> entry : objLanguages.entrySet()) {
+	        	languages.add(entry.getKey());
+	        }
         }
         repo.setLanguages(languages);
 		return repo;

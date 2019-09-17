@@ -1,7 +1,12 @@
 package com.tacs.ResstApp.services;
 
+import javax.security.auth.message.callback.PrivateKeyCallback.Request;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
+import static org.mockito.Mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.tacs.ResstApp.model.Repository;
@@ -17,8 +22,6 @@ public class GitServiceTest {
 		String json = "{\r\n" + 
 				"    \"id\": 208917040,\r\n" +  
 				"    \"name\": \"TACS\",\r\n" +
-				"    \"languages_url\": \"https://api.github.com/repos/tacsgit/TACS/languages\",\r\n" +  
-				"    \"commits_url\": \"https://api.github.com/repos/tacsgit/TACS/commits{/sha}\",\r\n" +
 				"    \"stargazers_count\": 0,\r\n" + 
 				"    \"language\": null,\r\n" +  
 				"    \"forks_count\": 5,\r\n" + 
