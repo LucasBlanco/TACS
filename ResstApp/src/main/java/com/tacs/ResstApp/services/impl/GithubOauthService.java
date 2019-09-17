@@ -18,8 +18,8 @@ public class GithubOauthService {
     @Autowired
     GitService gitService;
 
-    private final String clientId = "Iv1.10c4d35c163c35f3";
-    private final String clientSecret = "f87506daf36e9c8f9239cf83a803623502c6d894";
+    private static final String clientId = "Iv1.10c4d35c163c35f3";
+    private static final String clientSecret = "f87506daf36e9c8f9239cf83a803623502c6d894";
     private final String secretState = "secret" + new Random().nextInt(999_999);
     private final OAuth20Service service = new ServiceBuilder(clientId)
             .apiSecret(clientSecret)
@@ -46,6 +46,10 @@ public class GithubOauthService {
         GitCredentials.setToken(token);
         String userName = gitService.getUserName();
         GitCredentials.setUserName(userName);
+    }
+    
+    public static String getAuthentication() {
+    	return "?client_id="+clientId+"&cliente_secret="+clientSecret;
     }
 
 }
