@@ -19,7 +19,9 @@ public class Repository {
 	private LocalDate registrationDate;
 
 	@Transient
-	private int nofFaved;
+	private int stars;
+
+	private int favs;
 	
 	private int totalCommits;
 	
@@ -58,6 +60,7 @@ public class Repository {
 		this.name = name;
 	}
 
+	@JsonProperty("registrationDate")
 	public LocalDate getRegistrationDate() {
 		return registrationDate;
 	}
@@ -93,6 +96,7 @@ public class Repository {
 		this.mainLanguage = mainLanguage;
 	}
 
+	@JsonProperty("issues")
 	public Integer getTotalIssues() {
 		return totalIssues;
 	}
@@ -110,15 +114,17 @@ public class Repository {
 		this.score = score;
 	}
 
-	public int getNofFaved() {
-		return nofFaved;
+	@JsonProperty("stars")
+	public int getStars() {
+		return stars;
 	}
 
 	@JsonProperty("stargazers_count")
-	public void setNofFaved(int noffaved) {
-		this.nofFaved = noffaved;
+	public void setStars(int noffaved) {
+		this.stars = noffaved;
 	}
 
+	@JsonProperty("forks")
 	public Integer getNofForks() {
 		return nofForks;
 	}
@@ -128,5 +134,12 @@ public class Repository {
 		this.nofForks = nofForks;
 	}
 
-	
+	@JsonProperty("favs")
+	public int getFavs() {
+		return favs;
+	}
+
+	public void setFavs(int favs) {
+		this.favs = favs;
+	}
 }

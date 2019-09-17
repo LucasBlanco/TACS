@@ -1,13 +1,8 @@
 package com.tacs.ResstApp.services;
 
-import javax.security.auth.message.callback.PrivateKeyCallback.Request;
-
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
-import static org.mockito.Mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.tacs.ResstApp.model.Repository;
@@ -38,7 +33,7 @@ public class GitServiceTest {
 		Assertions.assertEquals(0, repo.getScore());
 		Assertions.assertNull(repo.getMainLanguage());
 		Assertions.assertEquals(5, repo.getNofForks());
-		Assertions.assertEquals(0, repo.getNofFaved());
+		Assertions.assertEquals(0, repo.getStars());
 		Assertions.assertEquals(2, repo.getTotalIssues());
 	}
 }
