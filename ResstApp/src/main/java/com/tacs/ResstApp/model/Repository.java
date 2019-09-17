@@ -27,6 +27,8 @@ public class Repository {
 	private Integer totalIssues;
 		
 	private Double score;
+	
+	private Integer nofForks;
 
 	@Transient
 	private List<String> languages;
@@ -109,4 +111,13 @@ public class Repository {
 		this.nofFaved = noffaved;
 	}
 
+	public Integer getNofForks() {
+		return nofForks;
+	}
+
+	public void setNofForks(Integer nofForks) {
+		this.nofForks = nofForks;
+	}
+
+	
 }
