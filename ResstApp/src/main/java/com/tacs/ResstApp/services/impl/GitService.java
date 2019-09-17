@@ -67,7 +67,7 @@ public class GitService {
 
     }
 
-	private Repository parseRepository(String result) throws IOException {
+	public Repository parseRepository(String result) throws IOException {
 		JsonObject obj = new JsonParser().parse(result).getAsJsonObject();
         Repository repo = new Repository(obj.get("id").getAsLong(), obj.get("name").getAsString());
         repo.setMainLanguage(obj.get("language").isJsonNull()?null:obj.get("language").getAsString());
