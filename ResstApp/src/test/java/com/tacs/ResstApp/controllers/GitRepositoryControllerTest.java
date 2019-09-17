@@ -1,7 +1,6 @@
 package com.tacs.ResstApp.controllers;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,16 +12,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.tacs.ResstApp.controllers.GitRepositoryController;
+import com.tacs.ResstApp.model.GitRepositoriesResponse;
 import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.RepositoryService;
-import com.tacs.ResstApp.services.impl.UserService;
 
 @SpringBootTest
 class GitRepositoryControllerTest {
@@ -40,11 +38,11 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoryReturnsOneRepositorySuccessfully() throws Exception {
-		Long id = 1L;
+		String repoName = "Repo";
 		Repository repository = new Repository(1L, "Repo 1");
-		Mockito.when(repositoryMockService.getRepository(Mockito.anyLong())).thenReturn(repository);
+		Mockito.when(repositoryMockService.getRepository(Mockito.anyString())).thenReturn(repository);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepository(id);
+		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
 		Repository returnedRepo = (Repository) response.getBody();
 
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
@@ -54,10 +52,10 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoryReturnsUserError() throws Exception {
-		Long id = 1L;
-		Mockito.when(repositoryMockService.getRepository(Mockito.anyLong())).thenThrow(ServiceException.class);
+		String repoName = "Repo";
+		Mockito.when(repositoryMockService.getRepository(Mockito.anyString())).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepository(id);
+		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
 		Repository returnedRepo = (Repository) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -66,10 +64,10 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoryReturnsServiceError() throws Exception {
-		Long id = 1L;
-		Mockito.when(repositoryMockService.getRepository(Mockito.anyLong())).thenThrow(RuntimeException.class);
+		String repoName = "Repo";
+		Mockito.when(repositoryMockService.getRepository(Mockito.anyString())).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepository(id);
+		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
 		Repository returnedRepo = (Repository) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
@@ -81,14 +79,18 @@ class GitRepositoryControllerTest {
 		Repository repo1 = new Repository(1L, "repo 1");
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
-		String since = "2019-08-09 00:00:00";
-		String to = "2019-08-09 23:59:59";
-		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDateTime.class),
-				Mockito.any(LocalDateTime.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+		String since = "2019-08-09";
+		String to = "2019-08-09";
+		Mockito.when(
+				repositoryMockService.getRepositoriesBetween(
+						Mockito.any(LocalDate.class),
+						Mockito.any(LocalDate.class)
+				)
+		).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
 
 		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate(since, to, 1, 1);
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-		List<Repository> returnedRepos = (List) response.getBody();
+		List<Repository> returnedRepos = ((GitRepositoriesResponse) response.getBody()).getRepositories();
 
 		Assertions.assertEquals(3, returnedRepos.size());
 		Assertions.assertEquals(1L, returnedRepos.get(0).getId());
@@ -101,10 +103,10 @@ class GitRepositoryControllerTest {
 	
 	@Test
 	public void getRepositoriesReturnsUserError() throws Exception {
-		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDateTime.class),
-				Mockito.any(LocalDateTime.class))).thenThrow(ServiceException.class);
+		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDate.class),
+				Mockito.any(LocalDate.class))).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate("2019-08-09 00:00:00", "2019-08-09 23:59:59", 1, 1);
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate("2019-08-09", "2019-08-09", 1, 1);
 		List<Repository> returnedRepos = (List) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -113,8 +115,8 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoriesReturnsServerError() throws Exception {
-		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDateTime.class),
-				Mockito.any(LocalDateTime.class))).thenThrow(RuntimeException.class);
+		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDate.class),
+				Mockito.any(LocalDate.class))).thenThrow(RuntimeException.class);
 
 		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate("2019-08-09 00:00:00", "2019-08-09 23:59:59", 1, 1);
 		List<Repository> returnedRepos = (List) response.getBody();
@@ -128,10 +130,10 @@ class GitRepositoryControllerTest {
 		Repository repo1 = new Repository(1L, "repo 1");
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
-		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(String.class), Mockito.any(Integer.class),
-				Mockito.any(Integer.class), Mockito.any(Integer.class), Mockito.any(Integer.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+		Search search = new Search();
+		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered("spanish",1,1,1,1);
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(search);
 		List<Repository> returnedRepos = (List) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -146,10 +148,9 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoriesFilteredReturnsUserError() throws Exception {
-		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(String.class), Mockito.any(Integer.class),
-				Mockito.any(Integer.class), Mockito.any(Integer.class), Mockito.any(Integer.class))).thenThrow(ServiceException.class);
+		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered("spanish",1,1,1,1);
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(new Search());
 		List<Repository> returnedRepos = (List) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -158,10 +159,9 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoriesFilteredReturnsServerError() throws Exception {
-		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(String.class), Mockito.any(Integer.class),
-				Mockito.any(Integer.class), Mockito.any(Integer.class), Mockito.any(Integer.class))).thenThrow(RuntimeException.class);
+		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered("spanish",1,1,1,1);
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(new Search());
 		List<Repository> returnedRepos = (List) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());

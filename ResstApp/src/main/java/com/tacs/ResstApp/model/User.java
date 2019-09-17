@@ -1,24 +1,34 @@
 package com.tacs.ResstApp.model;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class User {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	private String username;
 
+	private String password;
+
+	@ManyToMany
 	private List<Repository> favourites;
 	
 	private LocalDateTime lastLoginDate;
-	
+
+	@ElementCollection
 	private List<String> languages;
+
 
 	public User(){
 		favourites = new ArrayList<>();
 	}
+
 
 	public Long getId() {
 		return id;
@@ -59,11 +69,16 @@ public class User {
 	public void setFavourites(List<Repository> favourites) {
 		this.favourites = favourites;
 	}
-	
-	
+
 	public int getNofFavourites() {
 		return this.favourites.size();
 	}
-	
-	
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 }
