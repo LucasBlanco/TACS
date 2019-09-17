@@ -2,6 +2,10 @@ package com.tacs.ResstApp.services.impl;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.tacs.ResstApp.model.GitRepository;
 import com.tacs.ResstApp.model.GitUser;
 import com.tacs.ResstApp.model.Repository;
@@ -17,9 +21,11 @@ import org.springframework.stereotype.Component;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Component
@@ -54,12 +60,40 @@ public class GitService {
     }
 
     public Repository getRepositoryById(String repoName) throws IOException {
-        String userName = "tacsgit";//GitCredentials.getUserName();
+        String userName = "tptacs";//GitCredentials.getUserName();
         String result = executeRequest(Request.Get(baseUrl + "/repos/" + userName + "/" + repoName + GithubOauthService.getAuthentication()));
-        GitRepository repo = gson.fromJson(result, GitRepository.class);
-        return new Repository(repo.getId(), repo.getName());
+        Repository repo = parseRepository(result);
+        return repo;
 
     }
+
+	public Repository parseRepository(String result) throws IOException {
+		JsonObject obj = new JsonParser().parse(result).getAsJsonObject();
+        Repository repo = new Repository(obj.get("id").getAsLong(), obj.get("name").getAsString());
+        repo.setMainLanguage(obj.get("language").isJsonNull()?null:obj.get("language").getAsString());
+        repo.setNofFaved(obj.get("subscribers_count").isJsonNull()?null:obj.get("subscribers_count").getAsInt());
+        repo.setScore(obj.get("stargazers_count").isJsonNull()?null:obj.get("stargazers_count").getAsDouble());
+        repo.setNofForks(obj.get("forks_count").isJsonNull()?null:obj.get("forks_count").getAsInt());
+        repo.setTotalIssues(obj.get("open_issues_count").isJsonNull()?null:obj.get("open_issues_count").getAsInt());
+        
+        /*
+        if (!obj.get("commits_url").isJsonNull()) {
+	        String resultCommits = executeRequest(Request.Get(obj.get("commits_url").getAsString().replace("{/sha}", "") + GithubOauthService.getAuthentication()));
+	        JsonArray objCommits = new JsonParser().parse(resultCommits).getAsJsonArray();
+	        repo.setTotalCommits(objCommits.size());
+	    }*/
+        
+        List<String> languages = new ArrayList<String>();
+        if (obj.get("languages_url") != null) {
+	        String resultLanguages = executeRequest(Request.Get(obj.get("languages_url").getAsString() + GithubOauthService.getAuthentication()));
+	        JsonObject objLanguages = new JsonParser().parse(resultLanguages).getAsJsonObject();
+	        for(Map.Entry<String, JsonElement> entry : objLanguages.entrySet()) {
+	        	languages.add(entry.getKey());
+	        }
+        }
+        repo.setLanguages(languages);
+		return repo;
+	}
 
     public String getUserName() throws IOException {
         String userName = GitCredentials.getUserName();
