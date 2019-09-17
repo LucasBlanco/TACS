@@ -62,7 +62,12 @@ public class GitService {
 
     public List<Repository> getUserRepositories() throws IOException {
         String result = executeRequest(Request.Get(baseUrl + "/users/" + "tptacs" + "/repos"));
-        List<Repository> repos = Arrays.stream(gson.fromJson(result, Repository[].class)).collect(toList());
+        JsonArray objArray = new JsonParser().parse(result).getAsJsonArray();
+        List<Repository> repos = new ArrayList<Repository>();
+        for (JsonElement el : objArray) {
+            repos.add(parseRepository(el.toString()));
+        }
+        //List<Repository> repos = Arrays.stream(gson.fromJson(result, Repository[].class)).collect(toList());
         return repos;
 
     }
