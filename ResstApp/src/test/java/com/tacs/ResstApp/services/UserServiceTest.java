@@ -80,6 +80,8 @@ public class UserServiceTest {
 	
 	@Test
 	public void compareFavourites() throws Exception {
+		when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
+        when(userRepository.findById(userId2)).thenReturn(Optional.of(user2));
 		ComparisonDTO favouritesComparison = userService.getFavouritesComparison(userId1, userId2);
 		Assertions.assertEquals(2, favouritesComparison.getCommonRepositories().size());
 		Assertions.assertEquals(3, favouritesComparison.getCommonLanguages().size());
@@ -87,6 +89,8 @@ public class UserServiceTest {
 	
 	@Test
 	public void compareFavouritesWithEmptyUserList() throws Exception {
+        when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
+        when(userRepository.findById(userId3)).thenReturn(Optional.of(user3));
 		ComparisonDTO favouritesComparison = userService.getFavouritesComparison(userId1, userId3);
 		Assertions.assertEquals(0, favouritesComparison.getCommonRepositories().size());
 		Assertions.assertEquals(0, favouritesComparison.getCommonLanguages().size());
