@@ -1,5 +1,7 @@
 package com.tacs.ResstApp.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -8,7 +10,6 @@ import java.util.List;
 public class Repository {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	@Transient
@@ -18,7 +19,9 @@ public class Repository {
 	private LocalDate registrationDate;
 
 	@Transient
-	private int nofFaved;
+	private int stars;
+
+	private int favs;
 	
 	private int totalCommits;
 	
@@ -39,6 +42,8 @@ public class Repository {
 		this.registrationDate = LocalDate.now();
 	}
 
+	public Repository() {}
+
 	public Long getId() {
 		return id;
 	}
@@ -55,10 +60,12 @@ public class Repository {
 		this.name = name;
 	}
 
+	@JsonProperty("registrationDate")
 	public LocalDate getRegistrationDate() {
 		return registrationDate;
 	}
 
+	@JsonProperty("created_at")
 	public void setRegistrationDate(LocalDate registrationDate) {
 		this.registrationDate = registrationDate;
 	}
@@ -75,6 +82,7 @@ public class Repository {
 		return totalCommits;
 	}
 
+	@JsonProperty("size")
 	public void setTotalCommits(int totalCommits) {
 		this.totalCommits = totalCommits;
 	}
@@ -83,14 +91,17 @@ public class Repository {
 		return mainLanguage;
 	}
 
+	@JsonProperty("language")
 	public void setMainLanguage(String mainLanguage) {
 		this.mainLanguage = mainLanguage;
 	}
 
+	@JsonProperty("issues")
 	public Integer getTotalIssues() {
 		return totalIssues;
 	}
 
+	@JsonProperty("open_issues_count")
 	public void setTotalIssues(Integer totalIssues) {
 		this.totalIssues = totalIssues;
 	}
@@ -103,21 +114,32 @@ public class Repository {
 		this.score = score;
 	}
 
-	public int getNofFaved() {
-		return nofFaved;
+	@JsonProperty("stars")
+	public int getStars() {
+		return stars;
 	}
 
-	public void setNofFaved(int noffaved) {
-		this.nofFaved = noffaved;
+	@JsonProperty("stargazers_count")
+	public void setStars(int noffaved) {
+		this.stars = noffaved;
 	}
 
+	@JsonProperty("forks")
 	public Integer getNofForks() {
 		return nofForks;
 	}
 
+	@JsonProperty("forks_count")
 	public void setNofForks(Integer nofForks) {
 		this.nofForks = nofForks;
 	}
 
-	
+	@JsonProperty("favs")
+	public int getFavs() {
+		return favs;
+	}
+
+	public void setFavs(int favs) {
+		this.favs = favs;
+	}
 }

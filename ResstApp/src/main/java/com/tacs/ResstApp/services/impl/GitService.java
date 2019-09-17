@@ -1,6 +1,8 @@
 package com.tacs.ResstApp.services.impl;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -49,13 +51,24 @@ public class GitService {
     }
 
     public List<Repository> getRepositories() throws IOException {
-
         String result = executeRequest(Request.Get(baseUrl + "/user/repos" + GithubOauthService.getAuthentication()));
         GitRepository[] repos = gson.fromJson(result, GitRepository[].class);
         List<Repository> listaRepos = Arrays.stream(repos)
                 .map(repo -> new Repository(repo.getId(), repo.getName()))
                 .collect(toList());
         return listaRepos;
+
+    }
+
+    public List<Repository> getUserRepositories() throws IOException {
+        String result = executeRequest(Request.Get(baseUrl + "/users/" + "tptacs" + "/repos"));
+        JsonArray objArray = new JsonParser().parse(result).getAsJsonArray();
+        List<Repository> repos = new ArrayList<Repository>();
+        for (JsonElement el : objArray) {
+            repos.add(parseRepository(el.toString()));
+        }
+        //List<Repository> repos = Arrays.stream(gson.fromJson(result, Repository[].class)).collect(toList());
+        return repos;
 
     }
 
@@ -71,7 +84,8 @@ public class GitService {
 		JsonObject obj = new JsonParser().parse(result).getAsJsonObject();
         Repository repo = new Repository(obj.get("id").getAsLong(), obj.get("name").getAsString());
         repo.setMainLanguage(obj.get("language").isJsonNull()?null:obj.get("language").getAsString());
-        repo.setNofFaved(obj.get("subscribers_count").isJsonNull()?null:obj.get("subscribers_count").getAsInt());
+        //TODO: Obtener este valor, "subscribers_count" no viene en la información del repositorio
+        //repo.setNofFaved(obj.get("subscribers_count").isJsonNull()?null:obj.get("subscribers_count").getAsInt());
         repo.setScore(obj.get("stargazers_count").isJsonNull()?null:obj.get("stargazers_count").getAsDouble());
         repo.setNofForks(obj.get("forks_count").isJsonNull()?null:obj.get("forks_count").getAsInt());
         repo.setTotalIssues(obj.get("open_issues_count").isJsonNull()?null:obj.get("open_issues_count").getAsInt());

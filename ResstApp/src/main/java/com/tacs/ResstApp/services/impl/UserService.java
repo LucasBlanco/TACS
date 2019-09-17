@@ -26,10 +26,9 @@ public class UserService {
 	@Autowired
 	private RepositoryService repositoryService;
 
-
-
 	private List<User> users = new ArrayList<User>();
 
+	@Autowired
 	private UserTokenService userTokenService;
 
 
@@ -69,8 +68,10 @@ public class UserService {
 		return getUser(id).getFavourites();
 	}
 
-	public List<Repository> addFavourite(Long userId, Repository repository) throws ServiceException {
+	public List<Repository> addFavourite(Long userId, String repoId) throws ServiceException, IOException {
 		User user = getUser(userId);
+		Repository repository = repositoryService.getRepository(repoId);
+		repositoryService.save(repository);
 		user.getFavourites().add(repository);
 		userRepository.save(user);
 		return user.getFavourites();
@@ -80,21 +81,36 @@ public class UserService {
 		User user = getUser(userId);
 		Repository repoToRemove = repositoryService.getRepository(repoName);
 
-		if(user.getFavourites().contains(repoToRemove)){
-			user.getFavourites().remove(repoToRemove);
+		if(hasRepository(user, repoToRemove)){
+			deleteFavourite(user, repoToRemove);
 			userRepository.save(user);
 		} else {
 			throw new ServiceException("User does not have repository in favourites");
 		}
 	}
+
+	private void deleteFavourite(User user, Repository repoToRemove) {
+		user.getFavourites().removeIf(f -> sameRepositories(repoToRemove, f));
+	}
+
+	private boolean sameRepositories(Repository repo, Repository anotherRepo) {
+		return anotherRepo.getId().equals(repo.getId());
+	}
+
+	private boolean hasRepository(User user, Repository repoToRemove) {
+		return user.getFavourites().stream().anyMatch(f -> sameRepositories(repoToRemove, f));
+	}
 	
 	public ComparisonDTO getFavouritesComparison(Long id1, Long id2) throws ServiceException {
-		
-		List<Repository> favs1 = this.getUserFavouriteRepos(id1);
-		List<Repository> favs2 = this.getUserFavouriteRepos(id2);
+		User user1 = userRepository.findById(id1).get();
+		User user2 = userRepository.findById(id2).get();
+		updateUser(user1);
+		updateUser(user2);
+		List<Repository> favs1 = user1.getFavourites();
+		List<Repository> favs2 = user2.getFavourites();
 		List<Repository> commonRepos = favs1==null?null:favs1.stream().filter(favs2::contains).collect(Collectors.toList());
-		List<String> favs1Languages = favs1==null?null:favs1.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(List::stream).distinct().collect(Collectors.toList());
-		List<String> favs2Languages = favs2==null?null:favs2.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(List::stream).distinct().collect(Collectors.toList());
+		List<String> favs1Languages = favs1==null?null:favs1.stream().map(Repository::getMainLanguage).filter(x -> x!=null).distinct().collect(Collectors.toList());
+		List<String> favs2Languages = favs2==null?null:favs2.stream().map(Repository::getMainLanguage).filter(x -> x!=null).distinct().collect(Collectors.toList());
 		List<String> commonLanguages = favs1Languages==null?null:favs1Languages.stream().filter(favs2Languages::contains).collect(Collectors.toList());
 		
 		return new ComparisonDTO(id1, id2, commonRepos, commonLanguages);
@@ -123,8 +139,10 @@ public class UserService {
 
 	public String login(User user) throws ServiceException {
 		User foundUser = this.getUserByUsername(user.getUsername());
-		if(foundUser.getPassword() == user.getPassword()){
-			return userTokenService.generateToken(foundUser);
+		if(foundUser.getPassword().equals(user.getPassword())){
+			String token = userTokenService.generateToken(foundUser);
+			System.out.println(token);
+			return token;
 		}
 		throw new ServiceException("Incorrect password");
 	}

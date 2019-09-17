@@ -40,7 +40,7 @@ class GitRepositoryControllerTest {
 	public void getRepositoryReturnsOneRepositorySuccessfully() throws Exception {
 		String repoName = "Repo";
 		Repository repository = new Repository(1L, "Repo 1");
-		Mockito.when(repositoryMockService.getRepository(Mockito.anyString())).thenReturn(repository);
+		Mockito.when(repositoryMockService.getUpdatedRepository(Mockito.anyString())).thenReturn(repository);
 
 		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
 		Repository returnedRepo = (Repository) response.getBody();
@@ -53,7 +53,7 @@ class GitRepositoryControllerTest {
 	@Test
 	public void getRepositoryReturnsUserError() throws Exception {
 		String repoName = "Repo";
-		Mockito.when(repositoryMockService.getRepository(Mockito.anyString())).thenThrow(ServiceException.class);
+		Mockito.when(gitRepositoryController.getRepository(Mockito.anyString())).thenThrow(ServiceException.class);
 
 		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
 		Repository returnedRepo = (Repository) response.getBody();
@@ -65,7 +65,7 @@ class GitRepositoryControllerTest {
 	@Test
 	public void getRepositoryReturnsServiceError() throws Exception {
 		String repoName = "Repo";
-		Mockito.when(repositoryMockService.getRepository(Mockito.anyString())).thenThrow(RuntimeException.class);
+		Mockito.when(gitRepositoryController.getRepository(Mockito.anyString())).thenThrow(RuntimeException.class);
 
 		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
 		Repository returnedRepo = (Repository) response.getBody();

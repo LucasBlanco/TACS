@@ -20,21 +20,21 @@ public class SubscribersFilterTest {
 	@Test
 	public void aSubscribersFilterValidatesARepositoryWithMoreSubscribersThanReferenceValue() {
 		Repository repoWithLotsOfSubscribers = new Repository(1L, "TACS");
-		repoWithLotsOfSubscribers.setNofFaved(REFERENCE_SUBSCRIBER_VALUE + 1);
+		repoWithLotsOfSubscribers.setStars(REFERENCE_SUBSCRIBER_VALUE + 1);
 		Assertions.assertThat(subscribersFilter.filter(repoWithLotsOfSubscribers)).isTrue();
 	}
 	
 	@Test
 	public void aSubscribersFilterValidatesARepositoryWithSameSubscribersAsTheReferenceValue() {
 		Repository repoWithExactAmountOfSubscribers = new Repository(1L, "TACS");
-		repoWithExactAmountOfSubscribers.setNofFaved(REFERENCE_SUBSCRIBER_VALUE);
+		repoWithExactAmountOfSubscribers.setStars(REFERENCE_SUBSCRIBER_VALUE);
 		Assertions.assertThat(subscribersFilter.filter(repoWithExactAmountOfSubscribers)).isTrue();
 	}
 
 	@Test
 	public void aSubscribersFilterDoesNotValidateARepositoryWithLessSubscribersThanReferenceValue() {
 		Repository repoWithLittleCommits = new Repository(1L, "TACS");
-		repoWithLittleCommits.setNofFaved(REFERENCE_SUBSCRIBER_VALUE - 1);
+		repoWithLittleCommits.setStars(REFERENCE_SUBSCRIBER_VALUE - 1);
 		Assertions.assertThat(subscribersFilter.filter(repoWithLittleCommits)).isFalse();
 	}
 

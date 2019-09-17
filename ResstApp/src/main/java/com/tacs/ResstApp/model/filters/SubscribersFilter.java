@@ -15,6 +15,6 @@ public class SubscribersFilter implements Filter {
 
     @Override
     public boolean filter(Repository repository) {
-        return repository.getNofFaved() >= getNofsubscribers();
+        return repository.getStars() >= getNofsubscribers();
     }
 }

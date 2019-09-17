@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
-import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
 
 @RestController
@@ -112,9 +111,9 @@ public class UserController {
     }
 
     @PostMapping("/users/{id}/favourites")
-    public ResponseEntity<Object> addFavourite(@PathVariable Long id, @RequestBody Repository repo){
+    public ResponseEntity<Object> addFavourite(@PathVariable Long id, @RequestBody String repoId){
         try{
-            List<Repository> favourites = userService.addFavourite(id, repo);
+            List<Repository> favourites = userService.addFavourite(id, repoId);
             return ResponseEntity.status(HttpStatus.CREATED).body(favourites);
         }
         catch(ServiceException ex){
