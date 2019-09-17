@@ -22,7 +22,6 @@ public class Repository {
 	public Repository(Long id, String name) {
 		this.id = id;
 		this.name = name;
-		this.registrationDate = LocalDate.now();
 	}
 
 	public Long getId() {
@@ -53,8 +52,9 @@ public class Repository {
 		return registrationDate;
 	}
 
-	public void setRegistrationDate(LocalDate registrationDate) {
+	public Repository setRegistrationDate(LocalDate registrationDate) {
 		this.registrationDate = registrationDate;
+		return this;
 	}
 
 }

@@ -47,20 +47,21 @@ public class GitRepositoryController {
     }
 
     @GetMapping("/repositories")
-    public ResponseEntity<Object> getRepositoryByDate(@RequestParam("since") String since, @RequestParam("to") String to, @RequestParam("start") int start, @RequestParam("limit") int limit){
+    public ResponseEntity<Object> getRepositoryByDate(@RequestParam(value = "since", required = false) String since, @RequestParam(value = "to", required = false) String to, @RequestParam("start") int start, @RequestParam("limit") int limit){
         try {
         	DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    	    LocalDate sinceParsed = LocalDate.parse(since , DATEFORMATTER);
-    	    LocalDate toParsed = LocalDate.parse(to , DATEFORMATTER);
+    	    LocalDate sinceParsed = since == null ? LocalDate.MIN : LocalDate.parse(since , DATEFORMATTER);
+    	    LocalDate toParsed = to == null ? LocalDate.now() : LocalDate.parse(to , DATEFORMATTER);
             List<Repository> repos = repositoryMockService.getRepositoriesBetween(sinceParsed, toParsed);
-            GitRepositoriesResponse response = new GitRepositoriesResponse(repos.size(), repos);
+
+            GitRepositoriesResponse response = new GitRepositoriesResponse(repos.size(), repos.subList(start, Math.min(start + limit, repos.size())));
             return ResponseEntity.ok(response);
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
         catch(Exception ex){
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
         }
     }
     

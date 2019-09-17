@@ -59,7 +59,7 @@ public class RepositoryService {
         List<Repository> lista = gitService.getRepositories();
         return lista
                 .stream()
-                .filter(r -> r.getRegistrationDate().isAfter(since) && r.getRegistrationDate().isBefore(to))
+                .filter(r -> !r.getRegistrationDate().isBefore(since) && !r.getRegistrationDate().isAfter(to))
                 .collect(Collectors.toList());
     }
 
