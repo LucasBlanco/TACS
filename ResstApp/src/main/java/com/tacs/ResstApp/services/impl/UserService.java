@@ -30,6 +30,7 @@ public class UserService {
 
 	private List<User> users = new ArrayList<User>();
 
+	@Autowired
 	private UserTokenService userTokenService;
 
 
@@ -69,8 +70,10 @@ public class UserService {
 		return getUser(id).getFavourites();
 	}
 
-	public List<Repository> addFavourite(Long userId, Repository repository) throws ServiceException {
+	public List<Repository> addFavourite(Long userId, String repoId) throws ServiceException, IOException {
 		User user = getUser(userId);
+		Repository repository = repositoryService.getRepository(repoId);
+		System.out.println(repository.getMainLanguage());
 		user.getFavourites().add(repository);
 		userRepository.save(user);
 		return user.getFavourites();
@@ -89,9 +92,12 @@ public class UserService {
 	}
 	
 	public ComparisonDTO getFavouritesComparison(Long id1, Long id2) throws ServiceException {
-		
-		List<Repository> favs1 = this.getUserFavouriteRepos(id1);
-		List<Repository> favs2 = this.getUserFavouriteRepos(id2);
+		User user1 = userRepository.findById(id1).get();
+		User user2 = userRepository.findById(id1).get();
+		updateUser(user1);
+		updateUser(user2);
+		List<Repository> favs1 = user1.getFavourites();
+		List<Repository> favs2 = user2.getFavourites();
 		List<Repository> commonRepos = favs1==null?null:favs1.stream().filter(favs2::contains).collect(Collectors.toList());
 		List<String> favs1Languages = favs1==null?null:favs1.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(List::stream).distinct().collect(Collectors.toList());
 		List<String> favs2Languages = favs2==null?null:favs2.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(List::stream).distinct().collect(Collectors.toList());
@@ -123,8 +129,10 @@ public class UserService {
 
 	public String login(User user) throws ServiceException {
 		User foundUser = this.getUserByUsername(user.getUsername());
-		if(foundUser.getPassword() == user.getPassword()){
-			return userTokenService.generateToken(foundUser);
+		if(foundUser.getPassword().equals(user.getPassword())){
+			String token = userTokenService.generateToken(foundUser);
+			System.out.println(token);
+			return token;
 		}
 		throw new ServiceException("Incorrect password");
 	}

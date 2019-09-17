@@ -284,9 +284,9 @@ class UserControllerTest {
 		repositories.add(repo1);
 		repositories.add(repo2);
 		repositories.add(repo3);
-		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any(Repository.class))).thenReturn(repositories);
+		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any(String.class))).thenReturn(repositories);
 
-		ResponseEntity<Object> response = userController.addFavourite(id, repo3);
+		ResponseEntity<Object> response = userController.addFavourite(id, repo3.getName());
 		List<Repository> favourites = (List) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -300,24 +300,24 @@ class UserControllerTest {
 	}
 
 	@Test
-	public void createFavouritesReturnsUserError() throws ServiceException {
+	public void createFavouritesReturnsUserError() throws ServiceException, IOException {
 		Long id = 1L;
 		Repository repository = new Repository(3L, "repo 3");
-		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any(Repository.class))).thenThrow(ServiceException.class);
+		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any(String.class))).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = userController.addFavourite(id, repository);
+		ResponseEntity<Object> response = userController.addFavourite(id, repository.getName());
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		Assertions.assertNull(response.getBody());
 	}
 
 	@Test
-	public void createFavouritesReturnsServerError() throws ServiceException {
+	public void createFavouritesReturnsServerError() throws ServiceException, IOException {
 		Long id = 1L;
 		Repository repository = new Repository(3L, "repo 3");
 		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any())).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = userController.addFavourite(id, repository);
+		ResponseEntity<Object> response = userController.addFavourite(id, repository.getName());
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(response.getBody());
