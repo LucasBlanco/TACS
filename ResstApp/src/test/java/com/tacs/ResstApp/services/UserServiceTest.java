@@ -101,6 +101,7 @@ public class UserServiceTest {
 		User user = getUserWithFavourites();
 		Repository repository = new Repository(3L, "Third repo");
 		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+		when(repositoryService.getRepository(any())).thenReturn(repository);
 
 		userService.addFavourite(user.getId(),"Third repo");
 
