@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.tacs.ResstApp.model.ComparisonDTO;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.repositories.UserRepository;
@@ -87,10 +88,16 @@ public class UserService {
 		}
 	}
 	
-	public List<Repository> getFavouritesComparison(Long id1, Long id2) throws ServiceException {
+	public ComparisonDTO getFavouritesComparison(Long id1, Long id2) throws ServiceException {
+		
 		List<Repository> favs1 = this.getUserFavouriteRepos(id1);
 		List<Repository> favs2 = this.getUserFavouriteRepos(id2);
-		return favs1.stream().filter(favs2::contains).collect(Collectors.toList());
+		List<Repository> commonRepos = favs1==null?null:favs1.stream().filter(favs2::contains).collect(Collectors.toList());
+		List<String> favs1Languages = favs1==null?null:favs1.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(List::stream).distinct().collect(Collectors.toList());
+		List<String> favs2Languages = favs2==null?null:favs2.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(List::stream).distinct().collect(Collectors.toList());
+		List<String> commonLanguages = favs1Languages==null?null:favs1Languages.stream().filter(favs2Languages::contains).collect(Collectors.toList());
+		
+		return new ComparisonDTO(id1, id2, commonRepos, commonLanguages);
 	}
 
 	public void logout(String token) throws ServiceException{

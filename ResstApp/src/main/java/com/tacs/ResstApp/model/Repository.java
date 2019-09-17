@@ -25,7 +25,7 @@ public class Repository {
 	private String mainLanguage;
 	
 	private Integer totalIssues;
-	
+		
 	private Double score;
 
 	@Transient
@@ -59,6 +59,14 @@ public class Repository {
 
 	public void setRegistrationDate(LocalDate registrationDate) {
 		this.registrationDate = registrationDate;
+	}
+
+	public List<String> getLanguages() {
+		return languages;
+	}
+
+	public void setLanguages(List<String> languages) {
+		this.languages = languages;
 	}
 
 	public int getTotalCommits() {

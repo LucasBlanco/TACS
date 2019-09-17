@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.tacs.ResstApp.repositories.UserRepository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
@@ -16,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.tacs.ResstApp.model.ComparisonDTO;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.impl.UserService;
@@ -55,6 +58,8 @@ public class UserServiceTest {
 		repo2 = new Repository(2L, "repo 2");
 		repo3 = new Repository(3L, "repo 3");
 		repo4 = new Repository(4L, "repo 4");
+		repo2.setLanguages(Stream.of("C", "JAVA").collect(Collectors.toCollection(ArrayList::new)));
+		repo3.setLanguages(Stream.of("PYTHON", "C").collect(Collectors.toCollection(ArrayList::new)));
 		user1 = new User();
 		user2 = new User();
 		user3 = new User();
@@ -75,18 +80,20 @@ public class UserServiceTest {
 	
 	@Test
 	public void compareFavourites() throws Exception {
-	    when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
+		when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
         when(userRepository.findById(userId2)).thenReturn(Optional.of(user2));
-		List<Repository> favouritesComparison = userService.getFavouritesComparison(userId1, userId2);
-		Assertions.assertEquals(2, favouritesComparison.size());
+		ComparisonDTO favouritesComparison = userService.getFavouritesComparison(userId1, userId2);
+		Assertions.assertEquals(2, favouritesComparison.getCommonRepositories().size());
+		Assertions.assertEquals(3, favouritesComparison.getCommonLanguages().size());
 	}
 	
 	@Test
 	public void compareFavouritesWithEmptyUserList() throws Exception {
         when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
         when(userRepository.findById(userId3)).thenReturn(Optional.of(user3));
-		List<Repository> favouritesComparison = userService.getFavouritesComparison(userId1, userId3);
-		Assertions.assertEquals(0, favouritesComparison.size());
+		ComparisonDTO favouritesComparison = userService.getFavouritesComparison(userId1, userId3);
+		Assertions.assertEquals(0, favouritesComparison.getCommonRepositories().size());
+		Assertions.assertEquals(0, favouritesComparison.getCommonLanguages().size());
 	}
 
 	@Test
