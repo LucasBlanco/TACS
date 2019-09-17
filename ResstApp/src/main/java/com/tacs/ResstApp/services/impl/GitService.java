@@ -29,7 +29,7 @@ public class GitService {
     private Gson gson = new Gson();
 
     private String executeRequest(Request request) throws IOException {
-        HttpResponse response = request.addHeader("Authorization", "token " + GitCredentials.getToken())
+        HttpResponse response = request//.addHeader("Authorization", "token " + GitCredentials.getToken())
                 .execute()
                 .returnResponse();
         StatusLine statusLine = response.getStatusLine();
@@ -44,7 +44,7 @@ public class GitService {
 
     public List<Repository> getRepositories() throws IOException {
 
-        String result = executeRequest(Request.Get(baseUrl + "/user/repos"));
+        String result = executeRequest(Request.Get(baseUrl + "/user/repos" + GithubOauthService.getAuthentication()));
         GitRepository[] repos = gson.fromJson(result, GitRepository[].class);
         List<Repository> listaRepos = Arrays.stream(repos)
                 .map(repo -> new Repository(repo.getId(), repo.getName()))
@@ -54,8 +54,8 @@ public class GitService {
     }
 
     public Repository getRepositoryById(String repoName) throws IOException {
-        String userName = GitCredentials.getUserName();
-        String result = executeRequest(Request.Get(baseUrl + "/repos/" + userName + "/" + repoName));
+        String userName = "tacsgit";//GitCredentials.getUserName();
+        String result = executeRequest(Request.Get(baseUrl + "/repos/" + userName + "/" + repoName + GithubOauthService.getAuthentication()));
         GitRepository repo = gson.fromJson(result, GitRepository.class);
         return new Repository(repo.getId(), repo.getName());
 
@@ -63,7 +63,7 @@ public class GitService {
 
     public String getUserName() throws IOException {
         String userName = GitCredentials.getUserName();
-        String result = executeRequest(Request.Get(baseUrl + "/user"));
+        String result = executeRequest(Request.Get(baseUrl + "/user" + GithubOauthService.getAuthentication()));
         HashMap<String, String> user = gson.fromJson(result, HashMap.class);
         return user.get("login");
     }
