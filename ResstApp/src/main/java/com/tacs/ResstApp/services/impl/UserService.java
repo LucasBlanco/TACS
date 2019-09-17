@@ -97,8 +97,8 @@ public class UserService {
 		List<Repository> favs1 = user1.getFavourites();
 		List<Repository> favs2 = user2.getFavourites();
 		List<Repository> commonRepos = favs1==null?null:favs1.stream().filter(favs2::contains).collect(Collectors.toList());
-		List<String> favs1Languages = favs1==null?null:favs1.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(List::stream).distinct().collect(Collectors.toList());
-		List<String> favs2Languages = favs2==null?null:favs2.stream().map(Repository::getLanguages).filter(x -> x!=null).flatMap(List::stream).distinct().collect(Collectors.toList());
+		List<String> favs1Languages = favs1==null?null:favs1.stream().map(Repository::getMainLanguage).filter(x -> x!=null).distinct().collect(Collectors.toList());
+		List<String> favs2Languages = favs2==null?null:favs2.stream().map(Repository::getMainLanguage).filter(x -> x!=null).distinct().collect(Collectors.toList());
 		List<String> commonLanguages = favs1Languages==null?null:favs1Languages.stream().filter(favs2Languages::contains).collect(Collectors.toList());
 		
 		return new ComparisonDTO(id1, id2, commonRepos, commonLanguages);
