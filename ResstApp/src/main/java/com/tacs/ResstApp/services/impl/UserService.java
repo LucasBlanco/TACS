@@ -83,12 +83,24 @@ public class UserService {
 		User user = getUser(userId);
 		Repository repoToRemove = repositoryService.getRepository(repoName);
 
-		if(user.getFavourites().contains(repoToRemove)){
-			user.getFavourites().remove(repoToRemove);
+		if(hasRepository(user, repoToRemove)){
+			deleteFavourite(user, repoToRemove);
 			userRepository.save(user);
 		} else {
 			throw new ServiceException("User does not have repository in favourites");
 		}
+	}
+
+	private void deleteFavourite(User user, Repository repoToRemove) {
+		user.getFavourites().removeIf(f -> sameRepositories(repoToRemove, f));
+	}
+
+	private boolean sameRepositories(Repository repo, Repository anotherRepo) {
+		return anotherRepo.getId().equals(repo.getId());
+	}
+
+	private boolean hasRepository(User user, Repository repoToRemove) {
+		return user.getFavourites().stream().anyMatch(f -> sameRepositories(repoToRemove, f));
 	}
 	
 	public ComparisonDTO getFavouritesComparison(Long id1, Long id2) throws ServiceException {
