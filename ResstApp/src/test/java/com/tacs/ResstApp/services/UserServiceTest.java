@@ -58,8 +58,10 @@ public class UserServiceTest {
 		repo2 = new Repository(2L, "repo 2");
 		repo3 = new Repository(3L, "repo 3");
 		repo4 = new Repository(4L, "repo 4");
-		repo2.setLanguages(Stream.of("C", "JAVA").collect(Collectors.toCollection(ArrayList::new)));
-		repo3.setLanguages(Stream.of("PYTHON", "C").collect(Collectors.toCollection(ArrayList::new)));
+		//repo2.setLanguages(Stream.of("C", "JAVA").collect(Collectors.toCollection(ArrayList::new)));
+		//repo3.setLanguages(Stream.of("PYTHON", "C").collect(Collectors.toCollection(ArrayList::new)));
+		repo2.setMainLanguage("Java");
+		repo3.setMainLanguage("Java");
 		user1 = new User();
 		user2 = new User();
 		user3 = new User();
@@ -84,7 +86,7 @@ public class UserServiceTest {
         when(userRepository.findById(userId2)).thenReturn(Optional.of(user2));
 		ComparisonDTO favouritesComparison = userService.getFavouritesComparison(userId1, userId2);
 		Assertions.assertEquals(2, favouritesComparison.getCommonRepositories().size());
-		Assertions.assertEquals(3, favouritesComparison.getCommonLanguages().size());
+		Assertions.assertEquals(1, favouritesComparison.getCommonLanguages().size());
 	}
 	
 	@Test
