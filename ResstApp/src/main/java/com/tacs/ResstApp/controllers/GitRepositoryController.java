@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-
+import org.hibernate.annotations.MetaValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +65,7 @@ public class GitRepositoryController {
         }
     }
     
-    @GetMapping("/repositories/filters")
+    @GetMapping("/repositories/search")
     public ResponseEntity<Object> getRepositoriesFiltered(Search search) {
     	try{
     	    return ResponseEntity.ok(repositoryService.getRepositoriesFiltered(search));
