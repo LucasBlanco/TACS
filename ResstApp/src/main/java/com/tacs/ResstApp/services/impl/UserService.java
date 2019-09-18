@@ -26,8 +26,6 @@ public class UserService {
 	@Autowired
 	private RepositoryService repositoryService;
 
-
-
 	private List<User> users = new ArrayList<User>();
 
 	@Autowired
