@@ -16,7 +16,7 @@ public class Search {
     private CommitsFilter commitsFilters;
     private IssuesFilter issuesFilters;
     private LanguageFilter languageFilters;
-    private ScoreFilter starsFilters;
+    private ScoreFilter scoreFilters;
     private SubscribersFilter subscribersFilters;
 
     public CommitsFilter getCommitsFilters() {
@@ -43,12 +43,12 @@ public class Search {
     	this.languageFilters = languageFilters;
     }
     
-    public ScoreFilter getStarsFilters() {
-    	return starsFilters;
+    public ScoreFilter getScoreFilters() {
+    	return scoreFilters;
     }
     
-    public void setStarsFilters(ScoreFilter starsFilters) {
-    	this.starsFilters = starsFilters;
+    public void setScoreFilters(ScoreFilter scoreFilters) {
+    	this.scoreFilters = scoreFilters;
     }
     
     public SubscribersFilter getSubscribersFilters() {
@@ -70,7 +70,7 @@ public class Search {
 
 	private Stream<Filter> getFiltersAttributes() {
 		return Stream
-				.of(commitsFilters, issuesFilters, languageFilters, starsFilters, subscribersFilters)
+				.of(commitsFilters, issuesFilters, languageFilters, scoreFilters, subscribersFilters)
 				.filter(Objects::nonNull);
 	}
 
