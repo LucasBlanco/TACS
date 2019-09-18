@@ -5,14 +5,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.tacs.ResstApp.model.User;
-import com.tacs.ResstApp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.Search;
+import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.repositories.RepositoryRepository;
+import com.tacs.ResstApp.repositories.UserRepository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 
 @Component
