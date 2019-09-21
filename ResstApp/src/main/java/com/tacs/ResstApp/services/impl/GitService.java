@@ -75,6 +75,7 @@ public class GitService {
     public Repository getRepositoryByUserRepo(String username, String repoName) throws IOException {
         String result = executeRequest(Request.Get(baseUrl + "/repos/" + username + "/" + repoName + GithubOauthService.getAuthentication()));
         Repository repo = parseRepository(result);
+        repo.setOwner(username);
         return repo;
 
     }
