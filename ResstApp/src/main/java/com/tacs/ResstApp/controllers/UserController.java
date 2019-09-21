@@ -21,7 +21,7 @@ import com.tacs.ResstApp.services.impl.UserService;
 
 @RestController
 public class UserController {
-
+	
     @Autowired
     UserService userService;
 
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity logout(@RequestBody String token){
+    public ResponseEntity<Object> logout(@RequestBody String token){
         try{
             userService.logout(token);
             HttpHeaders httpHeaders = new HttpHeaders();
