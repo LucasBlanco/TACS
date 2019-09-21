@@ -51,25 +51,12 @@ public class GitService {
 
 	}
 
-	public List<Repository> getRepositories() throws IOException {
-		String result = executeGet("/user/repos");
+	public List<Repository> getRepositories(String lastRepoId) throws IOException {
+		String result = executeGet("/repositories" + (lastRepoId == null ? "" : "?since=" + lastRepoId));
 		GitRepository[] repos = gson.fromJson(result, GitRepository[].class);
 		List<Repository> listaRepos = Arrays.stream(repos).map(repo -> new Repository(repo.getId(), repo.getName()))
 				.collect(toList());
 		return listaRepos;
-
-	}
-
-	public List<Repository> getUserRepositories() throws IOException {
-		String result = executeGet("/users/" + "tptacs" + "/repos");
-		JsonArray objArray = new JsonParser().parse(result).getAsJsonArray();
-		List<Repository> repos = new ArrayList<Repository>();
-		for (JsonElement el : objArray) {
-			repos.add(parseRepository(el.toString()));
-		}
-		// List<Repository> repos = Arrays.stream(gson.fromJson(result,
-		// Repository[].class)).collect(toList());
-		return repos;
 
 	}
 

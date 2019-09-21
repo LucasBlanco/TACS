@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.tacs.ResstApp.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,11 +29,21 @@ public class RepositoryService {
     private UserRepository userRepository;
 
 	public List<Repository> getRepositoriesFiltered(Search search) throws ServiceException, IOException {
-		return search.filter(this.getRepositories());
+		return search.filter(this.getRepositories(null));
 	}
 
-    public List<Repository> getRepositories() throws IOException {
-        return gitService.getUserRepositories();
+    public List<Repository> getRepositories(String pageId) throws ServiceException{
+	    try{
+            String lastRepoId = null;
+            if (pageId != null){
+                String decryptedPageId = CryptoUtils.decrypt(pageId);
+                lastRepoId = CryptoUtils.removeLeftCharacterRepeated(decryptedPageId,'0');
+            }
+            return gitService.getRepositories(lastRepoId);
+        }
+	    catch(IOException ex){
+	        throw new ServiceException(ex.getMessage());
+        }
     }
 
     public Repository getRepository(String name) throws ServiceException, IOException {
@@ -46,7 +57,7 @@ public class RepositoryService {
     }
 
     public List<Repository> getRepositoriesBetween(LocalDate since, LocalDate to) throws ServiceException, IOException {
-        List<Repository> lista = gitService.getRepositories();
+        List<Repository> lista = getRepositories(null);
         return lista
                 .stream()
                 .filter(r -> r.getRegistrationDate().isAfter(since) && r.getRegistrationDate().isBefore(to))
