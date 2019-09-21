@@ -41,9 +41,9 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity logout(@RequestBody String token){
+    public ResponseEntity logout(@RequestBody User user){
         try{
-            userService.logout(token);
+            userService.logout(user);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(org.springframework.http.MediaType.TEXT_PLAIN);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Logout successful");
@@ -82,7 +82,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<Object> getUserById(@PathVariable Long id){
         try {
             User user = userService.getUser(id);
@@ -97,10 +97,10 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/{id}/favourites")
-    public ResponseEntity<Object> getFavourites(@PathVariable Long id){
+    @GetMapping("/users/{userId}/favourites")
+    public ResponseEntity<Object> getFavourites(@PathVariable Long userId){
         try {
-            return ResponseEntity.ok(userService.getUserFavouriteRepos(id));
+            return ResponseEntity.ok(userService.getUserFavouriteRepos(userId));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -110,10 +110,10 @@ public class UserController {
         }
     }
 
-    @PostMapping("/users/{id}/favourites")
-    public ResponseEntity<Object> addFavourite(@PathVariable Long id, @RequestBody String repoId){
+    @PostMapping("/users/{userId}/favourites")
+    public ResponseEntity<Object> addFavourite(@PathVariable Long userId, @RequestBody Repository gitRepository){
         try{
-            List<Repository> favourites = userService.addFavourite(id, repoId);
+            List<Repository> favourites = userService.addFavourite(userId, gitRepository);
             return ResponseEntity.status(HttpStatus.CREATED).body(favourites);
         }
         catch(ServiceException ex){
@@ -124,10 +124,10 @@ public class UserController {
         }
     }
     
-    @DeleteMapping("/users/{userId}/favourites/{repoName}")
-    public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @PathVariable String repoName){
-        try{
-            userService.deleteFavourite(userId, repoName);
+    @DeleteMapping("/users/{userId}/favourites/{repoId}")
+    public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @PathVariable Long repoId){
+        try {
+        	userService.deleteFavourite(userId, repoId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Element from list of favourites deleted succesfully");
         }
         catch(ServiceException ex){

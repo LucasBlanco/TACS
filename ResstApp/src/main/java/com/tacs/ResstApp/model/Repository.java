@@ -20,6 +20,8 @@ public class Repository {
 
 	@Transient
 	private int stars;
+	
+	private String owner;
 
 	private int favs;
 	
@@ -94,6 +96,16 @@ public class Repository {
 	@JsonProperty("language")
 	public void setMainLanguage(String mainLanguage) {
 		this.mainLanguage = mainLanguage;
+	}
+	
+	
+	public String getOwner() {
+		return owner;
+	}
+
+	@JsonProperty("owner")
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 	@JsonProperty("issues")

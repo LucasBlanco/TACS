@@ -3,6 +3,7 @@ package com.tacs.ResstApp.services.impl;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +36,15 @@ public class RepositoryService {
         return gitService.getUserRepositories();
     }
 
-    public Repository getRepository(String name) throws ServiceException, IOException {
-        /*Optional<Repository> repository = repositoryRepository.findById(id);
-        if (repository.isPresent()) {
-            return repository.get();
-        }
-        throw new ServiceException("Repository does not exist");
-        */
-        return gitService.getRepositoryById(name);
+    public Repository getRepository(Repository repo) throws ServiceException, IOException {
+    	return gitService.getRepositoryByUserRepo(repo.getOwner(), repo.getName());
+    }
+    
+    public Repository getRepositoryById(Long repoId) throws ServiceException, IOException {
+    	Optional<Repository> repo =  repositoryRepository.findById(repoId);
+    	if (repo.isPresent()) {
+    		return repo.get();
+    	} else throw new ServiceException("Repo does not exist ib database");
     }
 
     public List<Repository> getRepositoriesBetween(LocalDate since, LocalDate to) throws ServiceException, IOException {
@@ -57,8 +59,8 @@ public class RepositoryService {
 		repositoryRepository.save(repository);
 	}
 
-    public Repository getUpdatedRepository(String name) throws ServiceException, IOException {
-        Repository repository = gitService.getRepositoryById(name);
+    public Repository getRepositoryByUserRepo(String username, String repoName) throws ServiceException, IOException {
+        Repository repository = gitService.getRepositoryByUserRepo(username, repoName);
         System.out.println(repository.getMainLanguage());
         List<User> users = userRepository.findByFavourites(repository);
         repository.setFavs(users.size());

@@ -33,11 +33,10 @@ public class GitRepositoryController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/repositories/{name}")
-    public ResponseEntity<Object> getRepository(@PathVariable String name){
+    @GetMapping("/repositories/{user}/{repoName}")
+    public ResponseEntity<Object> getRepository(@PathVariable String username, @PathVariable String repoName){
         try {
-            System.out.println(name);
-            return ResponseEntity.ok(repositoryService.getUpdatedRepository(name));
+            return ResponseEntity.ok(repositoryService.getRepositoryByUserRepo(username, repoName));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());

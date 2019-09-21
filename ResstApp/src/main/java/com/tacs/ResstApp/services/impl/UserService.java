@@ -64,22 +64,22 @@ public class UserService {
 		throw new ServiceException("User does not exist");
 	}
 
-	public List<Repository> getUserFavouriteRepos(Long id) throws ServiceException {
-		return getUser(id).getFavourites();
+	public List<Repository> getUserFavouriteRepos(Long userId) throws ServiceException {
+		return getUser(userId).getFavourites();
 	}
 
-	public List<Repository> addFavourite(Long userId, String repoId) throws ServiceException, IOException {
+	public List<Repository> addFavourite(Long userId, Repository gitRepository) throws ServiceException, IOException {
 		User user = getUser(userId);
-		Repository repository = repositoryService.getRepository(repoId);
-		repositoryService.save(repository);
-		user.getFavourites().add(repository);
+		Repository foundRepo = repositoryService.getRepository(gitRepository);
+		repositoryService.save(foundRepo);
+		user.getFavourites().add(foundRepo);
 		userRepository.save(user);
 		return user.getFavourites();
 	}
 
-	public void deleteFavourite(Long userId, String repoName) throws ServiceException, IOException {
+	public void deleteFavourite(Long userId, Long repoId) throws ServiceException, IOException {
 		User user = getUser(userId);
-		Repository repoToRemove = repositoryService.getRepository(repoName);
+		Repository repoToRemove = repositoryService.getRepositoryById(repoId);
 
 		if(hasRepository(user, repoToRemove)){
 			deleteFavourite(user, repoToRemove);
@@ -116,17 +116,17 @@ public class UserService {
 		return new ComparisonDTO(id1, id2, commonRepos, commonLanguages);
 	}
 
-	public void logout(String token) throws ServiceException{
-		userTokenService.destroyToken(token);
+	public void logout(User user) throws ServiceException{
+		userTokenService.destroyToken(user);
 	}
 
 	public void updateUser(User user) throws ServiceException{
 		List<Repository> repositoriesWithNoData = user.getFavourites();
 		List<Repository> repositoriesWithData = new ArrayList<>();
 
-		repositoriesWithData.forEach(repo -> {
+		repositoriesWithNoData.forEach(repo -> {
 			try {
-				repositoriesWithData.add(repositoryService.getRepository(repo.getName()));
+				repositoriesWithData.add(repositoryService.getRepository(repo));
 			} catch (ServiceException | IOException e) {
 				//Queria que quede la excepcion lanzada pero no me deja :(
 			}

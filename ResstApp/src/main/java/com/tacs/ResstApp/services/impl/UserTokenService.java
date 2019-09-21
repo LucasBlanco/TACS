@@ -10,23 +10,23 @@ import java.util.HashMap;
 public class UserTokenService {
 
     //Long es el id de usuario y string su token
-    private HashMap<String, Long> tokenMap = new HashMap<>();
+    private HashMap<Long, String> tokenMap = new HashMap<>();
 
     public String generateToken(User user){
         SecureRandom random = new SecureRandom();
         byte bytes[] = new byte[20];
         random.nextBytes(bytes);
         String token = bytes.toString();
-        tokenMap.put(token, user.getId());
+        tokenMap.put(user.getId(), token);
 
         return token;
     }
 
-    public void destroyToken(String token) {
-        tokenMap.remove(token);
+    public void destroyToken(User user) {
+        tokenMap.remove(user.getId());
     }
 
-    public HashMap<String, Long> getTokenMap() {
+    public HashMap<Long, String> getTokenMap() {
         return tokenMap;
     }
 }

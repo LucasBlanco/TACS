@@ -72,9 +72,8 @@ public class GitService {
 
     }
 
-    public Repository getRepositoryById(String repoName) throws IOException {
-        String userName = "tptacs";//GitCredentials.getUserName();
-        String result = executeRequest(Request.Get(baseUrl + "/repos/" + userName + "/" + repoName + GithubOauthService.getAuthentication()));
+    public Repository getRepositoryByUserRepo(String username, String repoName) throws IOException {
+        String result = executeRequest(Request.Get(baseUrl + "/repos/" + username + "/" + repoName + GithubOauthService.getAuthentication()));
         Repository repo = parseRepository(result);
         return repo;
 
