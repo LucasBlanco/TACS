@@ -14,7 +14,7 @@ public class AppConfig {
 		TokenFilter tokenFilter = new TokenFilter();
 
 		registrationBean.setFilter(tokenFilter);
-		//registrationBean.addUrlPatterns("/users/*");//TODO: Asignar a que urls se hay que autenticar
+		registrationBean.addUrlPatterns("/user/*");//TODO: Asignar a que urls se hay que autenticar
 		registrationBean.setOrder(1);
 		return registrationBean;
 	}
