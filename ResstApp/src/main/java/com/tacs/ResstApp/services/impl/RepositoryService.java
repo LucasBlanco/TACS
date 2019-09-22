@@ -51,7 +51,6 @@ public class RepositoryService {
     	repo.setLanguages(re.getLanguages());
     	repo.setMainLanguage(re.getMainLanguage());
     	repo.setNofForks(repo.getNofForks());
-    	repo.setScore(re.getScore());
     	repo.setStars(re.getStars());
     	repo.setTotalCommits(re.getTotalCommits());
     	repo.setTotalIssues(re.getTotalIssues()); //puede q me falte algo

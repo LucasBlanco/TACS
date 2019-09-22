@@ -77,7 +77,9 @@ public class GitService {
     }
 
     public Repository getRepositoryByUserRepo(String username, String repoName) throws IOException {
+    	System.out.println(baseUrl + "/repos/" + username + "/" + repoName);
         String result = executeRequest(Request.Get(baseUrl + "/repos/" + username + "/" + repoName + GithubOauthService.getAuthentication()));
+        System.out.println("holaaaa");
         Repository repo = parseRepository(result);
         repo.setOwner(username);
         return repo;
@@ -87,12 +89,12 @@ public class GitService {
 		JsonObject obj = new JsonParser().parse(result).getAsJsonObject();
         Repository repo = new Repository(obj.get("id").getAsLong(), obj.get("name").getAsString());
         repo.setMainLanguage(obj.get("language").isJsonNull()?null:obj.get("language").getAsString());
-        repo.setScore(obj.get("score").isJsonNull()?null:obj.get("score").getAsDouble());
+        //repo.setScore(obj.get("score").isJsonNull()?null:obj.get("score").getAsDouble());
         repo.setNofForks(obj.get("forks_count").isJsonNull()?null:obj.get("forks_count").getAsInt());
         repo.setTotalIssues(obj.get("open_issues_count").isJsonNull()?null:obj.get("open_issues_count").getAsInt());
         repo.setStars(obj.get("stargazers_count").isJsonNull()?null:obj.get("stargazers_count").getAsInt());
-        String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-        repo.setRegistrationDate(obj.get("created_at").isJsonNull() ?null:LocalDate.parse(obj.get("created_at").getAsString(), DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)));
+        //String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        //repo.setRegistrationDate(obj.get("created_at").isJsonNull() ?null:LocalDate.parse(obj.get("created_at").getAsString(), DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)));
         
         /*
         if (!obj.get("commits_url").isJsonNull()) {
@@ -110,6 +112,7 @@ public class GitService {
 	        	languages.add(entry.getKey());
 	        }
         }
+        
         repo.setLanguages(languages);
 		return repo;
 	}

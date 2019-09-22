@@ -12,10 +12,8 @@ public class Repository {
 	@Id
 	private Long id;
 
-	@Transient
 	private String name;
 
-	@Transient
 	private LocalDate registrationDate;
 
 	@Transient
