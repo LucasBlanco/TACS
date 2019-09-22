@@ -3,6 +3,8 @@ package com.tacs.ResstApp.services.impl;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,12 +19,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tacs.ResstApp.model.GitRepository;
 import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.services.exceptions.GHRateLimitExceededException;
 
 @Component
 public class GitService {
@@ -36,7 +38,7 @@ public class GitService {
 	private Gson gson = new Gson();
 
 	private String createUrl(String resource) {
-		return baseUrl + resource + (resource.contains("?") ? "&" : "?") + "client_id=" + clientId + "&cliente_secret="
+		return baseUrl + resource + (resource.contains("?") ? "&" : "?") + "client_id=" + clientId + "&client_secret="
 				+ clientSecret;
 	}
 
@@ -44,7 +46,12 @@ public class GitService {
 		Request request = Request.Get(createUrl(resource));
 		HttpResponse response = request.execute().returnResponse();
 		StatusLine statusLine = response.getStatusLine();
-		if (statusLine.getStatusCode() >= 300) {
+		if (statusLine.getStatusCode() == 403) {
+			Long resetTimeInSeconds = Long.valueOf(response.getFirstHeader("X-RateLimit-Reset").getValue());
+			Long minutes = (resetTimeInSeconds - Instant.now().atZone(ZoneOffset.UTC).toInstant().getEpochSecond())
+					/ 60;
+			throw new GHRateLimitExceededException(minutes);
+		} else if (statusLine.getStatusCode() >= 300) {
 			throw new HttpResponseException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
 		}
 		return EntityUtils.toString(response.getEntity());
