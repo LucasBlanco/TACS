@@ -111,8 +111,8 @@ public class UserService {
 		return new ComparisonDTO(id1, id2, commonRepos, commonLanguages);
 	}
 
-	public void logout(User user) throws ServiceException{
-		userTokenService.destroyToken(user);
+	public void logout(String token) throws ServiceException{
+		userTokenService.destroyToken(token);
 	}
 
 	public void updateUser(User user) throws ServiceException{

@@ -21,7 +21,7 @@ import com.tacs.ResstApp.services.impl.UserService;
 
 @RestController
 public class UserController {
-
+	
     @Autowired
     UserService userService;
 
@@ -41,9 +41,9 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity logout(@RequestBody User user){
+    public ResponseEntity<Object> logout(@RequestBody String token){
         try{
-            userService.logout(user);
+            userService.logout(token);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(org.springframework.http.MediaType.TEXT_PLAIN);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Logout successful");

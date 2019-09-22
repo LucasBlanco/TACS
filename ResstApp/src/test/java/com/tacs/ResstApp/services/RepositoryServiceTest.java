@@ -29,14 +29,14 @@ public class RepositoryServiceTest {
 	private Repository repository1 = new Repository(1L, "TACS");
 	private Repository repository2 = new Repository(2L, "TADP");
 	private LocalDate referenceTime = LocalDate.now();
-
+/*
 	@BeforeEach
 	public void before() throws Exception {
 		repository1.setRegistrationDate(referenceTime.minusDays(2));
 		repository2.setRegistrationDate(referenceTime.plusDays(2));
 		this.repositories = Arrays.asList(repository1, repository2);
 		Mockito.when(gitService.getRepositories()).thenReturn(this.repositories);
-	}
+	}*/
 
 	@Test
     public void repositoryServiceDoesNotReturnAnyRepositoriesInOpenIntervalBetweenRepositories() throws Exception {

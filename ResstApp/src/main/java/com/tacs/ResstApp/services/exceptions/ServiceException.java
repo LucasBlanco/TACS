@@ -2,7 +2,9 @@ package com.tacs.ResstApp.services.exceptions;
 
 public class ServiceException extends Exception {
 
-    public ServiceException(String message) {
+	private static final long serialVersionUID = 7503571023150785612L;
+
+	public ServiceException(String message) {
         super(message);
     }
 

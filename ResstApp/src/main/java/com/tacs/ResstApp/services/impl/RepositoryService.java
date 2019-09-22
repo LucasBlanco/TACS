@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.tacs.ResstApp.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,8 +28,18 @@ public class RepositoryService {
 		return gitService.filterBy(search);
 	}
 
-    public List<Repository> getRepositories() throws IOException {
-        return gitService.getUserRepositories();
+    public List<Repository> getRepositories(String pageId) throws ServiceException{
+	    try{
+            String lastRepoId = null;
+            if (pageId != null){
+                String decryptedPageId = CryptoUtils.decrypt(pageId);
+                lastRepoId = CryptoUtils.removeLeftCharacterRepeated(decryptedPageId,'0');
+            }
+            return gitService.getRepositories(lastRepoId);
+        }
+	    catch(IOException ex){
+	        throw new ServiceException(ex.getMessage());
+        }
     }
 
     public Repository getRepository(Repository repo) throws ServiceException, IOException {
@@ -67,6 +78,7 @@ public class RepositoryService {
 
     public List<Repository> getRepositoriesBetween(LocalDate since, LocalDate to) throws ServiceException, IOException {
         List<Repository> lista = repositoryRepository.findAll();
+        //List<Repository> lista = getRepositories(null); Es sobre nuestros repositorios
         return lista
                 .stream()
                 .filter(r -> r.getRegistrationDate().isAfter(since) && r.getRegistrationDate().isBefore(to))
