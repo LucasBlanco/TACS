@@ -71,7 +71,6 @@ public class UserService {
 	public List<Repository> addFavourite(Long userId, Repository gitRepository) throws ServiceException, IOException {
 		User user = getUser(userId);
 		Repository foundRepo = repositoryService.getRepository(gitRepository);
-		repositoryService.save(foundRepo);
 		user.addFavourite(foundRepo);
 		userRepository.save(user);
 		return user.getFavourites();
@@ -80,17 +79,12 @@ public class UserService {
 	public void deleteFavourite(Long userId, Long repoId) throws ServiceException, IOException {
 		User user = getUser(userId);
 		Repository repoToRemove = repositoryService.getRepositoryById(repoId);
-
 		if(hasRepository(user, repoToRemove)){
-			deleteFavourite(user, repoToRemove);
+			user.deleteFavourite(repoToRemove);
 			userRepository.save(user);
 		} else {
 			throw new ServiceException("User does not have repository in favourites");
 		}
-	}
-
-	private void deleteFavourite(User user, Repository repoToRemove) {
-		user.getFavourites().removeIf(f -> sameRepositories(repoToRemove, f));
 	}
 
 	private boolean sameRepositories(Repository repo, Repository anotherRepo) {

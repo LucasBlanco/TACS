@@ -41,7 +41,6 @@ public class Repository {
 	public Repository(Long id, String name) {
 		this.id = id;
 		this.name = name;
-		this.registrationDate = LocalDate.now();
 	}
 
 	public Repository() {}
@@ -153,5 +152,13 @@ public class Repository {
 
 	public void setFavs(int favs) {
 		this.favs = favs;
+	}
+	
+	public void favved() {
+		this.favs++;
+	}
+	
+	public void unfavved() {
+		this.favs--;
 	}
 }

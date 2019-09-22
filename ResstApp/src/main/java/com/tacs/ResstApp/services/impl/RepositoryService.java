@@ -2,6 +2,7 @@ package com.tacs.ResstApp.services.impl;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,8 +26,8 @@ public class RepositoryService {
     @Autowired
     private RepositoryRepository repositoryRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    //@Autowired
+    //private UserRepository userRepository;
 
 	public List<Repository> getRepositoriesFiltered(Search search) throws ServiceException, IOException {
 		return search.filter(this.getRepositories());
@@ -37,11 +38,31 @@ public class RepositoryService {
     }
 
     public Repository getRepository(Repository repo) throws ServiceException, IOException {
-    	//Optional<Repository> repository =  repositoryRepository.findById(repo.getId());
-    	//if (repository.isPresent()) {
-    	//	return repository.get();
-    	//} else
-    	return gitService.getRepositoryByUserRepo(repo.getOwner(), repo.getName());
+    	Optional<Repository> repository = repositoryRepository.findById(repo.getId());
+    	if (repository.isPresent()) {
+    		return updateRepository(repository.get());
+    	} else {
+    		return saveNewFavourite(repo);
+    	}
+    }
+    
+    public Repository updateRepository(Repository repo) throws ServiceException, IOException {
+    	Repository re = gitService.getRepositoryByUserRepo(repo.getOwner(), repo.getName());
+    	repo.setLanguages(re.getLanguages());
+    	repo.setMainLanguage(re.getMainLanguage());
+    	repo.setNofForks(repo.getNofForks());
+    	repo.setScore(re.getScore());
+    	repo.setStars(re.getStars());
+    	repo.setTotalCommits(re.getTotalCommits());
+    	repo.setTotalIssues(re.getTotalIssues()); //puede q me falte algo
+    	return repo;
+    }
+    
+    public Repository saveNewFavourite(Repository repo) throws ServiceException, IOException {
+    	Repository re = gitService.getRepositoryByUserRepo(repo.getOwner(), repo.getName());
+		re.setRegistrationDate(LocalDate.now());
+		repositoryRepository.save(re);
+		return re;
     }
     
     public Repository getRepositoryById(Long repoId) throws ServiceException, IOException {
@@ -66,9 +87,8 @@ public class RepositoryService {
 
     public Repository getRepositoryByUserRepo(String username, String repoName) throws ServiceException, IOException {
         Repository repository = gitService.getRepositoryByUserRepo(username, repoName);
-        System.out.println(repository.getMainLanguage());
-        List<User> users = userRepository.findByFavourites(repository);
-        repository.setFavs(users.size());
+        //List<User> users = userRepository.findByFavourites(repository); //esto lo hace un usuario para agregarlo a favoritos, o no
+        //repository.setFavs(users.size());
 	    return repository;
     }
 }

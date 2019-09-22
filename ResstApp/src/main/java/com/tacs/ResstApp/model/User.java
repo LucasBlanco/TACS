@@ -64,6 +64,12 @@ public class User {
 	
 	public void addFavourite(Repository repo) {
 		this.favourites.add(repo);
+		repo.favved();
+	}
+	
+	public void deleteFavourite(Repository repo) {
+		this.favourites.removeIf(f -> f.getId().equals(repo.getId()));
+		repo.unfavved();
 	}
 
 	public List<Repository> getFavourites() {

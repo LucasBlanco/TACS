@@ -86,7 +86,7 @@ public class UserController {
     public ResponseEntity<Object> getUserById(@PathVariable Long userId){
         try {
             User user = userService.getUser(userId);
-            userService.updateUser(user);
+            userService.updateUser(user); //pa mi no va
             return ResponseEntity.ok(user);
         }
         catch(ServiceException ex){
@@ -113,7 +113,7 @@ public class UserController {
     @PostMapping("/users/{userId}/favourites")
     public ResponseEntity<Object> addFavourite(@PathVariable Long userId, @RequestBody Repository gitRepository){
         try{
-            List<Repository> favourites = userService.addFavourite(userId, gitRepository);
+            List<Repository> favourites = userService.addFavourite(userId, gitRepository); //LLEGA CON ID el repo
             return ResponseEntity.status(HttpStatus.CREATED).body(favourites);
         }
         catch(ServiceException ex){
