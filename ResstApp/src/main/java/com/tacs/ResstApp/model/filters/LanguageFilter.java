@@ -18,4 +18,9 @@ public class LanguageFilter implements Filter {
 		return this.getMainLanguage().equalsIgnoreCase(repository.getMainLanguage());
 	}
 
+	@Override
+	public String getQueryProperty() {
+		return "language:" + mainLanguage;
+	}
+
 }

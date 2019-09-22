@@ -17,4 +17,9 @@ public class IssuesFilter implements Filter {
 	public boolean filter(Repository repository) {
 		return repository.getTotalIssues() >= this.getTotalIssues(); 
 	}
+
+	@Override
+	public String getQueryProperty() {
+		return "issues:" + Integer.toString(totalIssues);
+	}
 }

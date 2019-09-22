@@ -29,7 +29,7 @@ public class RepositoryService {
     private UserRepository userRepository;
 
 	public List<Repository> getRepositoriesFiltered(Search search) throws ServiceException, IOException {
-		return search.filter(this.getRepositories());
+		return gitService.filterBy(search);
 	}
 
     public List<Repository> getRepositories() throws IOException {

@@ -10,14 +10,14 @@ import com.tacs.ResstApp.model.filters.Filter;
 import com.tacs.ResstApp.model.filters.IssuesFilter;
 import com.tacs.ResstApp.model.filters.LanguageFilter;
 import com.tacs.ResstApp.model.filters.ScoreFilter;
-import com.tacs.ResstApp.model.filters.SubscribersFilter;
+import com.tacs.ResstApp.model.filters.StarsFilter;
 
 public class Search {
     private CommitsFilter commitsFilters;
     private IssuesFilter issuesFilters;
     private LanguageFilter languageFilters;
     private ScoreFilter scoreFilters;
-    private SubscribersFilter subscribersFilters;
+    private StarsFilter starsFilters;
 
     public CommitsFilter getCommitsFilters() {
     	return commitsFilters;
@@ -51,12 +51,12 @@ public class Search {
     	this.scoreFilters = scoreFilters;
     }
     
-    public SubscribersFilter getSubscribersFilters() {
-    	return subscribersFilters;
+    public StarsFilter getStarsFilters() {
+    	return starsFilters;
     }
     
-    public void setSubscribersFilters(SubscribersFilter subscribersFilters) {
-    	this.subscribersFilters = subscribersFilters;
+    public void setStarsFilters(StarsFilter starsFilters) {
+    	this.starsFilters = starsFilters;
     }
 
 	public List<Repository> filter(List<Repository> repositories) {
@@ -70,8 +70,12 @@ public class Search {
 
 	private Stream<Filter> getFiltersAttributes() {
 		return Stream
-				.of(commitsFilters, issuesFilters, languageFilters, scoreFilters, subscribersFilters)
+				.of(commitsFilters, issuesFilters, languageFilters, scoreFilters, starsFilters)
 				.filter(Objects::nonNull);
+	}
+
+	public List<String> buildGitSearchQuery() {
+		return this.getFiltersAttributes().map(f -> f.getQueryProperty()).collect(Collectors.toList());
 	}
 
 }

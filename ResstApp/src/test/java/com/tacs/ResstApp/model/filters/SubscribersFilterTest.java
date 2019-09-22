@@ -10,11 +10,11 @@ import com.tacs.ResstApp.model.Repository;
 @SpringBootTest
 public class SubscribersFilterTest {
 	private static final int REFERENCE_SUBSCRIBER_VALUE = 10;
-	SubscribersFilter subscribersFilter = new SubscribersFilter();
+	StarsFilter subscribersFilter = new StarsFilter();
 	
 	@BeforeEach
 	public void before() {
-		subscribersFilter.setNofsubscribers(REFERENCE_SUBSCRIBER_VALUE);
+		subscribersFilter.setTotalStars(REFERENCE_SUBSCRIBER_VALUE);
 	}
 	
 	@Test

@@ -17,4 +17,10 @@ public class CommitsFilter implements Filter {
 	public boolean filter(Repository repository) {
 		return repository.getTotalCommits() >= this.getTotalCommits();
 	}
+
+	@Override
+	public String getQueryProperty() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
