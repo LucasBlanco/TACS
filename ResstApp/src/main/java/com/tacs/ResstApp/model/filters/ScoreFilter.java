@@ -17,4 +17,9 @@ public class ScoreFilter implements Filter {
 	public boolean filter(Repository repository) {
 		return repository.getScore() >= this.getRepositoryScore();
 	}
+
+	@Override
+	public String getQueryProperty() {
+		return "score:" + Double.toString(repositoryScore);
+	}
 }

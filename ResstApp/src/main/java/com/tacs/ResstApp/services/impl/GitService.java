@@ -11,6 +11,8 @@ import com.google.gson.JsonParser;
 import com.tacs.ResstApp.model.GitRepository;
 import com.tacs.ResstApp.model.GitUser;
 import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.model.Search;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
@@ -23,6 +25,8 @@ import org.springframework.stereotype.Component;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -77,18 +81,18 @@ public class GitService {
         Repository repo = parseRepository(result);
         repo.setOwner(username);
         return repo;
-
     }
 
 	public Repository parseRepository(String result) throws IOException {
 		JsonObject obj = new JsonParser().parse(result).getAsJsonObject();
         Repository repo = new Repository(obj.get("id").getAsLong(), obj.get("name").getAsString());
         repo.setMainLanguage(obj.get("language").isJsonNull()?null:obj.get("language").getAsString());
-        //TODO: Obtener este valor, "subscribers_count" no viene en la información del repositorio
-        //repo.setNofFaved(obj.get("subscribers_count").isJsonNull()?null:obj.get("subscribers_count").getAsInt());
-        repo.setScore(obj.get("stargazers_count").isJsonNull()?null:obj.get("stargazers_count").getAsDouble());
+        repo.setScore(obj.get("score").isJsonNull()?null:obj.get("score").getAsDouble());
         repo.setNofForks(obj.get("forks_count").isJsonNull()?null:obj.get("forks_count").getAsInt());
         repo.setTotalIssues(obj.get("open_issues_count").isJsonNull()?null:obj.get("open_issues_count").getAsInt());
+        repo.setStars(obj.get("stargazers_count").isJsonNull()?null:obj.get("stargazers_count").getAsInt());
+        String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        repo.setRegistrationDate(obj.get("created_at").isJsonNull() ?null:LocalDate.parse(obj.get("created_at").getAsString(), DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)));
         
         /*
         if (!obj.get("commits_url").isJsonNull()) {
@@ -99,7 +103,8 @@ public class GitService {
         
         List<String> languages = new ArrayList<String>();
         if (obj.get("languages_url") != null) {
-	        String resultLanguages = executeRequest(Request.Get(obj.get("languages_url").getAsString() + GithubOauthService.getAuthentication()));
+	        String languageUri = obj.get("languages_url").getAsString() + GithubOauthService.getAuthentication();
+			String resultLanguages = executeRequest(Request.Get(languageUri));
 	        JsonObject objLanguages = new JsonParser().parse(resultLanguages).getAsJsonObject();
 	        for(Map.Entry<String, JsonElement> entry : objLanguages.entrySet()) {
 	        	languages.add(entry.getKey());
@@ -115,4 +120,22 @@ public class GitService {
         HashMap<String, String> user = gson.fromJson(result, HashMap.class);
         return user.get("login");
     }
+
+	public List<Repository> filterBy(Search search) throws IOException {
+		List<String> queries = search.buildGitSearchQuery();
+		String uri = baseUrl + "/search/repositories?q=" + concatQueries(queries);
+		String executeRequest = this.executeRequest(Request.Get(uri));
+		JsonObject response = new JsonParser().parse(executeRequest).getAsJsonObject();
+		JsonArray items = response.get("items").getAsJsonArray();
+        List<Repository> repos = new ArrayList<Repository>();
+        for (JsonElement el : items) {
+            repos.add(parseRepository(el.toString()));
+        }
+        return repos;
+	}
+
+	private String concatQueries(List<String> queries) {
+		return String.join("+", queries);
+	}
+
 }
