@@ -37,6 +37,10 @@ public class RepositoryService {
     }
 
     public Repository getRepository(Repository repo) throws ServiceException, IOException {
+    	//Optional<Repository> repository =  repositoryRepository.findById(repo.getId());
+    	//if (repository.isPresent()) {
+    	//	return repository.get();
+    	//} else
     	return gitService.getRepositoryByUserRepo(repo.getOwner(), repo.getName());
     }
     
@@ -44,11 +48,12 @@ public class RepositoryService {
     	Optional<Repository> repo =  repositoryRepository.findById(repoId);
     	if (repo.isPresent()) {
     		return repo.get();
-    	} else throw new ServiceException("Repo does not exist ib database");
+    	} else throw new ServiceException("Repo does not exist in database");
     }
 
     public List<Repository> getRepositoriesBetween(LocalDate since, LocalDate to) throws ServiceException, IOException {
-        List<Repository> lista = gitService.getRepositories();
+        List<Repository> lista = repositoryRepository.findAll();
+        System.out.println(lista.size());
         return lista
                 .stream()
                 .filter(r -> r.getRegistrationDate().isAfter(since) && r.getRegistrationDate().isBefore(to))

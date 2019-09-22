@@ -34,9 +34,9 @@ public class GitRepositoryController {
     UserService userService;
 
     @GetMapping("/repositories/{user}/{repoName}")
-    public ResponseEntity<Object> getRepository(@PathVariable String username, @PathVariable String repoName){
+    public ResponseEntity<Object> getRepository(@PathVariable String user, @PathVariable String repoName){
         try {
-            return ResponseEntity.ok(repositoryService.getRepositoryByUserRepo(username, repoName));
+            return ResponseEntity.ok(repositoryService.getRepositoryByUserRepo(user, repoName));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());

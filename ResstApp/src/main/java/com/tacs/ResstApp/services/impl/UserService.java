@@ -72,7 +72,7 @@ public class UserService {
 		User user = getUser(userId);
 		Repository foundRepo = repositoryService.getRepository(gitRepository);
 		repositoryService.save(foundRepo);
-		user.getFavourites().add(foundRepo);
+		user.addFavourite(foundRepo);
 		userRepository.save(user);
 		return user.getFavourites();
 	}

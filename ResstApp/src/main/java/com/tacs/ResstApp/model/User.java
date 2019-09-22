@@ -61,6 +61,10 @@ public class User {
 	public void setLanguages(List<String> langs) {
 		this.languages = langs;
 	}
+	
+	public void addFavourite(Repository repo) {
+		this.favourites.add(repo);
+	}
 
 	public List<Repository> getFavourites() {
 		return favourites;
