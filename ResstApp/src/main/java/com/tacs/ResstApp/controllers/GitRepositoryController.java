@@ -1,16 +1,9 @@
 package com.tacs.ResstApp.controllers;
 
-import com.tacs.ResstApp.model.GitRepositoriesResponse;
-import com.tacs.ResstApp.model.Repository;
-import com.tacs.ResstApp.services.exceptions.ServiceException;
-import com.tacs.ResstApp.services.impl.RepositoryService;
-import com.tacs.ResstApp.services.impl.UserService;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import org.hibernate.annotations.MetaValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import com.tacs.ResstApp.model.GitRepositoriesResponse;
+import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.Search;
+import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.services.impl.RepositoryService;
+import com.tacs.ResstApp.services.impl.UserService;
 
 
 @RestController

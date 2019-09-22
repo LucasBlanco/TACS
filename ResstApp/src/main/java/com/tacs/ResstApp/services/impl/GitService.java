@@ -1,37 +1,30 @@
 package com.tacs.ResstApp.services.impl;
 
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static java.util.stream.Collectors.toList;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.util.EntityUtils;
+import org.springframework.stereotype.Component;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tacs.ResstApp.model.GitRepository;
-import com.tacs.ResstApp.model.GitUser;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.Search;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.client.fluent.Response;
-import org.apache.http.util.EntityUtils;
-import org.springframework.stereotype.Component;
-
-import static java.util.stream.Collectors.toList;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 @Component
@@ -79,7 +72,6 @@ public class GitService {
     public Repository getRepositoryByUserRepo(String username, String repoName) throws IOException {
     	System.out.println(baseUrl + "/repos/" + username + "/" + repoName);
         String result = executeRequest(Request.Get(baseUrl + "/repos/" + username + "/" + repoName + GithubOauthService.getAuthentication()));
-        System.out.println("holaaaa");
         Repository repo = parseRepository(result);
         repo.setOwner(username);
         return repo;
@@ -89,12 +81,11 @@ public class GitService {
 		JsonObject obj = new JsonParser().parse(result).getAsJsonObject();
         Repository repo = new Repository(obj.get("id").getAsLong(), obj.get("name").getAsString());
         repo.setMainLanguage(obj.get("language").isJsonNull()?null:obj.get("language").getAsString());
-        //repo.setScore(obj.get("score").isJsonNull()?null:obj.get("score").getAsDouble());
+        JsonElement score = obj.get("score");
+		repo.setScore(score == null?0:score.getAsDouble());
         repo.setNofForks(obj.get("forks_count").isJsonNull()?null:obj.get("forks_count").getAsInt());
         repo.setTotalIssues(obj.get("open_issues_count").isJsonNull()?null:obj.get("open_issues_count").getAsInt());
         repo.setStars(obj.get("stargazers_count").isJsonNull()?null:obj.get("stargazers_count").getAsInt());
-        //String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-        //repo.setRegistrationDate(obj.get("created_at").isJsonNull() ?null:LocalDate.parse(obj.get("created_at").getAsString(), DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)));
         
         /*
         if (!obj.get("commits_url").isJsonNull()) {

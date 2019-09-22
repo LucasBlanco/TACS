@@ -33,7 +33,7 @@ public class Repository {
 	
 	private Integer nofForks;
 
-	@Transient
+	@ElementCollection
 	private List<String> languages;
 
 	public Repository(Long id, String name) {

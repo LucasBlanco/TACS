@@ -2,7 +2,6 @@ package com.tacs.ResstApp.services.impl;
 
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,15 +25,10 @@ public class UserService {
 	@Autowired
 	private RepositoryService repositoryService;
 
-	private List<User> users = new ArrayList<User>();
-
 	@Autowired
 	private UserTokenService userTokenService;
 
-
-	//para mockear
-	public UserService() {
-    }
+	public UserService() {}
 
 	public User createUser(User newUser) throws ServiceException {
 	    if(userRepository.findByUsername(newUser.getUsername()).isPresent()){
@@ -70,8 +64,13 @@ public class UserService {
 
 	public List<Repository> addFavourite(Long userId, Repository gitRepository) throws ServiceException, IOException {
 		User user = getUser(userId);
-		Repository foundRepo = repositoryService.getRepository(gitRepository);
-		user.addFavourite(foundRepo);
+		Repository repoToAdd = repositoryService.getRepository(gitRepository);
+		if(hasRepository(user, repoToAdd)) {
+			throw new ServiceException("The repository " + repoToAdd.getName() + " was already in favourites");
+		}
+		repoToAdd.favved();
+		repositoryService.save(repoToAdd);
+		user.addFavourite(repoToAdd);
 		userRepository.save(user);
 		return user.getFavourites();
 	}
@@ -80,6 +79,8 @@ public class UserService {
 		User user = getUser(userId);
 		Repository repoToRemove = repositoryService.getRepositoryById(repoId);
 		if(hasRepository(user, repoToRemove)){
+			repoToRemove.unfavved();
+			repositoryService.save(repoToRemove);
 			user.deleteFavourite(repoToRemove);
 			userRepository.save(user);
 		} else {
