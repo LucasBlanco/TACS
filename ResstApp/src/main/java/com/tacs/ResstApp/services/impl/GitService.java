@@ -119,12 +119,15 @@ public class GitService {
 	}
 
 	private String createUrl(String resource) {
-		return baseUrl + resource + (resource.contains("?") ? "&" : "?") + "client_id=" + clientId + "&client_secret="
-				+ clientSecret;
+		return baseUrl + resource;
+	}
+	
+	private String authenticationTrailer(String resource) {
+		return (resource.contains("?") ? "&" : "?") + "client_id=" + clientId + "&client_secret=" + clientSecret;
 	}
 
 	private String executeGet(String url) throws IOException {
-		Request request = Request.Get(url);
+		Request request = Request.Get(url + authenticationTrailer(url));
 		HttpResponse response = request.execute().returnResponse();
 		StatusLine statusLine = response.getStatusLine();
 		if (statusLine.getStatusCode() == 403) {
