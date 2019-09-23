@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tacs.ResstApp.model.FavouritesResponse;
 import com.tacs.ResstApp.model.GitRepositoriesResponse;
+import com.tacs.ResstApp.model.PagedResponse;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
@@ -83,9 +84,9 @@ public class GitRepositoryController {
     }
     
     @GetMapping("/repositories/search")
-    public ResponseEntity<Object> getRepositoriesFiltered(Search search) {
+    public ResponseEntity<Object> getRepositoriesFiltered(Search search, @RequestParam(value="page", required = false) Integer page, @RequestParam(value="pageSize", required = false) Integer pageSize) {
     	try{
-    	    return ResponseEntity.ok(repositoryService.getRepositoriesFiltered(search));
+    	    return ResponseEntity.ok(new PagedResponse<Repository>(page, pageSize, repositoryService.getRepositoriesFiltered(search)));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.tacs.ResstApp.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import com.tacs.ResstApp.model.Repository;
@@ -24,6 +25,7 @@ public class RepositoryService {
     @Autowired
     private RepositoryRepository repositoryRepository;
 
+    @Cacheable("repos")
 	public List<Repository> getRepositoriesFiltered(Search search) throws ServiceException, IOException {
 		return gitService.filterBy(search);
 	}

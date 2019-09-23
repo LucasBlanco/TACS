@@ -1,12 +1,16 @@
 package com.tacs.ResstApp;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.tacs.ResstApp.filters.TokenFilter;
 
 @Configuration
+@EnableCaching
 public class AppConfig {
 	@Bean
 	public FilterRegistrationBean<TokenFilter> filterRegistrationBean() {
@@ -18,4 +22,9 @@ public class AppConfig {
 		registrationBean.setOrder(1);
 		return registrationBean;
 	}
+	
+	@Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager("repos");
+    }
 }
