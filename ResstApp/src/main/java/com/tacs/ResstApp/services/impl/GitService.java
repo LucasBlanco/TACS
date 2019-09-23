@@ -15,14 +15,11 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
-import org.springframework.stereotype.Component;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -33,8 +30,9 @@ import com.tacs.ResstApp.services.exceptions.GHRateLimitExceededException;
 
 @Component
 public class GitService {
-
-    private String baseUrl = "https://api.github.com";
+	
+	@Value("${github.baseUrl}")
+    private String baseUrl;
     private Gson gson = new Gson();
 	@Value("${github.clientId}")
 	private String clientId;
