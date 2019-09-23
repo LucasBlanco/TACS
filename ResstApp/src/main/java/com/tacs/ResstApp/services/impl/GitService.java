@@ -42,7 +42,7 @@ public class GitService {
 	private String clientSecret;
 
     public List<Repository> getRepositories() throws IOException {
-        String result = executeGet(baseUrl + "/user/repos");
+        String result = executeGet(createUrl("/user/repos"));
         GitRepository[] repos = gson.fromJson(result, GitRepository[].class);
         List<Repository> listaRepos = Arrays.stream(repos)
                 .map(repo -> new Repository(repo.getId(), repo.getName()))
@@ -52,7 +52,7 @@ public class GitService {
     }
 
     public List<Repository> getUserRepositories() throws IOException {
-        String result = executeGet(baseUrl + "/users/" + "tptacs" + "/repos");
+        String result = executeGet(createUrl("/users/" + "tptacs" + "/repos"));
         JsonArray objArray = new JsonParser().parse(result).getAsJsonArray();
         List<Repository> repos = new ArrayList<Repository>();
         for (JsonElement el : objArray) {
@@ -64,8 +64,7 @@ public class GitService {
     }
 
     public Repository getRepositoryByUserRepo(String username, String repoName) throws IOException {
-    	System.out.println(baseUrl + "/repos/" + username + "/" + repoName);
-        String result = executeGet(baseUrl + "/repos/" + username + "/" + repoName);
+        String result = executeGet(createUrl("/repos/" + username + "/" + repoName));
         Repository repo = parseRepository(result);
         repo.setOwner(username);
         return repo;
@@ -104,8 +103,8 @@ public class GitService {
 
 	public List<Repository> filterBy(Search search) throws IOException {
 		List<String> queries = search.buildGitSearchQuery();
-		String uri = baseUrl + "/search/repositories?q=" + concatQueries(queries);
-		String executeRequest = this.executeGet(uri);
+		String uri = "/search/repositories?q=" + concatQueries(queries);
+		String executeRequest = this.executeGet(createUrl(uri));
 		JsonObject response = new JsonParser().parse(executeRequest).getAsJsonObject();
 		JsonArray items = response.get("items").getAsJsonArray();
         List<Repository> repos = new ArrayList<Repository>();
@@ -124,8 +123,8 @@ public class GitService {
 				+ clientSecret;
 	}
 
-	private String executeGet(String resource) throws IOException {
-		Request request = Request.Get(createUrl(resource));
+	private String executeGet(String url) throws IOException {
+		Request request = Request.Get(url);
 		HttpResponse response = request.execute().returnResponse();
 		StatusLine statusLine = response.getStatusLine();
 		if (statusLine.getStatusCode() == 403) {
@@ -141,7 +140,7 @@ public class GitService {
 	}
 
 	public List<Repository> getRepositories(String lastRepoId) throws IOException {
-		String result = executeGet("/repositories" + (lastRepoId == null ? "" : "?since=" + lastRepoId));
+		String result = executeGet(createUrl("/repositories" + (lastRepoId == null ? "" : "?since=" + lastRepoId)));
 		GitRepository[] repos = gson.fromJson(result, GitRepository[].class);
 		List<Repository> listaRepos = Arrays.stream(repos).map(repo -> new Repository(repo.getId(), repo.getName()))
 				.collect(toList());
@@ -151,7 +150,7 @@ public class GitService {
 
 	public Repository getRepositoryById(String repoName) throws IOException {
 		String userName = "tptacs";
-		String result = executeGet("/repos/" + userName + "/" + repoName);
+		String result = executeGet(createUrl("/repos/" + userName + "/" + repoName));
 		Repository repo = parseRepository(result);
 		return repo;
 
