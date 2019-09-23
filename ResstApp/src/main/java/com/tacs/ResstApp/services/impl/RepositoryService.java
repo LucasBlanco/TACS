@@ -77,13 +77,16 @@ public class RepositoryService {
     }
 
     public List<Repository> getRepositoriesBetween(LocalDate since, LocalDate to) throws ServiceException, IOException {
-        List<Repository> lista = repositoryRepository.findAll();
         //List<Repository> lista = getRepositories(null); Es sobre nuestros repositorios
-        return lista
+        return findLocalRepositories()
                 .stream()
                 .filter(r -> r.getRegistrationDate().isAfter(since) && r.getRegistrationDate().isBefore(to))
                 .collect(Collectors.toList());
     }
+
+	public List<Repository> findLocalRepositories() {
+		return repositoryRepository.findAll();
+	}
 
 	public void save(Repository repository) {
 		repositoryRepository.save(repository);

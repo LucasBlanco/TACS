@@ -11,9 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.repositories.RepositoryRepository;
 import com.tacs.ResstApp.services.impl.GitService;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 
@@ -23,20 +25,21 @@ public class RepositoryServiceTest {
 	@InjectMocks
 	RepositoryService repositoryService = new RepositoryService();
 	@Mock
-	GitService gitService = new GitService();
+	RepositoryRepository repositoryRepository;
 
 	private List<Repository> repositories;
 	private Repository repository1 = new Repository(1L, "TACS");
 	private Repository repository2 = new Repository(2L, "TADP");
 	private LocalDate referenceTime = LocalDate.now();
-/*
+
 	@BeforeEach
 	public void before() throws Exception {
 		repository1.setRegistrationDate(referenceTime.minusDays(2));
 		repository2.setRegistrationDate(referenceTime.plusDays(2));
 		this.repositories = Arrays.asList(repository1, repository2);
-		Mockito.when(gitService.getRepositories()).thenReturn(this.repositories);
-	}*/
+		MockitoAnnotations.initMocks(this);
+		Mockito.when(repositoryRepository.findAll()).thenReturn(this.repositories);
+	}
 
 	@Test
     public void repositoryServiceDoesNotReturnAnyRepositoriesInOpenIntervalBetweenRepositories() throws Exception {

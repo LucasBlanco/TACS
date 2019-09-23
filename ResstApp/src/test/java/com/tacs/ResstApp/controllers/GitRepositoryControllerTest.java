@@ -39,23 +39,25 @@ class GitRepositoryControllerTest {
 	@Test
 	public void getRepositoryReturnsOneRepositorySuccessfully() throws Exception {
 		String repoName = "Repo";
-		Repository repository = new Repository(1L, "Repo 1");
-		Mockito.when(repositoryMockService.getUpdatedRepository(Mockito.anyString())).thenReturn(repository);
+		String userName = "User";
+		Repository repository = new Repository(1L, repoName);
+		Mockito.when(repositoryMockService.getRepositoryByUserRepo(Mockito.anyString(), Mockito.anyString())).thenReturn(repository);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
+		ResponseEntity<Object> response = gitRepositoryController.getRepository(userName, repoName);
 		Repository returnedRepo = (Repository) response.getBody();
 
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 		Assertions.assertEquals(1L, returnedRepo.getId());
-		Assertions.assertEquals(returnedRepo.getName(), "Repo 1");
+		Assertions.assertEquals(repoName, returnedRepo.getName());
 	}
 
 	@Test
 	public void getRepositoryReturnsUserError() throws Exception {
 		String repoName = "Repo";
-		Mockito.when(gitRepositoryController.getRepository(Mockito.anyString())).thenThrow(ServiceException.class);
+		String userName = "User";
+		Mockito.when(repositoryMockService.getRepositoryByUserRepo(Mockito.anyString(), Mockito.anyString())).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
+		ResponseEntity<Object> response = gitRepositoryController.getRepository(userName, repoName);
 		Repository returnedRepo = (Repository) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -65,9 +67,10 @@ class GitRepositoryControllerTest {
 	@Test
 	public void getRepositoryReturnsServiceError() throws Exception {
 		String repoName = "Repo";
-		Mockito.when(gitRepositoryController.getRepository(Mockito.anyString())).thenThrow(RuntimeException.class);
+		String userName = "User";
+		Mockito.when(repositoryMockService.getRepositoryByUserRepo(Mockito.anyString(), Mockito.anyString())).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
+		ResponseEntity<Object> response = gitRepositoryController.getRepository(userName, repoName);
 		Repository returnedRepo = (Repository) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());

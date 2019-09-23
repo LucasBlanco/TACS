@@ -284,9 +284,9 @@ class UserControllerTest {
 		repositories.add(repo1);
 		repositories.add(repo2);
 		repositories.add(repo3);
-		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any(String.class))).thenReturn(repositories);
+		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any(Repository.class))).thenReturn(repositories);
 
-		ResponseEntity<Object> response = userController.addFavourite(id, repo3.getName());
+		ResponseEntity<Object> response = userController.addFavourite(id, repo3);
 		List<Repository> favourites = (List) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -303,9 +303,9 @@ class UserControllerTest {
 	public void createFavouritesReturnsUserError() throws ServiceException, IOException {
 		Long id = 1L;
 		Repository repository = new Repository(3L, "repo 3");
-		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any(String.class))).thenThrow(ServiceException.class);
+		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any(Repository.class))).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = userController.addFavourite(id, repository.getName());
+		ResponseEntity<Object> response = userController.addFavourite(id, repository);
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		Assertions.assertNull(response.getBody());
@@ -315,9 +315,9 @@ class UserControllerTest {
 	public void createFavouritesReturnsServerError() throws ServiceException, IOException {
 		Long id = 1L;
 		Repository repository = new Repository(3L, "repo 3");
-		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any())).thenThrow(RuntimeException.class);
+		Mockito.when(userMockService.addFavourite(Mockito.anyLong(), Mockito.any(Repository.class))).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = userController.addFavourite(id, repository.getName());
+		ResponseEntity<Object> response = userController.addFavourite(id, Mockito.any(Repository.class));
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(response.getBody());
@@ -326,10 +326,9 @@ class UserControllerTest {
 	@Test
 	public void deleteFavouriteSuccessfully() throws Exception {
 		Long userId = 1L;
-		String repoName = "Repo";
-		Mockito.doNothing().when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.anyString());
+		Mockito.doNothing().when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.anyLong());
 
-		ResponseEntity<Object> response = userController.deleteFavourite(userId, repoName);
+		ResponseEntity<Object> response = userController.deleteFavourite(userId, 1L);
 
 		Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 		Assertions.assertEquals("Element from list of favourites deleted succesfully", response.getBody());
@@ -337,9 +336,9 @@ class UserControllerTest {
 
 	@Test
 	public void deleteFavouritesReturnsUserError() throws ServiceException, IOException {
-		Mockito.doThrow(ServiceException.class).when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.anyString());
+		Mockito.doThrow(ServiceException.class).when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.anyLong());
 
-		ResponseEntity<Object> response = userController.deleteFavourite(1L, "Repo");
+		ResponseEntity<Object> response = userController.deleteFavourite(1L, 1L);
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		Assertions.assertNull(response.getBody());
@@ -347,9 +346,9 @@ class UserControllerTest {
 
 	@Test
 	public void deleteFavouritesReturnsServerError() throws ServiceException, IOException {
-		Mockito.doThrow(RuntimeException.class).when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.anyString());
+		Mockito.doThrow(RuntimeException.class).when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.anyLong());
 
-		ResponseEntity<Object> response = userController.deleteFavourite(1L, "Repo");
+		ResponseEntity<Object> response = userController.deleteFavourite(1L, 1L);
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(response.getBody());
