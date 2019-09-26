@@ -7,10 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.tacs.ResstApp.model.FavouritesResponse;
 import com.tacs.ResstApp.model.GitRepositoriesResponse;
@@ -33,6 +30,7 @@ public class GitRepositoryController {
     @Autowired
     UserService userService;
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("repositories")
     public ResponseEntity<Object> getRepositories(@RequestParam(value="pageId", required = false) String pageId){
         try {
@@ -51,6 +49,7 @@ public class GitRepositoryController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/repositories/{user}/{repoName}")
 	public ResponseEntity<Object> getRepository(@PathVariable String user, @PathVariable String repoName){
         try {
@@ -64,6 +63,7 @@ public class GitRepositoryController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/repositoriesa")
     public ResponseEntity<Object> getRepositoryByDate(@RequestParam(value="pageId", required = false) String pageId, @RequestParam(value = "since", required = false) String since, @RequestParam(value = "to", required = false) String to, @RequestParam("start") int start, @RequestParam("limit") int limit){
         try {
@@ -82,7 +82,8 @@ public class GitRepositoryController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
         }
     }
-    
+
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/repositories/search")
     public ResponseEntity<Object> getRepositoriesFiltered(Search search, @RequestParam(value="page", required = false) Integer page, @RequestParam(value="pageSize", required = false) Integer pageSize) {
     	try{
