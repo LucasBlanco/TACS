@@ -127,10 +127,10 @@ public class UserController {
         }
     }
     
-    @DeleteMapping("/users/{userId}/favourites/{repoId}")
-    public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @PathVariable Long repoId){
+    @DeleteMapping("/users/{userId}/favourites")
+    public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @RequestBody Repository gitRepository){
         try {
-        	userService.deleteFavourite(userId, repoId);
+        	userService.deleteFavourite(userId, gitRepository);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Element from list of favourites deleted succesfully");
         }
         catch(ServiceException ex){
