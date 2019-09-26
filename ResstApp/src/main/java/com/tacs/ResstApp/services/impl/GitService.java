@@ -62,7 +62,8 @@ public class GitService {
     }
 
     public Repository getRepositoryByUserRepo(String username, String repoName) throws IOException {
-        String result = executeGet(createUrl("/repos/" + username + "/" + repoName));
+    	System.out.println(createUrl("/repos/" + username + "/" + repoName));
+    	String result = executeGet(createUrl("/repos/" + username + "/" + repoName));
         Repository repo = parseRepository(result);
         repo.setOwner(username);
         return repo;

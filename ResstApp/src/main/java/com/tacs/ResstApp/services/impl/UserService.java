@@ -2,6 +2,8 @@ package com.tacs.ResstApp.services.impl;
 
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -136,6 +138,8 @@ public class UserService {
 		User foundUser = this.getUserByUsername(user.getUsername());
 		if(foundUser.getPassword().equals(user.getPassword())){
 			String token = userTokenService.generateToken(foundUser);
+			user.setLastLoginDate(LocalDateTime.now());
+			userRepository.save(user);
 			System.out.println(token);
 			return token;
 		}
