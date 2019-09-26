@@ -18,12 +18,15 @@ import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.UserService;
+import com.tacs.ResstApp.services.impl.UserTokenService;
 
 @RestController
 public class UserController {
 	
     @Autowired
     UserService userService;
+    
+    UserTokenService tokenService;
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user){

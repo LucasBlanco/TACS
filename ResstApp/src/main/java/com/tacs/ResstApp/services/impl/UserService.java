@@ -145,4 +145,5 @@ public class UserService {
 		}
 		throw new ServiceException("Incorrect password");
 	}
+	
 }
