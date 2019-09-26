@@ -149,4 +149,5 @@ public class UserService {
 	public Long getUserId(User user) throws ServiceException {
 		return this.getUserByUsername(user.getUsername()).getId();
 	}
+	
 }
