@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.tacs.ResstApp.model.LoginResponse;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
@@ -24,7 +25,10 @@ public class UserController {
     public ResponseEntity<Object> login(@RequestBody User user){
         try{
             String generatedToken = userService.login(user);
-            return ResponseEntity.ok(generatedToken);
+            LoginResponse response = new LoginResponse();
+            response.setUserId(userService.getUserId(user));
+            response.setToken(generatedToken);
+            return ResponseEntity.ok(response);
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
