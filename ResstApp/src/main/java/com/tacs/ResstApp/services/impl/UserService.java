@@ -77,9 +77,9 @@ public class UserService {
 		return user.getFavourites();
 	}
 
-	public void deleteFavourite(Long userId, Long repoId) throws ServiceException, IOException {
+	public void deleteFavourite(Long userId, Repository gitRepository) throws ServiceException, IOException {
 		User user = getUser(userId);
-		Repository repoToRemove = repositoryService.getRepositoryById(repoId);
+		Repository repoToRemove = repositoryService.getRepositoryById(gitRepository.getId());
 		if(hasRepository(user, repoToRemove)){
 			repoToRemove.unfavved();
 			repositoryService.save(repoToRemove);
