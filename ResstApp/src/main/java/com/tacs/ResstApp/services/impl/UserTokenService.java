@@ -22,6 +22,22 @@ public class UserTokenService {
         tokenMap.put(token, user);
         return token;
     }
+    
+    public boolean validateLogged(String token) throws InvalidTokenException {
+    	if (!tokenMap.containsKey(token)) {
+    		return false;
+    	} else return true;
+    }
+    
+    public boolean validateAdmin(String token) throws InvalidTokenException {
+    	this.validateLogged(token);
+    	User user = tokenMap.get(token);
+    	if(!user.isAdmin()) {
+    		return false;
+    	} else return true;
+    }
+    
+    //public void validateUser()
 
     public void destroyToken(String token) {
         tokenMap.remove(token);
