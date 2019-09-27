@@ -64,7 +64,7 @@ public class GitRepositoryController {
         }
     }
 
-    @GetMapping("/repositoriesa")
+    @GetMapping("/favourites")
     public ResponseEntity<Object> getRepositoryByDate(@RequestParam(value="pageId", required = false) String pageId, @RequestParam(value = "since", required = false) String since, @RequestParam(value = "to", required = false) String to, @RequestParam("start") int start, @RequestParam("limit") int limit){
         try {
             DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
