@@ -50,7 +50,6 @@ class UserControllerTest {
 	@Test
 	public void loginSuccessfull() throws ServiceException {
 		User user = new User();
-		user.setId(1L);
 		user.setUsername("Pedro");
 		Mockito.when(userMockService.login(user)).thenReturn("token1");
 
@@ -59,7 +58,6 @@ class UserControllerTest {
 
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 		Assertions.assertEquals("token1", loginResponse.getToken());
-		Assertions.assertEquals(1L, loginResponse.getUserId());
 	}
 
 	@Test
