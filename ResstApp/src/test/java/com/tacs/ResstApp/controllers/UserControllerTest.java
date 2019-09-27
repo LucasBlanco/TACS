@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException.ServiceUnavailable;
 
 import com.tacs.ResstApp.model.ComparisonDTO;
+import com.tacs.ResstApp.model.LoginResponse;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
@@ -54,10 +55,11 @@ class UserControllerTest {
 		Mockito.when(userMockService.login(user)).thenReturn("token1");
 
 		ResponseEntity<Object> response = userController.login(user);
-		String token = (String) response.getBody();
+		LoginResponse loginResponse = (LoginResponse) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-		Assertions.assertEquals("token1", token);
+		Assertions.assertEquals("token1", loginResponse.getToken());
+		Assertions.assertEquals(1L, loginResponse.getUserId());
 	}
 
 	@Test
