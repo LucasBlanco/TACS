@@ -1,32 +1,35 @@
 package com.tacs.ResstApp.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.tacs.ResstApp.repositories.UserRepository;
-import com.tacs.ResstApp.services.exceptions.ServiceException;
-import com.tacs.ResstApp.services.impl.RepositoryService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.tacs.ResstApp.model.ComparisonDTO;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
+import com.tacs.ResstApp.repositories.UserRepository;
+import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class UserServiceTest {
@@ -60,8 +63,10 @@ public class UserServiceTest {
 		repo4 = new Repository(4L, "repo 4");
 		//repo2.setLanguages(Stream.of("C", "JAVA").collect(Collectors.toCollection(ArrayList::new)));
 		//repo3.setLanguages(Stream.of("PYTHON", "C").collect(Collectors.toCollection(ArrayList::new)));
+		repo1.setMainLanguage("C");
 		repo2.setMainLanguage("Java");
 		repo3.setMainLanguage("Java");
+		repo4.setMainLanguage("Python");
 		user1 = new User();
 		user2 = new User();
 		user3 = new User();
@@ -84,6 +89,7 @@ public class UserServiceTest {
 	public void compareFavourites() throws Exception {
 		when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
         when(userRepository.findById(userId2)).thenReturn(Optional.of(user2));
+        when(repositoryService.getRepository(any(Repository.class))).then(returnsFirstArg());
 		ComparisonDTO favouritesComparison = userService.getFavouritesComparison(userId1, userId2);
 		Assertions.assertEquals(2, favouritesComparison.getCommonRepositories().size());
 		Assertions.assertEquals(1, favouritesComparison.getCommonLanguages().size());
@@ -93,9 +99,10 @@ public class UserServiceTest {
 	public void compareFavouritesWithEmptyUserList() throws Exception {
         when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
         when(userRepository.findById(userId3)).thenReturn(Optional.of(user3));
+        when(repositoryService.getRepository(any(Repository.class))).then(returnsFirstArg());
 		ComparisonDTO favouritesComparison = userService.getFavouritesComparison(userId1, userId3);
-		Assertions.assertEquals(0, favouritesComparison.getCommonRepositories().size());
-		Assertions.assertEquals(0, favouritesComparison.getCommonLanguages().size());
+		assertThat(favouritesComparison.getCommonRepositories()).isEmpty();
+		assertThat(favouritesComparison.getCommonLanguages()).isEmpty();
 	}
 
 	@Test
@@ -105,7 +112,7 @@ public class UserServiceTest {
 		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 		when(repositoryService.getRepository(any())).thenReturn(repository);
 
-		userService.addFavourite(user.getId(),"Third repo");
+		userService.addFavourite(user.getId(), repository);
 
 		assertThat(user.getFavourites().size()).isEqualTo(3);
 		verify(userRepository, times(1)).save(user);
@@ -115,7 +122,7 @@ public class UserServiceTest {
     public void addRepoToFavouritesThrowserrorBecauseUserDoesNotExist() throws ServiceException {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Throwable thrown = catchThrowable(() -> { userService.addFavourite(1L,"repo"); });
+        Throwable thrown = catchThrowable(() -> { userService.addFavourite(1L, repo1); });
 
         assertThat(thrown).isInstanceOf(ServiceException.class)
                 .hasMessageContaining("User does not exist");
@@ -126,10 +133,10 @@ public class UserServiceTest {
         User user = getUserWithFavourites();
         Repository repositoryToRemove = new Repository(3L, "Third repo");
         user.getFavourites().add(repositoryToRemove);
-        when(userRepository.findById(user.getId())).thenReturn(java.util.Optional.of(user));
-        when(repositoryService.getRepository("repo 2")).thenReturn(repositoryToRemove);
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(repositoryService.getRepositoryById(repositoryToRemove.getId())).thenReturn(repositoryToRemove);
 
-        userService.deleteFavourite(user.getId(),"repo 2");
+        userService.deleteFavourite(user.getId(), repositoryToRemove.getId());
 
         assertThat(user.getFavourites().size()).isEqualTo(2);
         verify(userRepository, times(1)).save(user);
@@ -138,9 +145,9 @@ public class UserServiceTest {
     @Test
     public void removeRepoFromFavouritesThrowserrorBecauseRepoDoesNotExist() throws ServiceException, IOException {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(getUserWithFavourites()));
-        when(repositoryService.getRepository("repo 2")).thenThrow(ServiceException.class);
+        when(repositoryService.getRepositoryById(repo2.getId())).thenThrow(ServiceException.class);
 
-        Throwable thrown = catchThrowable(() -> { userService.deleteFavourite(3L,"repo 2"); });
+        Throwable thrown = catchThrowable(() -> { userService.deleteFavourite(3L, repo2.getId()); });
 
         assertThat(thrown).isInstanceOf(ServiceException.class);
     }
@@ -148,9 +155,9 @@ public class UserServiceTest {
     @Test
     public void removeRepoFromFavouritesThrowserrorUserDoesNotHaveRepoInFavouritest() throws ServiceException, IOException {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(getUserWithFavourites()));
-        when(repositoryService.getRepository("repo 2")).thenReturn(new Repository(4L,""));
+        when(repositoryService.getRepositoryById(repo2.getId())).thenReturn(new Repository(4L,""));
 
-        Throwable thrown = catchThrowable(() -> { userService.deleteFavourite(3L,"repo 2"); });
+        Throwable thrown = catchThrowable(() -> { userService.deleteFavourite(3L, repo2.getId()); });
 
         assertThat(thrown).isInstanceOf(ServiceException.class)
                 .hasMessageContaining("User does not have repository in favourites");

@@ -2,7 +2,6 @@ package com.tacs.ResstApp.services.impl;
 
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,15 +25,10 @@ public class UserService {
 	@Autowired
 	private RepositoryService repositoryService;
 
-	private List<User> users = new ArrayList<User>();
-
 	@Autowired
 	private UserTokenService userTokenService;
 
-
-	//para mockear
-	public UserService() {
-    }
+	public UserService() {}
 
 	public User createUser(User newUser) throws ServiceException {
 	    if(userRepository.findByUsername(newUser.getUsername()).isPresent()){
@@ -64,33 +58,34 @@ public class UserService {
 		throw new ServiceException("User does not exist");
 	}
 
-	public List<Repository> getUserFavouriteRepos(Long id) throws ServiceException {
-		return getUser(id).getFavourites();
+	public List<Repository> getUserFavouriteRepos(Long userId) throws ServiceException {
+		return getUser(userId).getFavourites();
 	}
 
-	public List<Repository> addFavourite(Long userId, String repoId) throws ServiceException, IOException {
+	public List<Repository> addFavourite(Long userId, Repository gitRepository) throws ServiceException, IOException {
 		User user = getUser(userId);
-		Repository repository = repositoryService.getRepository(repoId);
-		repositoryService.save(repository);
-		user.getFavourites().add(repository);
+		Repository repoToAdd = repositoryService.getRepository(gitRepository);
+		if(hasRepository(user, repoToAdd)) {
+			throw new ServiceException("The repository " + repoToAdd.getName() + " was already in favourites");
+		}
+		repoToAdd.favved();
+		repositoryService.save(repoToAdd);
+		user.addFavourite(repoToAdd);
 		userRepository.save(user);
 		return user.getFavourites();
 	}
 
-	public void deleteFavourite(Long userId, String repoName) throws ServiceException, IOException {
+	public void deleteFavourite(Long userId, Long repoId) throws ServiceException, IOException {
 		User user = getUser(userId);
-		Repository repoToRemove = repositoryService.getRepository(repoName);
-
+		Repository repoToRemove = repositoryService.getRepositoryById(repoId);
 		if(hasRepository(user, repoToRemove)){
-			deleteFavourite(user, repoToRemove);
+			repoToRemove.unfavved();
+			repositoryService.save(repoToRemove);
+			user.deleteFavourite(repoToRemove);
 			userRepository.save(user);
 		} else {
 			throw new ServiceException("User does not have repository in favourites");
 		}
-	}
-
-	private void deleteFavourite(User user, Repository repoToRemove) {
-		user.getFavourites().removeIf(f -> sameRepositories(repoToRemove, f));
 	}
 
 	private boolean sameRepositories(Repository repo, Repository anotherRepo) {
@@ -124,9 +119,9 @@ public class UserService {
 		List<Repository> repositoriesWithNoData = user.getFavourites();
 		List<Repository> repositoriesWithData = new ArrayList<>();
 
-		repositoriesWithData.forEach(repo -> {
+		repositoriesWithNoData.forEach(repo -> {
 			try {
-				repositoriesWithData.add(repositoryService.getRepository(repo.getName()));
+				repositoriesWithData.add(repositoryService.getRepository(repo));
 			} catch (ServiceException | IOException e) {
 				//Queria que quede la excepcion lanzada pero no me deja :(
 			}

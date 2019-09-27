@@ -127,10 +127,10 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			<plugin>
+			<!--plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
+			</plugin-->
 
 <plugin>
     <groupId>org.eluder.coveralls</groupId>

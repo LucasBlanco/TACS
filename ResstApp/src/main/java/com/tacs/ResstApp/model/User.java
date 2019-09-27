@@ -9,13 +9,15 @@ import java.util.List;
 public class User {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private String username;
 
 	private String password;
 
+	private boolean admin;
+	
 	@ManyToMany
 	private List<Repository> favourites = new ArrayList<>();
 	
@@ -61,6 +63,14 @@ public class User {
 	public void setLanguages(List<String> langs) {
 		this.languages = langs;
 	}
+	
+	public void addFavourite(Repository repo) {
+		this.favourites.add(repo);
+	}
+	
+	public void deleteFavourite(Repository repo) {
+		this.favourites.removeIf(f -> f.getId().equals(repo.getId()));
+	}
 
 	public List<Repository> getFavourites() {
 		return favourites;
@@ -81,4 +91,16 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+
+	public boolean isAdmin() {
+		return admin;
+	}
+
+
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
+	}
+	
+	
 }

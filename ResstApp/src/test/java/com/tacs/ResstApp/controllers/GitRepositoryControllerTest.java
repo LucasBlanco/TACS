@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.tacs.ResstApp.model.GitRepositoriesResponse;
+import com.tacs.ResstApp.model.PagedResponse;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
@@ -39,23 +40,25 @@ class GitRepositoryControllerTest {
 	@Test
 	public void getRepositoryReturnsOneRepositorySuccessfully() throws Exception {
 		String repoName = "Repo";
-		Repository repository = new Repository(1L, "Repo 1");
-		Mockito.when(repositoryMockService.getUpdatedRepository(Mockito.anyString())).thenReturn(repository);
+		String userName = "User";
+		Repository repository = new Repository(1L, repoName);
+		Mockito.when(repositoryMockService.getRepositoryByUserRepo(Mockito.anyString(), Mockito.anyString())).thenReturn(repository);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
+		ResponseEntity<Object> response = gitRepositoryController.getRepository(userName, repoName);
 		Repository returnedRepo = (Repository) response.getBody();
 
-		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 		Assertions.assertEquals(1L, returnedRepo.getId());
-		Assertions.assertEquals(returnedRepo.getName(), "Repo 1");
+		Assertions.assertEquals(repoName, returnedRepo.getName());
 	}
 
 	@Test
 	public void getRepositoryReturnsUserError() throws Exception {
 		String repoName = "Repo";
-		Mockito.when(gitRepositoryController.getRepository(Mockito.anyString())).thenThrow(ServiceException.class);
+		String userName = "User";
+		Mockito.when(repositoryMockService.getRepositoryByUserRepo(Mockito.anyString(), Mockito.anyString())).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
+		ResponseEntity<Object> response = gitRepositoryController.getRepository(userName, repoName);
 		Repository returnedRepo = (Repository) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -65,15 +68,16 @@ class GitRepositoryControllerTest {
 	@Test
 	public void getRepositoryReturnsServiceError() throws Exception {
 		String repoName = "Repo";
-		Mockito.when(gitRepositoryController.getRepository(Mockito.anyString())).thenThrow(RuntimeException.class);
+		String userName = "User";
+		Mockito.when(repositoryMockService.getRepositoryByUserRepo(Mockito.anyString(), Mockito.anyString())).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepository(repoName);
+		ResponseEntity<Object> response = gitRepositoryController.getRepository(userName, repoName);
 		Repository returnedRepo = (Repository) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(returnedRepo);
 	}
-
+/*
 	@Test
 	public void getRepositoriesReturns3RepositoriesSuccessfully() throws Exception {
 		Repository repo1 = new Repository(1L, "repo 1");
@@ -123,7 +127,7 @@ class GitRepositoryControllerTest {
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(returnedRepos);
-	}
+	}*/
 	
 	@Test
 	public void getRepositoriesFilteredReturnsCorrectRepositories() throws Exception {
@@ -133,8 +137,8 @@ class GitRepositoryControllerTest {
 		Search search = new Search();
 		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(search);
-		List<Repository> returnedRepos = (List) response.getBody();
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(search, null, null);
+		List<Repository> returnedRepos = ((PagedResponse<Repository>) response.getBody()).getList();
 
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 		Assertions.assertEquals(3, returnedRepos.size());
@@ -150,8 +154,8 @@ class GitRepositoryControllerTest {
 	public void getRepositoriesFilteredReturnsUserError() throws Exception {
 		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(new Search());
-		List<Repository> returnedRepos = (List) response.getBody();
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(new Search(), null, null);
+		PagedResponse<Repository> returnedRepos = (PagedResponse<Repository>) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		Assertions.assertNull(returnedRepos);
@@ -161,12 +165,32 @@ class GitRepositoryControllerTest {
 	public void getRepositoriesFilteredReturnsServerError() throws Exception {
 		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(new Search());
-		List<Repository> returnedRepos = (List) response.getBody();
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(new Search(), null, null);
+		PagedResponse<Repository> returnedRepos = (PagedResponse<Repository>) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(returnedRepos);
 	}
 
+	@Test
+	public void getRepositoriesFilteredReturnsCorrectRepositoriesPaged() throws Exception {
+		Repository repo1 = new Repository(1L, "repo 1");
+		Repository repo2 = new Repository(2L, "repo 2");
+		Repository repo3 = new Repository(3L, "repo 3");
+		Repository repo4 = new Repository(4L, "repo 4");
+		Repository repo5 = new Repository(5L, "repo 5");
+		Search search = new Search();
+		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3, repo4, repo5)));
+
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(search, 2, 2);
+		List<Repository> returnedRepos = ((PagedResponse<Repository>) response.getBody()).getList();
+
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+		Assertions.assertEquals(2, returnedRepos.size());
+		Assertions.assertEquals(3L, returnedRepos.get(0).getId());
+		Assertions.assertEquals("repo 3", returnedRepos.get(0).getName());
+		Assertions.assertEquals(4L, returnedRepos.get(1).getId());
+		Assertions.assertEquals("repo 4", returnedRepos.get(1).getName());
+	}
 
 }

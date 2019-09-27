@@ -1,6 +1,8 @@
 package com.tacs.ResstApp.services.impl;
 
 import com.tacs.ResstApp.model.User;
+import com.tacs.ResstApp.services.exceptions.InvalidTokenException;
+
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
@@ -9,16 +11,15 @@ import java.util.HashMap;
 @Component
 public class UserTokenService {
 
-    //Long es el id de usuario y string su token
-    private HashMap<String, Long> tokenMap = new HashMap<>();
+    //Usuario y string su token
+    private HashMap<String, User> tokenMap = new HashMap<>();
 
     public String generateToken(User user){
         SecureRandom random = new SecureRandom();
         byte bytes[] = new byte[20];
         random.nextBytes(bytes);
         String token = bytes.toString();
-        tokenMap.put(token, user.getId());
-
+        tokenMap.put(token, user);
         return token;
     }
 
@@ -26,7 +27,15 @@ public class UserTokenService {
         tokenMap.remove(token);
     }
 
-    public HashMap<String, Long> getTokenMap() {
+    public HashMap<String, User> getTokenMap() {
         return tokenMap;
+    }
+    
+    public User getUser(String token) throws InvalidTokenException {
+    	if (!tokenMap.containsKey(token)) {
+    		throw new InvalidTokenException(token);
+    	}
+    		
+    	return tokenMap.get(token);
     }
 }

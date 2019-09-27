@@ -3,20 +3,20 @@ package com.tacs.ResstApp.model;
 import java.util.List;
 
 public class GitRepositoriesResponse{
-    private Integer totalAmount;
+    private String nextPageId;
     private List<Repository> repositories;
 
-    public GitRepositoriesResponse(Integer size, List<Repository> repositories){
-        this.totalAmount = size;
+    public GitRepositoriesResponse(List<Repository> repositories, String nextPageId){
         this.repositories = repositories;
+        this.nextPageId = String.format("/repositories?pageId=%s", nextPageId);
     }
 
-    public Integer getTotalAmount() {
-        return totalAmount;
+    public String getNextPageId() {
+        return nextPageId;
     }
 
-    public void setTotalAmount(Integer totalAmount) {
-        this.totalAmount = totalAmount;
+    public void setNextPageId(String nextPageId) {
+        this.nextPageId = nextPageId;
     }
 
     public List<Repository> getRepositories() {

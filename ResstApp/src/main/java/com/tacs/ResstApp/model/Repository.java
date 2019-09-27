@@ -12,14 +12,14 @@ public class Repository {
 	@Id
 	private Long id;
 
-	@Transient
 	private String name;
 
-	@Transient
 	private LocalDate registrationDate;
 
 	@Transient
 	private int stars;
+	
+	private String owner;
 
 	private int favs;
 	
@@ -33,13 +33,12 @@ public class Repository {
 	
 	private Integer nofForks;
 
-	@Transient
+	@ElementCollection
 	private List<String> languages;
 
 	public Repository(Long id, String name) {
 		this.id = id;
 		this.name = name;
-		this.registrationDate = LocalDate.now();
 	}
 
 	public Repository() {}
@@ -95,6 +94,16 @@ public class Repository {
 	public void setMainLanguage(String mainLanguage) {
 		this.mainLanguage = mainLanguage;
 	}
+	
+	
+	public String getOwner() {
+		return owner;
+	}
+
+	@JsonProperty("owner")
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
 
 	@JsonProperty("issues")
 	public Integer getTotalIssues() {
@@ -141,5 +150,13 @@ public class Repository {
 
 	public void setFavs(int favs) {
 		this.favs = favs;
+	}
+	
+	public void favved() {
+		this.favs++;
+	}
+	
+	public void unfavved() {
+		this.favs--;
 	}
 }

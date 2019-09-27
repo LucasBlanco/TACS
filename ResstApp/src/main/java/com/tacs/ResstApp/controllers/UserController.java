@@ -6,13 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
@@ -21,10 +15,11 @@ import com.tacs.ResstApp.services.impl.UserService;
 
 @RestController
 public class UserController {
-
+	
     @Autowired
     UserService userService;
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user){
         try{
@@ -40,8 +35,9 @@ public class UserController {
 
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/logout")
-    public ResponseEntity logout(@RequestBody String token){
+    public ResponseEntity<Object> logout(@RequestBody String token){
         try{
             userService.logout(token);
             HttpHeaders httpHeaders = new HttpHeaders();
@@ -57,6 +53,7 @@ public class UserController {
 
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/users")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
         try {
@@ -82,11 +79,12 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<Object> getUserById(@PathVariable Long id){
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<Object> getUserById(@PathVariable Long userId){
         try {
-            User user = userService.getUser(id);
-            userService.updateUser(user);
+            User user = userService.getUser(userId);
+            userService.updateUser(user); //pa mi no va
             return ResponseEntity.ok(user);
         }
         catch(ServiceException ex){
@@ -97,10 +95,11 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/{id}/favourites")
-    public ResponseEntity<Object> getFavourites(@PathVariable Long id){
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/users/{userId}/favourites")
+    public ResponseEntity<Object> getFavourites(@PathVariable Long userId){
         try {
-            return ResponseEntity.ok(userService.getUserFavouriteRepos(id));
+            return ResponseEntity.ok(userService.getUserFavouriteRepos(userId));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -110,10 +109,11 @@ public class UserController {
         }
     }
 
-    @PostMapping("/users/{id}/favourites")
-    public ResponseEntity<Object> addFavourite(@PathVariable Long id, @RequestBody String repoId){
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/users/{userId}/favourites")
+    public ResponseEntity<Object> addFavourite(@PathVariable Long userId, @RequestBody Repository gitRepository){
         try{
-            List<Repository> favourites = userService.addFavourite(id, repoId);
+            List<Repository> favourites = userService.addFavourite(userId, gitRepository); //LLEGA CON ID el repo
             return ResponseEntity.status(HttpStatus.CREATED).body(favourites);
         }
         catch(ServiceException ex){
@@ -123,11 +123,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
-    
-    @DeleteMapping("/users/{userId}/favourites/{repoName}")
-    public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @PathVariable String repoName){
-        try{
-            userService.deleteFavourite(userId, repoName);
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @DeleteMapping("/users/{userId}/favourites/{repoId}")
+    public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @PathVariable Long repoId){
+        try {
+        	userService.deleteFavourite(userId, repoId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Element from list of favourites deleted succesfully");
         }
         catch(ServiceException ex){
@@ -138,7 +139,7 @@ public class UserController {
         }
     }
 
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/comparison/favourites")
     public ResponseEntity<Object> compareFavourites(@RequestParam("id1") Long id1, @RequestParam("id2") Long id2){
         try{
