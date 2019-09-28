@@ -181,10 +181,10 @@ class GitRepositoryControllerTest {
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
 		Search search = new Search();
-		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class), Mockito.anyString())).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(search, null, null);
-		List<Repository> returnedRepos = ((PagedResponse<Repository>) response.getBody()).getList();
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(search, "");
+		List<Repository> returnedRepos = ((GitRepositoriesResponse) response.getBody()).getRepositories();
 
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 		Assertions.assertEquals(3, returnedRepos.size());
@@ -198,10 +198,10 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoriesFilteredReturnsUserError() throws Exception {
-		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenThrow(ServiceException.class);
+		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class), Mockito.anyString())).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(new Search(), null, null);
-		PagedResponse<Repository> returnedRepos = (PagedResponse<Repository>) response.getBody();
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(new Search(), "");
+		GitRepositoriesResponse returnedRepos = (GitRepositoriesResponse) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		Assertions.assertNull(returnedRepos);
@@ -209,34 +209,13 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoriesFilteredReturnsServerError() throws Exception {
-		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenThrow(RuntimeException.class);
+		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class), Mockito.anyString())).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(new Search(), null, null);
-		PagedResponse<Repository> returnedRepos = (PagedResponse<Repository>) response.getBody();
+		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(new Search(), "");
+		GitRepositoriesResponse returnedRepos = (GitRepositoriesResponse) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(returnedRepos);
 	}
-
-	@Test
-	public void getRepositoriesFilteredReturnsCorrectRepositoriesPaged() throws Exception {
-		Repository repo1 = new Repository(1L, "repo 1");
-		Repository repo2 = new Repository(2L, "repo 2");
-		Repository repo3 = new Repository(3L, "repo 3");
-		Repository repo4 = new Repository(4L, "repo 4");
-		Repository repo5 = new Repository(5L, "repo 5");
-		Search search = new Search();
-		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class))).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3, repo4, repo5)));
-
-		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(search, 2, 2);
-		List<Repository> returnedRepos = ((PagedResponse<Repository>) response.getBody()).getList();
-
-		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-		Assertions.assertEquals(2, returnedRepos.size());
-		Assertions.assertEquals(3L, returnedRepos.get(0).getId());
-		Assertions.assertEquals("repo 3", returnedRepos.get(0).getName());
-		Assertions.assertEquals(4L, returnedRepos.get(1).getId());
-		Assertions.assertEquals("repo 4", returnedRepos.get(1).getName());
-	}
-
+	
 }

@@ -2,6 +2,7 @@ package com.tacs.ResstApp.services;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +47,7 @@ public class RepositoryServiceTest {
 		repository2.setRegistrationDate(referenceTime.plusDays(2));
 		repository1.setOwner("owner1");
 		repository2.setOwner("owner2");
-		this.repositories = Arrays.asList(repository1, repository2);
+		this.repositories = new ArrayList<>(Arrays.asList(repository1, repository2));
 		MockitoAnnotations.initMocks(this);
 		Mockito.when(repositoryRepository.findAll()).thenReturn(this.repositories);
 	}
@@ -157,7 +158,19 @@ public class RepositoryServiceTest {
 		Throwable thrown = catchThrowable(() -> { 	repositoryService.getRepositories(encryptedPage ); });
 		assertThat(thrown).isInstanceOf(ServiceException.class);
 	}
-
+	
+	@Test
+	public void repositoryServiceReturnsLastRepositoryIdFromListOfRepositories() throws IOException, ServiceException {
+		Repository lastRepo = new Repository(5L, "Last Repo");
+		repositories.add(lastRepo);
+		assertThat(repositoryService.getNextPageId(repositories)).isEqualTo(lastRepo.getId().toString());
+	}
+	
+	@Test
+	public void repositoryServiceReturnsNullIdFromEmptyListOfRepositories() throws IOException, ServiceException {
+		repositories.clear();
+		assertThat(repositoryService.getNextPageId(repositories)).isNull();
+	}
 	
 
 }

@@ -14,24 +14,7 @@ public class RequestProcessingInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		UserTokenService tokenService = new UserTokenService();
-		String url = request.getRequestURI();
-		System.out.println("la url es");
-		System.out.println(url);
-		switch (url) {
-		case "/login":
-			return true;
-		case "/logout":
-			return tokenService.validateLogged(request.getHeader("token"));
-		case "/users":
-			if (request.getMethod().equals("GET")) {
-				return tokenService.validateAdmin(request.getHeader("token"));
-			}
-			return true;
-		case "/users/**":
-		default:
-			return true;
-		}
+		return true;
 	}
 
 	@Override
