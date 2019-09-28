@@ -138,8 +138,8 @@ public class UserService {
 		User foundUser = this.getUserByUsername(user.getUsername());
 		if(foundUser.getPassword().equals(user.getPassword())){
 			String token = userTokenService.generateToken(foundUser);
-			user.setLastLoginDate(LocalDateTime.now());
-			userRepository.save(user);
+			foundUser.setLastLoginDate(LocalDateTime.now());
+			userRepository.save(foundUser);
 			System.out.println(token);
 			return token;
 		}
