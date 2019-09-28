@@ -147,7 +147,7 @@ public class UserServiceTest {
         Repository repositoryToRemove = new Repository(3L, "Third repo");
         user.getFavourites().add(repositoryToRemove);
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(repositoryService.getRepositoryById(repositoryToRemove.getId())).thenReturn(repositoryToRemove);
+        when(repositoryService.getRepositoryForDelete(repositoryToRemove.getId())).thenReturn(repositoryToRemove);
 
         userService.deleteFavourite(user.getId(), repositoryToRemove);
 
@@ -158,7 +158,7 @@ public class UserServiceTest {
     @Test
     public void removeRepoFromFavouritesThrowserrorBecauseRepoDoesNotExist() throws ServiceException, IOException {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(getUserWithFavourites()));
-        when(repositoryService.getRepositoryById(repo2.getId())).thenThrow(ServiceException.class);
+        when(repositoryService.getRepositoryForDelete(repo2.getId())).thenThrow(ServiceException.class);
 
         Throwable thrown = catchThrowable(() -> { userService.deleteFavourite(3L, repo2); });
 
@@ -168,7 +168,7 @@ public class UserServiceTest {
     @Test
     public void removeRepoFromFavouritesThrowserrorUserDoesNotHaveRepoInFavouritest() throws ServiceException, IOException {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(getUserWithFavourites()));
-        when(repositoryService.getRepositoryById(repo2.getId())).thenReturn(new Repository(4L,""));
+        when(repositoryService.getRepositoryForDelete(repo2.getId())).thenReturn(new Repository(4L,""));
 
         Throwable thrown = catchThrowable(() -> { userService.deleteFavourite(3L, repo2); });
 

@@ -130,8 +130,8 @@ public class Repository {
 	}
 
 	@JsonProperty("stargazers_count")
-	public void setStars(int noffaved) {
-		this.stars = noffaved;
+	public void setStars(int stars) {
+		this.stars = stars;
 	}
 
 	@JsonProperty("forks")
