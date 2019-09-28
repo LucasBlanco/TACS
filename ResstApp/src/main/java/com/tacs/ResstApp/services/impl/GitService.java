@@ -78,6 +78,7 @@ public class GitService {
         repo.setNofForks(obj.get("forks_count").isJsonNull()?null:obj.get("forks_count").getAsInt());
         repo.setTotalIssues(obj.get("open_issues_count").isJsonNull()?null:obj.get("open_issues_count").getAsInt());
         repo.setStars(obj.get("stargazers_count").isJsonNull()?null:obj.get("stargazers_count").getAsInt());
+        repo.setSize(obj.get("size").isJsonNull()?null:obj.get("size").getAsInt());
         
         /*
         if (!obj.get("commits_url").isJsonNull()) {
@@ -85,6 +86,8 @@ public class GitService {
 	        JsonArray objCommits = new JsonParser().parse(resultCommits).getAsJsonArray();
 	        repo.setTotalCommits(objCommits.size());
 	    }*/
+        
+        repo.setMainLanguage(obj.get("language").isJsonNull()?null:obj.get("language").getAsString());
         
         List<String> languages = new ArrayList<String>();
         if (obj.get("languages_url") != null) {
@@ -96,6 +99,9 @@ public class GitService {
 	        }
         }
         
+        JsonObject owner = obj.get("owner").isJsonNull() ? null : obj.get("owner").getAsJsonObject();        
+        repo.setOwner(owner.isJsonNull() ? null : owner.get("login").getAsString());        
+        
         repo.setLanguages(languages);
 		return repo;
 	}
@@ -103,6 +109,7 @@ public class GitService {
 	public List<Repository> filterBy(Search search) throws IOException {
 		List<String> queries = search.buildGitSearchQuery();
 		String uri = "/search/repositories?q=" + concatQueries(queries);
+		System.out.println(uri);
 		String executeRequest = this.executeGet(createUrl(uri));
 		JsonObject response = new JsonParser().parse(executeRequest).getAsJsonObject();
 		JsonArray items = response.get("items").getAsJsonArray();

@@ -1,9 +1,11 @@
 package com.tacs.ResstApp.model.filters;
 
-import com.tacs.ResstApp.model.Repository;
+public abstract class Filter {
+	public String getQueryProperty() {
+		return getPropertyName() + ":" + getValue();
+	}
 
-public interface Filter {
-	public boolean filter(Repository repository);
+	protected abstract String getValue();
 
-	public String getQueryProperty();
+	protected abstract String getPropertyName();
 }

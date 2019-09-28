@@ -32,6 +32,8 @@ public class Repository {
 	private Double score;
 	
 	private Integer nofForks;
+	
+	private Integer size;
 
 	@ElementCollection
 	private List<String> languages;
@@ -81,7 +83,6 @@ public class Repository {
 		return totalCommits;
 	}
 
-	@JsonProperty("size")
 	public void setTotalCommits(int totalCommits) {
 		this.totalCommits = totalCommits;
 	}
@@ -158,5 +159,14 @@ public class Repository {
 	
 	public void unfavved() {
 		this.favs--;
+	}
+
+	public Integer getSize() {
+		return size;
+	}
+
+	@JsonProperty("size")
+	public void setSize(Integer size) {
+		this.size = size;
 	}
 }
