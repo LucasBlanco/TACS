@@ -8,7 +8,7 @@ public class GitRepositoriesResponse{
 
     public GitRepositoriesResponse(List<Repository> repositories, String nextPageId){
         this.repositories = repositories;
-        this.nextPageId = String.format("/repositories?pageId=%s", nextPageId);
+        this.nextPageId = nextPageId;
     }
 
     public String getNextPageId() {

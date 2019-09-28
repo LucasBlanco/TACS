@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -17,6 +18,7 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -85,9 +87,9 @@ public class GitService {
 		return repo;
 	}
 
-	public List<Repository> filterBy(Search search) throws IOException {
+	public List<Repository> filterBy(Search search, String lastId) throws IOException {
 		List<String> queries = search.buildGitSearchQuery();
-		String uri = "/search/repositories?q=" + concatQueries(queries);
+		String uri = "/search/repositories?q=" + concatQueries(queries) + pageTrailer(lastId);
 		System.out.println(uri);
 		String executeRequest = this.executeGet(createUrl(uri));
 		JsonObject response = new JsonParser().parse(executeRequest).getAsJsonObject();
@@ -97,6 +99,11 @@ public class GitService {
             repos.add(parseRepository(el.toString()));
         }
         return repos;
+	}
+
+	private String pageTrailer(String lastId) {
+		Optional<String> lastIdOptional = Optional.ofNullable(lastId);
+		return lastIdOptional.isPresent() ? "&since=" + lastId : "";
 	}
 
 	private String concatQueries(List<String> queries) {

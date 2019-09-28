@@ -26,8 +26,8 @@ public class RepositoryService {
     private RepositoryRepository repositoryRepository;
 
     @Cacheable("repos")
-	public List<Repository> getRepositoriesFiltered(Search search) throws ServiceException, IOException {
-		return gitService.filterBy(search);
+	public List<Repository> getRepositoriesFiltered(Search search, String lastId) throws ServiceException, IOException {
+		return gitService.filterBy(search, lastId);
 	}
 
     public List<Repository> getRepositories(String pageId) throws ServiceException{
@@ -107,4 +107,13 @@ public class RepositoryService {
         }
 	    return repository;
     }
+
+	public String getNextPageId(List<Repository> repositories) {
+	    if(repositories.isEmpty()) {
+	    	return null;
+	    }
+		
+		Long nextId = repositories.get(repositories.size() - 1).getId();
+	    return nextId.toString();
+	}
 }

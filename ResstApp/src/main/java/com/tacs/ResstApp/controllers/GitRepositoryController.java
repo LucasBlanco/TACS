@@ -85,9 +85,10 @@ public class GitRepositoryController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/repositories/search")
-    public ResponseEntity<Object> getRepositoriesFiltered(Search search, @RequestParam(value="page", required = false) Integer page, @RequestParam(value="pageSize", required = false) Integer pageSize) {
+    public ResponseEntity<Object> getRepositoriesFiltered(Search search, @RequestParam(value="lastId", required = false) String lastId) {
     	try{
-    	    return ResponseEntity.ok(new PagedResponse<Repository>(page, pageSize, repositoryService.getRepositoriesFiltered(search)));
+    	    List<Repository> repositoriesFiltered = repositoryService.getRepositoriesFiltered(search, lastId);
+			return ResponseEntity.ok(new GitRepositoriesResponse(repositoriesFiltered, repositoryService.getNextPageId(repositoriesFiltered)));
         }
         catch(ServiceException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
