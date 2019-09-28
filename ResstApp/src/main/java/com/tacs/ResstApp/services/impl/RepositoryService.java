@@ -71,11 +71,13 @@ public class RepositoryService {
 		return re;
     }
     
-    public Repository getRepositoryById(Long repoId) throws ServiceException, IOException {
+    public Repository getRepositoryForDelete(Long repoId) throws ServiceException, IOException {
     	Optional<Repository> repo =  repositoryRepository.findById(repoId);
     	if (repo.isPresent()) {
     		return repo.get();
-    	} else throw new ServiceException("Repo does not exist in database");
+    	} else {
+    		throw new ServiceException("Repo does not exist in database");
+    	}
     }
 
     public List<Repository> getRepositoriesBetween(LocalDate since, LocalDate to) throws ServiceException, IOException {

@@ -39,28 +39,6 @@ public class GitService {
 	@Value("${github.clientSecret}")
 	private String clientSecret;
 
-    public List<Repository> getRepositories() throws IOException {
-        String result = executeGet(createUrl("/user/repos"));
-        GitRepository[] repos = gson.fromJson(result, GitRepository[].class);
-        List<Repository> listaRepos = Arrays.stream(repos)
-                .map(repo -> new Repository(repo.getId(), repo.getName()))
-                .collect(toList());
-        return listaRepos;
-
-    }
-
-    public List<Repository> getUserRepositories() throws IOException {
-        String result = executeGet(createUrl("/users/" + "tptacs" + "/repos"));
-        JsonArray objArray = new JsonParser().parse(result).getAsJsonArray();
-        List<Repository> repos = new ArrayList<Repository>();
-        for (JsonElement el : objArray) {
-            repos.add(parseRepository(el.toString()));
-        }
-        //List<Repository> repos = Arrays.stream(gson.fromJson(result, Repository[].class)).collect(toList());
-        return repos;
-
-    }
-
     public Repository getRepositoryByUserRepo(String username, String repoName) throws IOException {
     	System.out.println(createUrl("/repos/" + username + "/" + repoName));
     	String result = executeGet(createUrl("/repos/" + username + "/" + repoName));
@@ -74,10 +52,11 @@ public class GitService {
         Repository repo = new Repository(obj.get("id").getAsLong(), obj.get("name").getAsString());
         repo.setMainLanguage(obj.get("language").isJsonNull()?null:obj.get("language").getAsString());
         JsonElement score = obj.get("score");
-		repo.setScore(score == null?0:score.getAsDouble());
+		repo.setScore(score == null || score.isJsonNull()?0:Double.valueOf(score.getAsString()));
         repo.setNofForks(obj.get("forks_count").isJsonNull()?null:obj.get("forks_count").getAsInt());
         repo.setTotalIssues(obj.get("open_issues_count").isJsonNull()?null:obj.get("open_issues_count").getAsInt());
-        repo.setStars(obj.get("stargazers_count").isJsonNull()?null:obj.get("stargazers_count").getAsInt());
+        JsonElement stars = obj.get("stargazers_count");
+		repo.setStars(stars.isJsonNull()?0:stars.getAsInt());
         repo.setSize(obj.get("size").isJsonNull()?null:obj.get("size").getAsInt());
         
         /*
@@ -99,8 +78,8 @@ public class GitService {
 	        }
         }
         
-        JsonObject owner = obj.get("owner").isJsonNull() ? null : obj.get("owner").getAsJsonObject();        
-        repo.setOwner(owner.isJsonNull() ? null : owner.get("login").getAsString());        
+        JsonObject owner = obj.get("owner").isJsonNull() ? null : obj.get("owner").getAsJsonObject();
+        repo.setOwner(owner == null ? null : owner.get("login").getAsString());
         
         repo.setLanguages(languages);
 		return repo;
@@ -154,14 +133,6 @@ public class GitService {
 		List<Repository> listaRepos = Arrays.stream(repos).map(repo -> new Repository(repo.getId(), repo.getName()))
 				.collect(toList());
 		return listaRepos;
-
-	}
-
-	public Repository getRepositoryById(String repoName) throws IOException {
-		String userName = "tptacs";
-		String result = executeGet(createUrl("/repos/" + userName + "/" + repoName));
-		Repository repo = parseRepository(result);
-		return repo;
 
 	}
 

@@ -80,7 +80,7 @@ class GitRepositoryControllerTest {
 	}
 
 	@Test
-	public void getRepositoriesReturns3RepositoriesSuccessfully() throws Exception {
+	public void getRepositoriesByDateReturns3RepositoriesSuccessfully() throws Exception {
 		Repository repo1 = new Repository(1L, "repo 1");
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
@@ -108,7 +108,7 @@ class GitRepositoryControllerTest {
 	}
 	
 	@Test
-	public void getRepositoriesReturnsUserError() throws Exception {
+	public void getRepositoriesByDateReturnsUserError() throws Exception {
 		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDate.class),
 				Mockito.any(LocalDate.class))).thenThrow(ServiceException.class);
 
@@ -120,11 +120,55 @@ class GitRepositoryControllerTest {
 	}
 
 	@Test
-	public void getRepositoriesReturnsServerError() throws Exception {
+	public void getRepositoriesByDateReturnsServerError() throws Exception {
 		Mockito.when(repositoryMockService.getRepositoriesBetween(Mockito.any(LocalDate.class),
 				Mockito.any(LocalDate.class))).thenThrow(RuntimeException.class);
 
 		ResponseEntity<Object> response = gitRepositoryController.getRepositoryByDate("1", "2019-08-09", "2019-08-09", 0, 10);
+		FavouritesResponse body = (FavouritesResponse) response.getBody();
+
+		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
+		Assertions.assertNull(body);
+	}
+	
+	@Test
+	public void getRepositoriesReturns3RepositoriesSuccessfully() throws Exception {
+		Repository repo1 = new Repository(1L, "repo 1");
+		Repository repo2 = new Repository(2L, "repo 2");
+		Repository repo3 = new Repository(3L, "repo 3");
+		Mockito.when(repositoryMockService.getRepositories(Mockito.anyString()))
+			.thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+
+		ResponseEntity<Object> response = gitRepositoryController.getRepositories("0");
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+		GitRepositoriesResponse body = (GitRepositoriesResponse) response.getBody();
+		List<Repository> returnedRepos =  body.getRepositories();
+
+		Assertions.assertEquals(3, returnedRepos.size());
+		Assertions.assertEquals(1L, returnedRepos.get(0).getId());
+		Assertions.assertEquals("repo 1", returnedRepos.get(0).getName());
+		Assertions.assertEquals(2L, returnedRepos.get(1).getId());
+		Assertions.assertEquals("repo 2", returnedRepos.get(1).getName());
+		Assertions.assertEquals(3L, returnedRepos.get(2).getId());
+		Assertions.assertEquals("repo 3", returnedRepos.get(2).getName());
+	}
+	
+	@Test
+	public void getRepositoriesReturnsUserError() throws Exception {
+		Mockito.when(repositoryMockService.getRepositories(Mockito.anyString())).thenThrow(ServiceException.class);
+
+		ResponseEntity<Object> response = gitRepositoryController.getRepositories("1");
+		GitRepositoriesResponse body = (GitRepositoriesResponse) response.getBody();
+
+		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		Assertions.assertNull(body);
+	}
+
+	@Test
+	public void getRepositoriesReturnsServerError() throws Exception {
+		Mockito.when(repositoryMockService.getRepositories(Mockito.anyString())).thenThrow(RuntimeException.class);
+
+		ResponseEntity<Object> response = gitRepositoryController.getRepositories("1");
 		FavouritesResponse body = (FavouritesResponse) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
