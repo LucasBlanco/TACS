@@ -22,20 +22,5 @@ class SearchTest {
 		List<Repository> repositories = Arrays.asList(repo1, repo2, repo3);
 		Assertions.assertThat(search.filter(repositories)).containsExactly(repo1, repo2, repo3);
 	}
-	
-	@Test
-	public void aSearchOfRepositoriesByCommitsReturnsOnlyRepositoryWithLotsOfCommits() {
-		CommitsFilter commitsFilter = new CommitsFilter();
-		commitsFilter.setTotalCommits(50);
-		search.setCommitsFilters(commitsFilter);
-		Repository repoWithLotsOfCommits = new Repository(1L, "TACS");
-		repoWithLotsOfCommits.setTotalCommits(100);
-		Repository repoWithLittleCommits = new Repository(2L, "TADP");
-		repoWithLittleCommits.setTotalCommits(5);
-		Repository repoWithoutCommits = new Repository(3L, "GDD");
-		repoWithoutCommits.setTotalCommits(0);
-		List<Repository> repositories = Arrays.asList(repoWithLotsOfCommits, repoWithLittleCommits, repoWithoutCommits);
-		Assertions.assertThat(search.filter(repositories)).containsExactly(repoWithLotsOfCommits);
-	}
 */
 }
