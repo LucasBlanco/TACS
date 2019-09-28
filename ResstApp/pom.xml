@@ -186,6 +186,9 @@
 			<id>spring-milestones</id>
 			<name>Spring Milestones</name>
 			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</pluginRepository>
 		<pluginRepository>
 			<id>spring-snapshots</id>

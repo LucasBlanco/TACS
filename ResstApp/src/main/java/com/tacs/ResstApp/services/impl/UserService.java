@@ -2,6 +2,8 @@ package com.tacs.ResstApp.services.impl;
 
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,9 +77,9 @@ public class UserService {
 		return user.getFavourites();
 	}
 
-	public void deleteFavourite(Long userId, Long repoId) throws ServiceException, IOException {
+	public void deleteFavourite(Long userId, Repository gitRepository) throws ServiceException, IOException {
 		User user = getUser(userId);
-		Repository repoToRemove = repositoryService.getRepositoryById(repoId);
+		Repository repoToRemove = repositoryService.getRepositoryForDelete(gitRepository.getId());
 		if(hasRepository(user, repoToRemove)){
 			repoToRemove.unfavved();
 			repositoryService.save(repoToRemove);
@@ -136,6 +138,8 @@ public class UserService {
 		User foundUser = this.getUserByUsername(user.getUsername());
 		if(foundUser.getPassword().equals(user.getPassword())){
 			String token = userTokenService.generateToken(foundUser);
+			user.setLastLoginDate(LocalDateTime.now());
+			userRepository.save(user);
 			System.out.println(token);
 			return token;
 		}
@@ -145,4 +149,5 @@ public class UserService {
 	public Long getUserId(User user) throws ServiceException {
 		return this.getUserByUsername(user.getUsername()).getId();
 	}
+	
 }

@@ -13,12 +13,15 @@ import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.UserService;
+import com.tacs.ResstApp.services.impl.UserTokenService;
 
 @RestController
 public class UserController {
 	
     @Autowired
     UserService userService;
+    
+    UserTokenService tokenService;
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
@@ -129,10 +132,10 @@ public class UserController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping("/users/{userId}/favourites/{repoId}")
-    public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @PathVariable Long repoId){
+    @DeleteMapping("/users/{userId}/favourites")
+    public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @RequestBody Repository gitRepository){
         try {
-        	userService.deleteFavourite(userId, repoId);
+        	userService.deleteFavourite(userId, gitRepository);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Element from list of favourites deleted succesfully");
         }
         catch(ServiceException ex){

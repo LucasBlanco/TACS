@@ -5,72 +5,53 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.tacs.ResstApp.model.filters.CommitsFilter;
 import com.tacs.ResstApp.model.filters.Filter;
-import com.tacs.ResstApp.model.filters.IssuesFilter;
+import com.tacs.ResstApp.model.filters.ForksFilter;
 import com.tacs.ResstApp.model.filters.LanguageFilter;
-import com.tacs.ResstApp.model.filters.ScoreFilter;
+import com.tacs.ResstApp.model.filters.SizeFilter;
 import com.tacs.ResstApp.model.filters.StarsFilter;
 
 public class Search {
-    private CommitsFilter commitsFilters;
-    private IssuesFilter issuesFilters;
-    private LanguageFilter languageFilters;
-    private ScoreFilter scoreFilters;
-    private StarsFilter starsFilters;
+    private ForksFilter forksFilter;
+    private LanguageFilter languageFilter;
+    private SizeFilter sizeFilter;
+    private StarsFilter starsFilter;
 
-    public CommitsFilter getCommitsFilters() {
-    	return commitsFilters;
+    public ForksFilter getForksFilter() {
+    	return forksFilter;
     }
     
-    public void setCommitsFilters(CommitsFilter commitsFilters) {
-    	this.commitsFilters = commitsFilters;
+    public void setForksFilter(ForksFilter forksFilter) {
+    	this.forksFilter = forksFilter;
     }
     
-    public IssuesFilter getIssuesFilters() {
-    	return issuesFilters;
+    public LanguageFilter getLanguageFilter() {
+    	return languageFilter;
     }
     
-    public void setIssuesFilters(IssuesFilter issuesFilters) {
-    	this.issuesFilters = issuesFilters;
+    public void setLanguageFilter(LanguageFilter languageFilter) {
+    	this.languageFilter = languageFilter;
     }
     
-    public LanguageFilter getLanguageFilters() {
-    	return languageFilters;
+    public SizeFilter getSizeFilter() {
+    	return sizeFilter;
     }
     
-    public void setLanguageFilters(LanguageFilter languageFilters) {
-    	this.languageFilters = languageFilters;
+    public void setSizeFilter(SizeFilter sizeFilter) {
+    	this.sizeFilter = sizeFilter;
     }
     
-    public ScoreFilter getScoreFilters() {
-    	return scoreFilters;
+    public StarsFilter getStarsFilter() {
+    	return starsFilter;
     }
     
-    public void setScoreFilters(ScoreFilter scoreFilters) {
-    	this.scoreFilters = scoreFilters;
+    public void setStarsFilter(StarsFilter starsFilter) {
+    	this.starsFilter = starsFilter;
     }
-    
-    public StarsFilter getStarsFilters() {
-    	return starsFilters;
-    }
-    
-    public void setStarsFilters(StarsFilter starsFilters) {
-    	this.starsFilters = starsFilters;
-    }
-
-	public List<Repository> filter(List<Repository> repositories) {
-		return repositories.stream().filter(r -> validateByFilters(r)).collect(Collectors.toList());
-	}
-
-	private boolean validateByFilters(Repository repository) {
-		return this.getFiltersAttributes()
-				.allMatch(f -> f.filter(repository));
-	}
 
 	private Stream<Filter> getFiltersAttributes() {
 		return Stream
-				.of(commitsFilters, issuesFilters, languageFilters, scoreFilters, starsFilters)
+				.of(forksFilter, languageFilter, sizeFilter, starsFilter)
 				.filter(Objects::nonNull);
 	}
 
@@ -82,11 +63,10 @@ public class Search {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((commitsFilters == null) ? 0 : commitsFilters.hashCode());
-		result = prime * result + ((issuesFilters == null) ? 0 : issuesFilters.hashCode());
-		result = prime * result + ((languageFilters == null) ? 0 : languageFilters.hashCode());
-		result = prime * result + ((scoreFilters == null) ? 0 : scoreFilters.hashCode());
-		result = prime * result + ((starsFilters == null) ? 0 : starsFilters.hashCode());
+		result = prime * result + ((forksFilter == null) ? 0 : forksFilter.hashCode());
+		result = prime * result + ((languageFilter == null) ? 0 : languageFilter.hashCode());
+		result = prime * result + ((sizeFilter == null) ? 0 : sizeFilter.hashCode());
+		result = prime * result + ((starsFilter == null) ? 0 : starsFilter.hashCode());
 		return result;
 	}
 
@@ -99,30 +79,25 @@ public class Search {
 		if (getClass() != obj.getClass())
 			return false;
 		Search other = (Search) obj;
-		if (commitsFilters == null) {
-			if (other.commitsFilters != null)
+		if (forksFilter == null) {
+			if (other.forksFilter != null)
 				return false;
-		} else if (!commitsFilters.equals(other.commitsFilters))
+		} else if (!forksFilter.equals(other.forksFilter))
 			return false;
-		if (issuesFilters == null) {
-			if (other.issuesFilters != null)
+		if (languageFilter == null) {
+			if (other.languageFilter != null)
 				return false;
-		} else if (!issuesFilters.equals(other.issuesFilters))
+		} else if (!languageFilter.equals(other.languageFilter))
 			return false;
-		if (languageFilters == null) {
-			if (other.languageFilters != null)
+		if (sizeFilter == null) {
+			if (other.sizeFilter != null)
 				return false;
-		} else if (!languageFilters.equals(other.languageFilters))
+		} else if (!sizeFilter.equals(other.sizeFilter))
 			return false;
-		if (scoreFilters == null) {
-			if (other.scoreFilters != null)
+		if (starsFilter == null) {
+			if (other.starsFilter != null)
 				return false;
-		} else if (!scoreFilters.equals(other.scoreFilters))
-			return false;
-		if (starsFilters == null) {
-			if (other.starsFilters != null)
-				return false;
-		} else if (!starsFilters.equals(other.starsFilters))
+		} else if (!starsFilter.equals(other.starsFilter))
 			return false;
 		return true;
 	}

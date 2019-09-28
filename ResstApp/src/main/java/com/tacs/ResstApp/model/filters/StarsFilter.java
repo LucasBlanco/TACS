@@ -1,52 +1,38 @@
 package com.tacs.ResstApp.model.filters;
 
-import com.tacs.ResstApp.model.Repository;
+public class StarsFilter extends RangeFilter {
+    private Integer minStars;
+    private Integer maxStars;
 
-public class StarsFilter implements Filter {
-    private Integer totalStars;
-
-    public Integer getTotalStars() {
-    	return totalStars;
+    public Integer getMinStars() {
+    	return minStars;
     }
     
-    public void setTotalStars(Integer totalStars) {
-    	this.totalStars = totalStars;
-    }
-
-    @Override
-    public boolean filter(Repository repository) {
-        return repository.getStars() >= getTotalStars();
+    public void setMinStars(Integer minStars) {
+    	this.minStars = minStars;
     }
 
 	@Override
-	public String getQueryProperty() {
-		return "stars:" + Integer.toString(totalStars);
+	protected String getMaxValue() {
+		return parseInt(getMaxStars());
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((totalStars == null) ? 0 : totalStars.hashCode());
-		return result;
+	protected String getMinValue() {
+		return parseInt(getMinStars());
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		StarsFilter other = (StarsFilter) obj;
-		if (totalStars == null) {
-			if (other.totalStars != null)
-				return false;
-		} else if (!totalStars.equals(other.totalStars))
-			return false;
-		return true;
+	protected String getPropertyName() {
+		return "stars";
 	}
-	
-	
+
+	public Integer getMaxStars() {
+		return maxStars;
+	}
+
+	public void setMaxStars(Integer maxStars) {
+		this.maxStars = maxStars;
+	}
+
 }
