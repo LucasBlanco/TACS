@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.tacs.ResstApp.repositories.RepositoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,9 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private RepositoryRepository repositoryRepository;
 
 	@Autowired
 	private RepositoryService repositoryService;
@@ -62,6 +66,14 @@ public class UserService {
 
 	public List<Repository> getUserFavouriteRepos(Long userId) throws ServiceException {
 		return getUser(userId).getFavourites();
+	}
+
+	public Repository getFavouriteByName(String name) throws ServiceException {
+		Optional<Repository> repo = repositoryRepository.findByName(name);
+		if(repo.isPresent()){
+			return repo.get();
+		}
+		throw new ServiceException("Favourite does not exist");
 	}
 
 	public List<Repository> addFavourite(Long userId, Repository gitRepository) throws ServiceException, IOException {
