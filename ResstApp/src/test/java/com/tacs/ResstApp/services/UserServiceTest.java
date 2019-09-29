@@ -149,7 +149,7 @@ public class UserServiceTest {
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(repositoryService.getRepositoryForDelete(repositoryToRemove.getId())).thenReturn(repositoryToRemove);
 
-        userService.deleteFavourite(user.getId(), repositoryToRemove);
+        userService.deleteFavourite(user.getId(), repositoryToRemove.getId());
 
         assertThat(user.getFavourites().size()).isEqualTo(2);
         verify(userRepository, times(1)).save(user);
@@ -160,7 +160,7 @@ public class UserServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(getUserWithFavourites()));
         when(repositoryService.getRepositoryForDelete(repo2.getId())).thenThrow(ServiceException.class);
 
-        Throwable thrown = catchThrowable(() -> { userService.deleteFavourite(3L, repo2); });
+        Throwable thrown = catchThrowable(() -> { userService.deleteFavourite(3L, repo2.getId()); });
 
         assertThat(thrown).isInstanceOf(ServiceException.class);
     }
@@ -170,7 +170,7 @@ public class UserServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(getUserWithFavourites()));
         when(repositoryService.getRepositoryForDelete(repo2.getId())).thenReturn(new Repository(4L,""));
 
-        Throwable thrown = catchThrowable(() -> { userService.deleteFavourite(3L, repo2); });
+        Throwable thrown = catchThrowable(() -> { userService.deleteFavourite(3L, repo2.getId()); });
 
         assertThat(thrown).isInstanceOf(ServiceException.class)
                 .hasMessageContaining("User does not have repository in favourites");

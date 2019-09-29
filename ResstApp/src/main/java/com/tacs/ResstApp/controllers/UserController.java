@@ -132,10 +132,10 @@ public class UserController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping("/users/{userId}/favourites")
-    public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @RequestBody Repository gitRepository){
+    @DeleteMapping("/users/{userId}/favourites/{repoId}")
+    public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @PathVariable Long repoId){
         try {
-        	userService.deleteFavourite(userId, gitRepository);
+        	userService.deleteFavourite(userId, repoId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Element from list of favourites deleted succesfully");
         }
         catch(ServiceException ex){

@@ -326,9 +326,9 @@ class UserControllerTest {
 	@Test
 	public void deleteFavouriteSuccessfully() throws Exception {
 		Long userId = 1L;
-		Mockito.doNothing().when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.any(Repository.class));
+		Mockito.doNothing().when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.anyLong());
 
-		ResponseEntity<Object> response = userController.deleteFavourite(userId, new Repository());
+		ResponseEntity<Object> response = userController.deleteFavourite(userId, 1L);
 
 		Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 		Assertions.assertEquals("Element from list of favourites deleted succesfully", response.getBody());
@@ -336,9 +336,9 @@ class UserControllerTest {
 
 	@Test
 	public void deleteFavouritesReturnsUserError() throws ServiceException, IOException {
-		Mockito.doThrow(ServiceException.class).when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.any(Repository.class));
+		Mockito.doThrow(ServiceException.class).when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.anyLong());
 
-		ResponseEntity<Object> response = userController.deleteFavourite(1L, new Repository());
+		ResponseEntity<Object> response = userController.deleteFavourite(1L, 1L);
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		Assertions.assertNull(response.getBody());
@@ -346,9 +346,9 @@ class UserControllerTest {
 
 	@Test
 	public void deleteFavouritesReturnsServerError() throws ServiceException, IOException {
-		Mockito.doThrow(RuntimeException.class).when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.any(Repository.class));
+		Mockito.doThrow(RuntimeException.class).when(userMockService).deleteFavourite(Mockito.anyLong(), Mockito.anyLong());
 
-		ResponseEntity<Object> response = userController.deleteFavourite(1L, new Repository());
+		ResponseEntity<Object> response = userController.deleteFavourite(1L, 1L);
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(response.getBody());
