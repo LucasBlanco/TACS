@@ -27,10 +27,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user){
         try{
-            String generatedToken = userService.login(user);
-            LoginResponse response = new LoginResponse();
-            response.setUserId(userService.getUserId(user));
-            response.setToken(generatedToken);
+            LoginResponse response = userService.login(user);
             return ResponseEntity.ok(response);
         }
         catch(ServiceException ex){

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.tacs.ResstApp.model.LoginResponse;
 import com.tacs.ResstApp.repositories.RepositoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -146,14 +147,19 @@ public class UserService {
 		user.setLanguages(languages);
 	}
 
-	public String login(User user) throws ServiceException {
+	public LoginResponse login(User user) throws ServiceException {
 		User foundUser = this.getUserByUsername(user.getUsername());
 		if(foundUser.getPassword().equals(user.getPassword())){
 			String token = userTokenService.generateToken(foundUser);
 			foundUser.setLastLoginDate(LocalDateTime.now());
 			userRepository.save(foundUser);
-			System.out.println(token);
-			return token;
+
+			LoginResponse response = new LoginResponse();
+			response.setUserId(foundUser.getId());
+			response.setAdmin(foundUser.isAdmin());
+			response.setToken(token);
+
+			return response;
 		}
 		throw new ServiceException("Incorrect password");
 	}

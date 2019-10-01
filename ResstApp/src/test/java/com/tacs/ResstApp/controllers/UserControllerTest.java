@@ -51,7 +51,9 @@ class UserControllerTest {
 	public void loginSuccessfull() throws ServiceException {
 		User user = new User();
 		user.setUsername("Pedro");
-		Mockito.when(userMockService.login(user)).thenReturn("token1");
+		LoginResponse mockResponse = new LoginResponse();
+		mockResponse.setToken("token1");
+		Mockito.when(userMockService.login(user)).thenReturn(mockResponse);
 
 		ResponseEntity<Object> response = userController.login(user);
 		LoginResponse loginResponse = (LoginResponse) response.getBody();
