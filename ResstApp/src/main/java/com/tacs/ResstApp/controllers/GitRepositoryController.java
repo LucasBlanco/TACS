@@ -4,16 +4,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import com.tacs.ResstApp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.tacs.ResstApp.model.FavouritesResponse;
-import com.tacs.ResstApp.model.GitRepositoriesResponse;
-import com.tacs.ResstApp.model.PagedResponse;
-import com.tacs.ResstApp.model.Repository;
-import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
@@ -73,8 +69,13 @@ public class GitRepositoryController {
             LocalDate sinceParsed = since == null ? LocalDate.MIN : LocalDate.parse(since, DATEFORMATTER);
             LocalDate toParsed = to == null ? LocalDate.now() : LocalDate.parse(to, DATEFORMATTER);
             List<Repository> repos = repositoryService.getRepositoriesBetween(sinceParsed, toParsed);
+            System.out.println("Repos: " + repos.size());
+            System.out.println("start: " + start);
+            System.out.println("limit: " + limit);
+            System.out.println("min: " + Math.min(limit, repos.size()));
+            System.out.println("subrepos: " + repos.subList(start, Math.min(limit, repos.size())).size());
+            FavouritesResponse response = new FavouritesResponse(repos.size(), repos.subList(start, Math.min(limit, repos.size())));
 
-            FavouritesResponse response = new FavouritesResponse(repos.size(), repos.subList(start, Math.min(start + limit, repos.size())));
             return ResponseEntity.ok(response);
         } catch (ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -97,10 +98,10 @@ public class GitRepositoryController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/repositories/search")
-    public ResponseEntity<Object> getRepositoriesFiltered(Search search, @RequestParam(value = "lastId", required = false) String lastId) {
+    public ResponseEntity<Object> getRepositoriesFiltered(Search search, @RequestParam(value = "page", required = false) String page) {
         try {
-            List<Repository> repositoriesFiltered = repositoryService.getRepositoriesFiltered(search, lastId);
-            return ResponseEntity.ok(new GitRepositoriesResponse(repositoriesFiltered, repositoryService.getNextPageId(repositoriesFiltered)));
+            GitSearchResponse response = repositoryService.getRepositoriesFiltered(search, page);
+            return ResponseEntity.ok(response);
         } catch (ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch (Exception ex) {
