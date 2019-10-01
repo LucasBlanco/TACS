@@ -69,8 +69,13 @@ public class GitRepositoryController {
             LocalDate sinceParsed = since == null ? LocalDate.MIN : LocalDate.parse(since, DATEFORMATTER);
             LocalDate toParsed = to == null ? LocalDate.now() : LocalDate.parse(to, DATEFORMATTER);
             List<Repository> repos = repositoryService.getRepositoriesBetween(sinceParsed, toParsed);
+            System.out.println("Repos: " + repos.size());
+            System.out.println("start: " + start);
+            System.out.println("limit: " + limit);
+            System.out.println("min: " + Math.min(limit, repos.size()));
+            System.out.println("subrepos: " + repos.subList(start, Math.min(limit, repos.size())).size());
+            FavouritesResponse response = new FavouritesResponse(repos.size(), repos.subList(start, Math.min(limit, repos.size())));
 
-            FavouritesResponse response = new FavouritesResponse(repos.size(), repos.subList(start, Math.min(start + limit, repos.size())));
             return ResponseEntity.ok(response);
         } catch (ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
