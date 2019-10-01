@@ -158,19 +158,4 @@ public class RepositoryServiceTest {
 		Throwable thrown = catchThrowable(() -> { 	repositoryService.getRepositories(encryptedPage ); });
 		assertThat(thrown).isInstanceOf(ServiceException.class);
 	}
-	
-	@Test
-	public void repositoryServiceReturnsLastRepositoryIdFromListOfRepositories() throws IOException, ServiceException {
-		Repository lastRepo = new Repository(5L, "Last Repo");
-		repositories.add(lastRepo);
-		assertThat(repositoryService.getNextPageId(repositories)).isEqualTo(lastRepo.getId().toString());
-	}
-	
-	@Test
-	public void repositoryServiceReturnsNullIdFromEmptyListOfRepositories() throws IOException, ServiceException {
-		repositories.clear();
-		assertThat(repositoryService.getNextPageId(repositories)).isNull();
-	}
-	
-
 }

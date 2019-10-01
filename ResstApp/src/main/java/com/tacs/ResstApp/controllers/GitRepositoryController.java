@@ -4,16 +4,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import com.tacs.ResstApp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.tacs.ResstApp.model.FavouritesResponse;
-import com.tacs.ResstApp.model.GitRepositoriesResponse;
-import com.tacs.ResstApp.model.PagedResponse;
-import com.tacs.ResstApp.model.Repository;
-import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
@@ -99,8 +95,8 @@ public class GitRepositoryController {
     @GetMapping("/repositories/search")
     public ResponseEntity<Object> getRepositoriesFiltered(Search search, @RequestParam(value = "page", required = false) String page) {
         try {
-            List<Repository> repositoriesFiltered = repositoryService.getRepositoriesFiltered(search, page);
-            return ResponseEntity.ok(new GitRepositoriesResponse(repositoriesFiltered, repositoryService.getNextPageId(repositoriesFiltered)));
+            GitSearchResponse response = repositoryService.getRepositoriesFiltered(search, page);
+            return ResponseEntity.ok(response);
         } catch (ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch (Exception ex) {

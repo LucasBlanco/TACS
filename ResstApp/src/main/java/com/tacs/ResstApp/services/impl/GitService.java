@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.tacs.ResstApp.model.GitSearchResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
@@ -87,7 +88,7 @@ public class GitService {
 		return repo;
 	}
 
-	public List<Repository> filterBy(Search search, String page) throws IOException {
+	public GitSearchResponse filterBy(Search search, String page) throws IOException {
 		List<String> queries = search.buildGitSearchQuery();
 		String uri = "/search/repositories?q=" + concatQueries(queries) + pageTrailer(page);
 		System.out.println(uri);
@@ -98,7 +99,10 @@ public class GitService {
         for (JsonElement el : items) {
             repos.add(parseRepository(el.toString()));
         }
-        return repos;
+        GitSearchResponse searchResponse = new GitSearchResponse();
+        searchResponse.setRepositories(repos);
+        searchResponse.setTotalRepositories(repos.size());
+        return searchResponse;
 	}
 
 	private String pageTrailer(String page) {

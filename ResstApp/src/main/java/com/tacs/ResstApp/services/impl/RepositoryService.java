@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.tacs.ResstApp.model.GitSearchResponse;
 import com.tacs.ResstApp.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,7 +27,7 @@ public class RepositoryService {
     private RepositoryRepository repositoryRepository;
 
     @Cacheable("repos")
-	public List<Repository> getRepositoriesFiltered(Search search, String page) throws ServiceException, IOException {
+	public GitSearchResponse getRepositoriesFiltered(Search search, String page) throws ServiceException, IOException {
 		return gitService.filterBy(search, page);
 	}
 
@@ -107,13 +108,4 @@ public class RepositoryService {
         }
 	    return repository;
     }
-
-	public String getNextPageId(List<Repository> repositories) {
-	    if(repositories.isEmpty()) {
-	    	return null;
-	    }
-		
-		Long nextId = repositories.get(repositories.size() - 1).getId();
-	    return nextId.toString();
-	}
 }

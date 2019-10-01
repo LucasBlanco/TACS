@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.tacs.ResstApp.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,11 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.tacs.ResstApp.model.FavouritesResponse;
-import com.tacs.ResstApp.model.GitRepositoriesResponse;
-import com.tacs.ResstApp.model.PagedResponse;
-import com.tacs.ResstApp.model.Repository;
-import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 
@@ -181,10 +177,12 @@ class GitRepositoryControllerTest {
 		Repository repo2 = new Repository(2L, "repo 2");
 		Repository repo3 = new Repository(3L, "repo 3");
 		Search search = new Search();
-		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class), Mockito.anyString())).thenReturn(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+		GitSearchResponse mockResponse = new GitSearchResponse();
+		mockResponse.setRepositories(new ArrayList<>(Arrays.asList(repo1, repo2, repo3)));
+		Mockito.when(repositoryMockService.getRepositoriesFiltered(Mockito.any(Search.class), Mockito.anyString())).thenReturn(mockResponse);
 
 		ResponseEntity<Object> response = gitRepositoryController.getRepositoriesFiltered(search, "");
-		List<Repository> returnedRepos = ((GitRepositoriesResponse) response.getBody()).getRepositories();
+		List<Repository> returnedRepos = ((GitSearchResponse) response.getBody()).getRepositories();
 
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 		Assertions.assertEquals(3, returnedRepos.size());
