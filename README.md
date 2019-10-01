@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/LucasBlanco/TACS.svg?branch=master)](https://travis-ci.org/LucasBlanco/TACS)
+[![Build Status](https://travis-ci.org/LucasBlanco/TACS.svg?branch=master)](https://travis-ci.org/LucasBlanco/TACS) [![Coverage Status](https://coveralls.io/repos/github/LucasBlanco/TACS/badge.svg?branch=master)](https://coveralls.io/github/LucasBlanco/TACS?branch=master)
 
 # TACS
 
