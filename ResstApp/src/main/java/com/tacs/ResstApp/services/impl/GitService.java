@@ -87,9 +87,9 @@ public class GitService {
 		return repo;
 	}
 
-	public List<Repository> filterBy(Search search, String lastId) throws IOException {
+	public List<Repository> filterBy(Search search, String page) throws IOException {
 		List<String> queries = search.buildGitSearchQuery();
-		String uri = "/search/repositories?q=" + concatQueries(queries) + pageTrailer(lastId);
+		String uri = "/search/repositories?q=" + concatQueries(queries) + pageTrailer(page);
 		System.out.println(uri);
 		String executeRequest = this.executeGet(createUrl(uri));
 		JsonObject response = new JsonParser().parse(executeRequest).getAsJsonObject();
@@ -101,9 +101,9 @@ public class GitService {
         return repos;
 	}
 
-	private String pageTrailer(String lastId) {
-		Optional<String> lastIdOptional = Optional.ofNullable(lastId);
-		return lastIdOptional.isPresent() ? "&since=" + lastId : "";
+	private String pageTrailer(String page) {
+		Optional<String> lastIdOptional = Optional.ofNullable(page);
+		return lastIdOptional.isPresent() ? "&page=" + page : "";
 	}
 
 	private String concatQueries(List<String> queries) {
