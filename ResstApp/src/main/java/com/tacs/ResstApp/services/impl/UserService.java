@@ -78,16 +78,18 @@ public class UserService {
 	}
 
 	public List<Repository> addFavourite(Long userId, Repository gitRepository) throws ServiceException, IOException {
-		User user = getUser(userId);
-		Repository repoToAdd = repositoryService.getRepository(gitRepository);
-		if(hasRepository(user, repoToAdd)) {
-			throw new ServiceException("The repository " + repoToAdd.getName() + " was already in favourites");
-		}
-		repoToAdd.favved();
-		repositoryService.save(repoToAdd);
-		user.addFavourite(repoToAdd);
-		userRepository.save(user);
-		return user.getFavourites();
+		//synchronized (userId) {
+			User user = getUser(userId);
+			Repository repoToAdd = repositoryService.getRepository(gitRepository);
+			if(hasRepository(user, repoToAdd)) {
+				throw new ServiceException("The repository " + repoToAdd.getName() + " was already in favourites");
+			}
+			repoToAdd.favved();
+			repositoryService.save(repoToAdd);
+			user.addFavourite(repoToAdd);
+			userRepository.save(user);
+			return user.getFavourites();
+		//}
 	}
 
 	public void deleteFavourite(Long userId, Long repoId) throws ServiceException, IOException {

@@ -109,9 +109,9 @@ public class UserServiceTest {
 	public void addRepoToFavouritesAddsRepoToUsersFavourites() throws ServiceException, IOException {
 		User user = getUserWithFavourites();
 		Repository repository = new Repository(3L, "Third repo");
-		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 		when(repositoryService.getRepository(any())).thenReturn(repository);
-
+		user.setId(userId1);
 		userService.addFavourite(user.getId(), repository);
 
 		assertThat(user.getFavourites().size()).isEqualTo(3);
