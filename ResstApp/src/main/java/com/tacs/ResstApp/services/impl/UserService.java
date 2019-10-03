@@ -78,7 +78,7 @@ public class UserService {
 	}
 
 	public List<Repository> addFavourite(Long userId, Repository gitRepository) throws ServiceException, IOException {
-		//synchronized (userId) {
+		synchronized (userId) {
 			User user = getUser(userId);
 			Repository repoToAdd = repositoryService.getRepository(gitRepository);
 			if(hasRepository(user, repoToAdd)) {
@@ -89,7 +89,7 @@ public class UserService {
 			user.addFavourite(repoToAdd);
 			userRepository.save(user);
 			return user.getFavourites();
-		//}
+		}
 	}
 
 	public void deleteFavourite(Long userId, Long repoId) throws ServiceException, IOException {
