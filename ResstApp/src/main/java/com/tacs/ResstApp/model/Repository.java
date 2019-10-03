@@ -16,7 +16,6 @@ public class Repository {
 
 	private LocalDate registrationDate;
 
-	@Transient
 	private int stars;
 	
 	private String owner;
