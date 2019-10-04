@@ -64,16 +64,23 @@ public class GitRepositoryController {
             @RequestParam("start") int start,
             @RequestParam("limit") int limit
     ) {
+    	List<Repository> repos;
+    	System.out.println("hola");
         try {
             DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            if(!(since.isEmpty() && to.isEmpty())) {
             LocalDate sinceParsed = since == null ? LocalDate.MIN : LocalDate.parse(since, DATEFORMATTER);
             LocalDate toParsed = to == null ? LocalDate.now() : LocalDate.parse(to, DATEFORMATTER);
-            List<Repository> repos = repositoryService.getRepositoriesBetween(sinceParsed, toParsed);
+            repos = repositoryService.getRepositoriesBetween(sinceParsed, toParsed);
             System.out.println("Repos: " + repos.size());
             System.out.println("start: " + start);
             System.out.println("limit: " + limit);
             System.out.println("min: " + Math.min(limit, repos.size()));
             System.out.println("subrepos: " + repos.subList(start, Math.min(limit, repos.size())).size());
+            } else {
+            	System.out.println("ta null");
+            	repos = repositoryService.findLocalRepositories();
+            }
             FavouritesResponse response = new FavouritesResponse(repos.size(), repos.subList(start, Math.min(limit, repos.size())));
 
             return ResponseEntity.ok(response);
