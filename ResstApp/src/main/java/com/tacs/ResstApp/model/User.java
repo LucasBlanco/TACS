@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class User {
@@ -57,7 +58,7 @@ public class User {
 	}
 	
 	public List<String> getLanguages() {
-		return this.languages;
+		return calculateFavouriteLanguages();
 	}
 	
 	public void setLanguages(List<String> langs) {
@@ -102,5 +103,8 @@ public class User {
 		this.admin = admin;
 	}
 	
+	public List<String> calculateFavouriteLanguages() {
+		return this.favourites.stream().map(f -> f.getMainLanguage()).distinct().collect(Collectors.toList());
+	}
 	
 }
