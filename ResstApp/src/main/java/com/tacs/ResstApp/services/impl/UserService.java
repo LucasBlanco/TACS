@@ -35,12 +35,17 @@ public class UserService {
 	@Autowired
 	private UserTokenService userTokenService;
 
+	@Autowired
+	private SaltService saltService;
+
 	public UserService() {}
 
 	public User createUser(User newUser) throws ServiceException {
 	    if(userRepository.findByUsername(newUser.getUsername()).isPresent()){
 	        throw new ServiceException("Username already taken");
         }
+	    String encryptedPass = saltService.encrypt(newUser.getPassword());
+	    newUser.setPassword(encryptedPass);
 		User user = userRepository.save(newUser);
 		return user;
 	}
@@ -151,7 +156,9 @@ public class UserService {
 
 	public LoginResponse login(User user) throws ServiceException {
 		User foundUser = this.getUserByUsername(user.getUsername());
-		if(foundUser.getPassword().equals(user.getPassword())){
+		String decryptedPassword = saltService.decrypt(foundUser.getPassword());
+		System.out.println("Pass: " + foundUser.getPassword() + " y desencriptada: " + decryptedPassword);
+		if(decryptedPassword.equals(user.getPassword())){
 			String token = userTokenService.generateToken(foundUser);
 			foundUser.setLastLoginDate(LocalDateTime.now());
 			userRepository.save(foundUser);

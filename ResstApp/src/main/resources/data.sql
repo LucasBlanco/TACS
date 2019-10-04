@@ -4,7 +4,9 @@ INSERT INTO tacs.user (username, password, admin) VALUES
 ('tacs2','1234',false),
 ('tacs3','1234',false),
 ('admin1','1234',true),
-('admin2','1234',true);
+('admin2','1234',true),
+('admin', 'Yim14u0CJQY=YWRtaW4=', true),
+('user','WnxBw10jL2M=dXNlcg==', false);
 
 TRUNCATE TABLE tacs.repository;
 INSERT INTO tacs.repository(id, favs, main_language, nof_forks, score, total_commits, total_issues, owner, name, registration_date, size) VALUES 
