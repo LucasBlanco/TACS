@@ -179,6 +179,7 @@ public class UserServiceTest {
     @Test
 	public void createUserCreatesUser() throws ServiceException {
 		User user = new User();
+		user.setPassword("hola123");
 		when(userRepository.save(user)).thenReturn(user);
 
 		User returnedUser = userService.createUser(user);
