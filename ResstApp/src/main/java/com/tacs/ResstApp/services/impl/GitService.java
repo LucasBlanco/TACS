@@ -101,7 +101,7 @@ public class GitService {
         }
         GitSearchResponse searchResponse = new GitSearchResponse();
         searchResponse.setRepositories(repos);
-        searchResponse.setTotalRepositories(repos.size());
+        searchResponse.setTotalRepositories(Integer.valueOf(response.get("total_count").getAsString()));
         return searchResponse;
 	}
 
