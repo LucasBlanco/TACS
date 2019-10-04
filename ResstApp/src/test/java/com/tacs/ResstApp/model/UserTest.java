@@ -15,7 +15,7 @@ class UserTest {
 	}
 	
 	@Test
-	public void aSearchWithoutFiltersReturnsAllRepositories() {
+	public void calculateFavouriteLanguagesTest() {
 		Repository repo1 = new Repository(1L, "TACS");
 		repo1.setMainLanguage("C");
 		Repository repo2 = new Repository(2L, "TADP");
