@@ -1,7 +1,6 @@
 package com.tacs.ResstApp.model.filters;
 
-public class LanguageFilter extends Filter { //
-	
+public class LanguageFilter extends Filter {
     private String mainLanguage;
 
     public String getMainLanguage() {
