@@ -2,23 +2,23 @@ package com.tacs.ResstApp.model.filters;
 
 public class ContainsWordFilter extends Filter {
 	
-    private String name;
+    private String words;
 
     public String getName() {
-    	return name;
+    	return words;
     }
     
     public void setName(String name) {
-    	this.name = name;
+    	this.words = name;
     }
 
 	protected String getValue() {
-		return name;
+		return words;
 	}
 
 	@Override
 	protected String getPropertyName() {
-		return "name";
+		return null;
 	}
 
 }
