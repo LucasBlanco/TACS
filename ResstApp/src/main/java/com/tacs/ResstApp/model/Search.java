@@ -61,7 +61,7 @@ public class Search {
 
 	private Stream<Filter> getFiltersAttributes() {
 		return Stream
-				.of(forksFilter, languageFilter, sizeFilter, starsFilter, containsWordFilter)
+				.of(containsWordFilter, forksFilter, languageFilter, sizeFilter, starsFilter)
 				.filter(Objects::nonNull);
 	}
 

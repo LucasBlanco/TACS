@@ -4,12 +4,12 @@ public class ContainsWordFilter extends Filter {
 	
     private String words;
 
-    public String getName() {
+    public String getWords() {
     	return words;
     }
     
-    public void setName(String name) {
-    	this.words = name;
+    public void setWords(String words) {
+    	this.words = words;
     }
 
 	protected String getValue() {
