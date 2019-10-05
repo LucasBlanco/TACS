@@ -28,7 +28,9 @@ public class RepositoryService {
 
     @Cacheable("repos")
 	public GitSearchResponse getRepositoriesFiltered(Search search, String page) throws ServiceException, IOException {
-		return gitService.filterBy(search, page);
+		GitSearchResponse gitSearch = gitService.filterBy(search, page);
+		addNumberOfFavourites(gitSearch.getRepositories());
+    	return gitSearch;
 	}
 
     public List<Repository> getRepositories(String pageId) throws ServiceException{
@@ -38,14 +40,26 @@ public class RepositoryService {
                 String decryptedPageId = CryptoUtils.decrypt(pageId);
                 lastRepoId = CryptoUtils.removeLeftCharacterRepeated(decryptedPageId,'0');
             }
-            return gitService.getRepositories(lastRepoId);
+            List<Repository> repositories = gitService.getRepositories(lastRepoId);
+            addNumberOfFavourites(repositories);
+            return repositories;
         }
 	    catch(IOException ex){
 	        throw new ServiceException(ex.getMessage());
         }
     }
 
-    public Repository getRepository(Repository repo) throws ServiceException, IOException {
+    private void addNumberOfFavourites(List<Repository> repositories) {
+		repositories.forEach(r -> addNFavs(r));
+	}
+
+	private void addNFavs(Repository r) {
+		if (repositoryRepository.existsById(r.getId())) {
+			r.setFavs(repositoryRepository.findById(r.getId()).get().getFavs());
+		}
+	}
+
+	public Repository getRepository(Repository repo) throws ServiceException, IOException {
     	Optional<Repository> repository = repositoryRepository.findById(repo.getId());
     	if (repository.isPresent()) {
     		return updateRepository(repository.get());

@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.tacs.ResstApp.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -34,7 +35,7 @@ class FilterTest {
 		mvc.perform(get("/users/1"))
 		.andExpect(status().isUnauthorized());
 		
-		String tokenJson = mvc.perform(post("/login").content("{ \"username\": \"tacs1\", \"password\": \"1234\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+		String tokenJson = mvc.perform(post("/login").content("{ \"username\": \"user\", \"password\": \"user\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 		JsonObject obj = new JsonParser().parse(tokenJson).getAsJsonObject();
 		String token = obj.get("token").getAsString();
 		mvc.perform(get("/users/1").header("Authorization", token))
@@ -43,17 +44,17 @@ class FilterTest {
 	
 	@Test
 	public void adminFilter() throws Exception {
-		
+
 		mvc.perform(get("/comparison/favourites?id1=1&id2=2"))
 		.andExpect(status().isUnauthorized());
 	
-		String tokenJson = mvc.perform(post("/login").content("{ \"username\": \"tacs1\", \"password\": \"1234\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+		String tokenJson = mvc.perform(post("/login").content("{ \"username\": \"user\", \"password\": \"user\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 		JsonObject obj = new JsonParser().parse(tokenJson).getAsJsonObject();
 		String token = obj.get("token").getAsString();
 		mvc.perform(get("/comparison/favourites?id1=1&id2=2").header("Authorization", token))
-		.andExpect(status().isUnauthorized());//No es admin
+		.andExpect(status().isUnauthorized());//No es admin••••
 		
-		String tokenJson2 = mvc.perform(post("/login").content("{ \"username\": \"admin1\", \"password\": \"1234\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+		String tokenJson2 = mvc.perform(post("/login").content("{ \"username\": \"admin\", \"password\": \"admin\" }").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 		JsonObject obj2 = new JsonParser().parse(tokenJson2).getAsJsonObject();
 		String token2 = obj2.get("token").getAsString();
 		mvc.perform(get("/comparison/favourites?id1=1&id2=2").header("Authorization", token2))
