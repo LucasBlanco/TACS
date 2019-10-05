@@ -22,8 +22,6 @@ public class Repository {
 
 	private int favs;
 	
-	private int totalCommits;
-	
 	private String mainLanguage;
 	
 	private Integer totalIssues;
@@ -76,14 +74,6 @@ public class Repository {
 
 	public void setLanguages(List<String> languages) {
 		this.languages = languages;
-	}
-
-	public int getTotalCommits() {
-		return totalCommits;
-	}
-
-	public void setTotalCommits(int totalCommits) {
-		this.totalCommits = totalCommits;
 	}
 
 	public String getMainLanguage() {

@@ -76,7 +76,6 @@ public class RepositoryService {
     	repo.setScore(re.getScore());
     	repo.setSize(re.getSize());
     	repo.setStars(re.getStars());
-    	repo.setTotalCommits(re.getTotalCommits());
     	repo.setTotalIssues(re.getTotalIssues());
     	return repo;
     }
