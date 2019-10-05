@@ -5,10 +5,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.tacs.ResstApp.model.filters.ContainsWordFilter;
 import com.tacs.ResstApp.model.filters.Filter;
 import com.tacs.ResstApp.model.filters.ForksFilter;
 import com.tacs.ResstApp.model.filters.LanguageFilter;
-import com.tacs.ResstApp.model.filters.NameFilter;
 import com.tacs.ResstApp.model.filters.SizeFilter;
 import com.tacs.ResstApp.model.filters.StarsFilter;
 
@@ -17,7 +17,7 @@ public class Search {
     private LanguageFilter languageFilter;
     private SizeFilter sizeFilter;
     private StarsFilter starsFilter;
-    private NameFilter nameFilter;
+    private ContainsWordFilter containsWordFilter;
 
     public ForksFilter getForksFilter() {
     	return forksFilter;

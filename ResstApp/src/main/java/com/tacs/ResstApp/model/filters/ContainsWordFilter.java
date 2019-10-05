@@ -1,6 +1,6 @@
 package com.tacs.ResstApp.model.filters;
 
-public class NameFilter extends Filter {
+public class ContainsWordFilter extends Filter {
 	
     private String name;
 
