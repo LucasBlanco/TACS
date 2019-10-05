@@ -47,13 +47,21 @@ public class Search {
     	return starsFilter;
     }
     
+    public void setContainsWordFilter(ContainsWordFilter containsWordFilter) {
+    	this.containsWordFilter = containsWordFilter;
+    }
+    
+    public ContainsWordFilter getContainsWordFilter() {
+    	return this.containsWordFilter;
+    }
+    
     public void setStarsFilter(StarsFilter starsFilter) {
     	this.starsFilter = starsFilter;
     }
 
 	private Stream<Filter> getFiltersAttributes() {
 		return Stream
-				.of(forksFilter, languageFilter, sizeFilter, starsFilter)
+				.of(forksFilter, languageFilter, sizeFilter, starsFilter, containsWordFilter)
 				.filter(Objects::nonNull);
 	}
 
@@ -69,6 +77,7 @@ public class Search {
 		result = prime * result + ((languageFilter == null) ? 0 : languageFilter.hashCode());
 		result = prime * result + ((sizeFilter == null) ? 0 : sizeFilter.hashCode());
 		result = prime * result + ((starsFilter == null) ? 0 : starsFilter.hashCode());
+		result = prime * result + ((containsWordFilter == null) ? 0 : containsWordFilter.hashCode());
 		return result;
 	}
 
@@ -100,6 +109,11 @@ public class Search {
 			if (other.starsFilter != null)
 				return false;
 		} else if (!starsFilter.equals(other.starsFilter))
+			return false;
+		if (containsWordFilter == null) {
+			if (other.containsWordFilter != null)
+				return false;
+		} else if (!containsWordFilter.equals(other.containsWordFilter))
 			return false;
 		return true;
 	}
