@@ -17,7 +17,7 @@ public class ContainsWordFilter extends Filter {
     }
 
 	protected String getValue() {
-		return words;
+		return words.replaceAll("\\s+","+");
 	}
 
 	@Override

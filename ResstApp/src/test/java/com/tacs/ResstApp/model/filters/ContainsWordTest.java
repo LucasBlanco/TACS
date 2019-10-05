@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 public class ContainsWordTest {
-	private static final String EXAMPLE_WORDS = "Football interface love";
+	private static final String EXAMPLE_WORDS = "Football+interface+love";
 
 	ContainsWordFilter containsWordFilter = new ContainsWordFilter();
 	
