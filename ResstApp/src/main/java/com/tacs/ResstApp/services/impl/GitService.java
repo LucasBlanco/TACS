@@ -62,13 +62,6 @@ public class GitService {
 		repo.setStars(stars.isJsonNull()?0:stars.getAsInt());
         repo.setSize(obj.get("size").isJsonNull()?null:obj.get("size").getAsInt());
         
-        /*
-        if (!obj.get("commits_url").isJsonNull()) {
-	        String resultCommits = executeRequest(Request.Get(obj.get("commits_url").getAsString().replace("{/sha}", "") + GithubOauthService.getAuthentication()));
-	        JsonArray objCommits = new JsonParser().parse(resultCommits).getAsJsonArray();
-	        repo.setTotalCommits(objCommits.size());
-	    }*/
-        
         repo.setMainLanguage(obj.get("language").isJsonNull()?null:obj.get("language").getAsString());
         
         List<String> languages = new ArrayList<String>();

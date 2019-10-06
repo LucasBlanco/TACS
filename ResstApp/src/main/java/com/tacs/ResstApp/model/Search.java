@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.tacs.ResstApp.model.filters.ContainsWordFilter;
 import com.tacs.ResstApp.model.filters.Filter;
 import com.tacs.ResstApp.model.filters.ForksFilter;
 import com.tacs.ResstApp.model.filters.LanguageFilter;
@@ -16,6 +17,7 @@ public class Search {
     private LanguageFilter languageFilter;
     private SizeFilter sizeFilter;
     private StarsFilter starsFilter;
+    private ContainsWordFilter containsWordFilter;
 
     public ForksFilter getForksFilter() {
     	return forksFilter;
@@ -45,13 +47,21 @@ public class Search {
     	return starsFilter;
     }
     
+    public void setContainsWordFilter(ContainsWordFilter containsWordFilter) {
+    	this.containsWordFilter = containsWordFilter;
+    }
+    
+    public ContainsWordFilter getContainsWordFilter() {
+    	return this.containsWordFilter;
+    }
+    
     public void setStarsFilter(StarsFilter starsFilter) {
     	this.starsFilter = starsFilter;
     }
 
 	private Stream<Filter> getFiltersAttributes() {
 		return Stream
-				.of(forksFilter, languageFilter, sizeFilter, starsFilter)
+				.of(containsWordFilter, forksFilter, languageFilter, sizeFilter, starsFilter)
 				.filter(Objects::nonNull);
 	}
 
@@ -67,6 +77,7 @@ public class Search {
 		result = prime * result + ((languageFilter == null) ? 0 : languageFilter.hashCode());
 		result = prime * result + ((sizeFilter == null) ? 0 : sizeFilter.hashCode());
 		result = prime * result + ((starsFilter == null) ? 0 : starsFilter.hashCode());
+		result = prime * result + ((containsWordFilter == null) ? 0 : containsWordFilter.hashCode());
 		return result;
 	}
 
@@ -98,6 +109,11 @@ public class Search {
 			if (other.starsFilter != null)
 				return false;
 		} else if (!starsFilter.equals(other.starsFilter))
+			return false;
+		if (containsWordFilter == null) {
+			if (other.containsWordFilter != null)
+				return false;
+		} else if (!containsWordFilter.equals(other.containsWordFilter))
 			return false;
 		return true;
 	}
