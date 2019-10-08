@@ -24,6 +24,8 @@ public class Repository {
 	
 	private String mainLanguage;
 	
+	private String languagesUrl;
+	
 	private Integer totalIssues;
 		
 	private Double score;
@@ -94,6 +96,15 @@ public class Repository {
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
+	
+	public String getLanguagesUrl() {
+		return languagesUrl;
+	}
+
+	public void setLanguagesUrl(String languagesUrl) {
+		this.languagesUrl = languagesUrl;
+	}
+	
 
 	@JsonProperty("issues")
 	public Integer getTotalIssues() {

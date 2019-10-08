@@ -34,6 +34,9 @@ public class UserService {
 
 	@Autowired
 	private UserTokenService userTokenService;
+	
+	@Autowired
+	private GitService gitService;
 
 	@Autowired
 	private SaltService saltService;
@@ -90,6 +93,7 @@ public class UserService {
 				throw new ServiceException("The repository " + repoToAdd.getName() + " was already in favourites");
 			}
 			repoToAdd.favved();
+			gitService.addLanguages(repoToAdd);
 			repositoryService.save(repoToAdd);
 			user.addFavourite(repoToAdd);
 			userRepository.save(user);

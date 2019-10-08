@@ -64,22 +64,28 @@ public class GitService {
         
         repo.setMainLanguage(obj.get("language").isJsonNull()?null:obj.get("language").getAsString());
         
-        List<String> languages = new ArrayList<String>();
         if (obj.get("languages_url") != null) {
-	        String languageUri = obj.get("languages_url").getAsString();
-			String resultLanguages = executeGet(languageUri);
-	        JsonObject objLanguages = new JsonParser().parse(resultLanguages).getAsJsonObject();
-	        for(Map.Entry<String, JsonElement> entry : objLanguages.entrySet()) {
-	        	languages.add(entry.getKey());
-	        }
+        	String languageUri = obj.get("languages_url").getAsString();
+        	repo.setLanguagesUrl(languageUri);
         }
         
         JsonObject owner = obj.get("owner").isJsonNull() ? null : obj.get("owner").getAsJsonObject();
         repo.setOwner(owner == null ? null : owner.get("login").getAsString());
         
-        repo.setLanguages(languages);
 		return repo;
 	}
+	
+	public void addLanguages(Repository repo) throws IOException {
+		if (repo.getLanguagesUrl() != null) {
+			List<String> languages = new ArrayList<String>();
+			String resultLanguages = executeGet(repo.getLanguagesUrl());
+			JsonObject objLanguages = new JsonParser().parse(resultLanguages).getAsJsonObject();
+			for(Map.Entry<String, JsonElement> entry : objLanguages.entrySet()) {
+				languages.add(entry.getKey());
+			}
+			repo.setLanguages(languages);	
+		}
+    }
 
 	public GitSearchResponse filterBy(Search search, String page) throws IOException {
 		List<String> queries = search.buildGitSearchQuery();
@@ -89,10 +95,11 @@ public class GitService {
 		JsonObject response = new JsonParser().parse(executeRequest).getAsJsonObject();
 		JsonArray items = response.get("items").getAsJsonArray();
         List<Repository> repos = new ArrayList<Repository>();
+        GitSearchResponse searchResponse = new GitSearchResponse();
         for (JsonElement el : items) {
             repos.add(parseRepository(el.toString()));
+            
         }
-        GitSearchResponse searchResponse = new GitSearchResponse();
         searchResponse.setRepositories(repos);
         searchResponse.setTotalRepositories(Integer.valueOf(response.get("total_count").getAsString()));
         return searchResponse;
