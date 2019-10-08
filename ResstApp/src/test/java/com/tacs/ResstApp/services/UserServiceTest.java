@@ -28,6 +28,7 @@ import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.User;
 import com.tacs.ResstApp.repositories.UserRepository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.services.impl.GitService;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
 
@@ -39,6 +40,9 @@ public class UserServiceTest {
 
     @Mock
     RepositoryService repositoryService;
+    
+    @Mock
+    GitService gitService;
 
 	@InjectMocks
 	UserService userService;
@@ -112,6 +116,7 @@ public class UserServiceTest {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 		when(repositoryService.getRepository(any())).thenReturn(repository);
 		user.setId(userId1);
+		gitService.addLanguages(repository);
 		userService.addFavourite(user.getId(), repository);
 
 		assertThat(user.getFavourites().size()).isEqualTo(3);
