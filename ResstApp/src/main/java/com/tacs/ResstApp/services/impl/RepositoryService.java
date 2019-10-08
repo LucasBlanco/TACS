@@ -48,6 +48,7 @@ public class RepositoryService {
 	        throw new ServiceException(ex.getMessage());
         }
     }
+    
 
     private void addNumberOfFavourites(List<Repository> repositories) {
 		repositories.forEach(r -> addNFavs(r));
