@@ -1,5 +1,8 @@
 package com.tacs.ResstApp.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
@@ -43,7 +46,7 @@ public class CryptoUtils {
         }
         catch (Exception e)
         {
-            System.out.println("Error while encrypting: " + e.toString());
+            LoggerFactory.getLogger("SampleLogger").error("Error while encrypting: " + e.toString());
         }
         return null;
     }
@@ -59,7 +62,7 @@ public class CryptoUtils {
         }
         catch (Exception e)
         {
-            System.out.println("Error while decrypting: " + e.toString());
+            LoggerFactory.getLogger("SampleLogger").error("Error while decrypting: " + e.toString());
         }
         return null;
     }

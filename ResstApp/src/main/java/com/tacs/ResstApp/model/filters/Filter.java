@@ -5,7 +5,6 @@ public abstract class Filter { //voy a tener un property filter que no va a tene
 		if(getPropertyName()!=null) {
 			return getPropertyName() + ":" + getValue();
 		} else
-		System.out.println(getValue());
 		return getValue();
 	}
 
