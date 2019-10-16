@@ -23,7 +23,7 @@ public class UserController {
     
     UserTokenService tokenService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user){
         try{
@@ -39,7 +39,7 @@ public class UserController {
 
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
     @PostMapping("/logout")
     public ResponseEntity<Object> logout(@RequestBody String token){
         try{
@@ -57,7 +57,7 @@ public class UserController {
 
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
     @PostMapping("/users")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
         try {
@@ -83,7 +83,7 @@ public class UserController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
     @GetMapping("/users/{userId}")
     public ResponseEntity<Object> getUserById(@PathVariable Long userId){
         try {
@@ -99,7 +99,7 @@ public class UserController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
     @GetMapping("/users/{userId}/favourites")
     public ResponseEntity<Object> getFavourites(@PathVariable Long userId){
         try {
@@ -113,7 +113,7 @@ public class UserController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
     @PostMapping("/users/{userId}/favourites")
     public ResponseEntity<Object> addFavourite(@PathVariable Long userId, @RequestBody Repository gitRepository){
         try{
@@ -128,7 +128,7 @@ public class UserController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
     @DeleteMapping("/users/{userId}/favourites/{repoId}")
     public ResponseEntity<Object> deleteFavourite(@PathVariable Long userId, @PathVariable Long repoId){
         try {
@@ -143,7 +143,7 @@ public class UserController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
     @GetMapping("/comparison/favourites")
     public ResponseEntity<Object> compareFavourites(@RequestParam("id1") Long id1, @RequestParam("id2") Long id2){
         try{
