@@ -26,7 +26,7 @@ public class GitRepositoryController {
     @Autowired
     UserService userService;
 
-    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
+    @CrossOrigin(origins = "*")
     @GetMapping("repositories")
     public ResponseEntity<Object> getRepositories(@RequestParam(value = "pageId", required = false) String pageId) {
         try {
@@ -43,7 +43,7 @@ public class GitRepositoryController {
         }
     }
 
-    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
+    @CrossOrigin(origins = "*")
     @GetMapping("/repositories/{user}/{repoName}")
     public ResponseEntity<Object> getRepository(@PathVariable String user, @PathVariable String repoName) {
         try {
@@ -55,7 +55,7 @@ public class GitRepositoryController {
         }
     }
 
-    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
+    @CrossOrigin(origins = "*")
     @GetMapping("/favourites")
     public ResponseEntity<Object> getRepositoryByDate(
             @RequestParam(value = "pageId", required = false) String pageId,
@@ -84,7 +84,7 @@ public class GitRepositoryController {
         }
     }
 
-    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
+    @CrossOrigin(origins = "*")
     @GetMapping("/favourites/{name}")
     public ResponseEntity<Object> getRepositoryByName( @PathVariable("name") String name) {
         try {
@@ -96,7 +96,7 @@ public class GitRepositoryController {
         }
     }
 
-    @CrossOrigin(origins = "https://tacs-2019-g3-front.herokuapp.com/")
+    @CrossOrigin(origins = "*")
     @GetMapping("/repositories/search")
     public ResponseEntity<Object> getRepositoriesFiltered(Search search, @RequestParam(value = "page", required = false) String page) {
         try {
