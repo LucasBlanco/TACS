@@ -11,53 +11,15 @@ import com.tacs.ResstApp.model.filters.ForksFilter;
 import com.tacs.ResstApp.model.filters.LanguageFilter;
 import com.tacs.ResstApp.model.filters.SizeFilter;
 import com.tacs.ResstApp.model.filters.StarsFilter;
+import lombok.Data;
 
+@Data
 public class Search {
     private ForksFilter forksFilter;
     private LanguageFilter languageFilter;
     private SizeFilter sizeFilter;
     private StarsFilter starsFilter;
     private ContainsWordFilter containsWordFilter;
-
-    public ForksFilter getForksFilter() {
-    	return forksFilter;
-    }
-    
-    public void setForksFilter(ForksFilter forksFilter) {
-    	this.forksFilter = forksFilter;
-    }
-    
-    public LanguageFilter getLanguageFilter() {
-    	return languageFilter;
-    }
-    
-    public void setLanguageFilter(LanguageFilter languageFilter) {
-    	this.languageFilter = languageFilter;
-    }
-    
-    public SizeFilter getSizeFilter() {
-    	return sizeFilter;
-    }
-    
-    public void setSizeFilter(SizeFilter sizeFilter) {
-    	this.sizeFilter = sizeFilter;
-    }
-    
-    public StarsFilter getStarsFilter() {
-    	return starsFilter;
-    }
-    
-    public void setContainsWordFilter(ContainsWordFilter containsWordFilter) {
-    	this.containsWordFilter = containsWordFilter;
-    }
-    
-    public ContainsWordFilter getContainsWordFilter() {
-    	return this.containsWordFilter;
-    }
-    
-    public void setStarsFilter(StarsFilter starsFilter) {
-    	this.starsFilter = starsFilter;
-    }
 
 	private Stream<Filter> getFiltersAttributes() {
 		return Stream

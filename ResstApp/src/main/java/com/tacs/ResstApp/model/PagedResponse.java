@@ -1,7 +1,10 @@
 package com.tacs.ResstApp.model;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class PagedResponse<T> {
 	
 	private Integer totalCount;
@@ -20,37 +23,5 @@ public class PagedResponse<T> {
 		}
 			
 		this.list = list.subList(fromIndex, toIndex);
-	}
-
-	public Integer getTotalCount() {
-		return totalCount;
-	}
-
-	public void setTotalCount(Integer totalCount) {
-		this.totalCount = totalCount;
-	}
-
-	public Integer getPage() {
-		return page;
-	}
-
-	public void setPage(Integer page) {
-		this.page = page;
-	}
-
-	public Integer getPageSize() {
-		return pageSize;
-	}
-
-	public void setPageSize(Integer pageSize) {
-		this.pageSize = pageSize;
-	}
-
-	public List<T> getList() {
-		return list;
-	}
-
-	public void setList(List<T> list) {
-		this.list = list;
 	}
 }
