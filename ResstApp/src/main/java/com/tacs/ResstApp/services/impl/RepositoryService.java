@@ -2,10 +2,13 @@ package com.tacs.ResstApp.services.impl;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.tacs.ResstApp.model.Cache.CacheValue;
 import com.tacs.ResstApp.model.GitSearchResponse;
 import com.tacs.ResstApp.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,9 @@ import com.tacs.ResstApp.services.exceptions.ServiceException;
 
 @Component
 public class RepositoryService {
+
+	private final int CACHE_SIZE = 10000;
+	private Map<String, CacheValue<Repository>> cachedData;
 
     @Autowired
     private GitService gitService;
@@ -115,11 +121,23 @@ public class RepositoryService {
 
     public Repository getRepositoryByUserRepo(String username, String repoName) throws ServiceException, IOException {
         //TODO buscar en la base por owner y nombre repo, si existe llamamos al método updateRepository y sino usamos el de git directo con favs en 0
-    	Repository repository = gitService.getRepositoryByUserRepo(username, repoName);
-        Optional<Repository> savedRepo = repositoryRepository.findById(repository.getId());
-        if(savedRepo.isPresent()) {
-        	repository.setFavs(savedRepo.get().getFavs());        
-        }
+    	Repository repository;
+    	repository = cachedData.get(username+":"+repoName).getValue();
+    	if (repository == null){
+			repository = gitService.getRepositoryByUserRepo(username, repoName);
+			Optional<Repository> savedRepo = repositoryRepository.findById(repository.getId());
+			if(savedRepo.isPresent()) {
+				repository.setFavs(savedRepo.get().getFavs());
+			}
+			if (cachedData.size() == CACHE_SIZE && !cachedData.containsKey(username+":"+repoName)){
+				String oldestKey = cachedData.entrySet().stream().min(Comparator.comparingLong(x->x.getValue().getTimestamp().getTime()))
+						.get()
+						.getKey();
+				cachedData.remove(oldestKey);
+			}
+			CacheValue<Repository> cachedRepo = new CacheValue<>(repository);
+			cachedData.put(username+":"+repoName, cachedRepo);
+		}
 	    return repository;
     }
 }
