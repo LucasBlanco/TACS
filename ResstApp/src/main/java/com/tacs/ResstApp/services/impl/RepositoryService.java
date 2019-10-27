@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.tacs.ResstApp.model.ContributorsResponse;
 import com.tacs.ResstApp.model.GitSearchResponse;
 import com.tacs.ResstApp.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,4 +123,9 @@ public class RepositoryService {
         }
 	    return repository;
     }
+
+	public ContributorsResponse getContributors(Repository repository) throws ServiceException, IOException {
+
+		return null;
+	}
 }

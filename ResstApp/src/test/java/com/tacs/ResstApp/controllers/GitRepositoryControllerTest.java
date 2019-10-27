@@ -215,5 +215,42 @@ class GitRepositoryControllerTest {
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(returnedRepos);
 	}
-	
+
+	@Test
+	public void getRepositoriesContributorsReturns2Contributors() throws Exception {
+		Repository repo = new Repository(1L, "repo 1");
+		List<String> contributors = Arrays.asList("Contributor1", "Contrubutor2");
+		ContributorsResponse mockResponse = new ContributorsResponse();
+		mockResponse.setContribuors(contributors);
+		Mockito.when(repositoryMockService.getContributors(repo)).thenReturn(mockResponse);
+
+		ResponseEntity<Object> response = gitRepositoryController.getContributorsFromRepo(repo);
+		List<String> returnedContributors = ((ContributorsResponse) response.getBody()).getContribuors();
+
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+		Assertions.assertEquals(contributors.get(0), returnedContributors.get(0));
+		Assertions.assertEquals(contributors.get(1), returnedContributors.get(1));
+	}
+
+	@Test
+	public void getRepositoriesContributorsReturnsUserError() throws Exception {
+		Mockito.when(repositoryMockService.getContributors(Mockito.any(Repository.class))).thenThrow(ServiceException.class);
+
+		ResponseEntity<Object> response = gitRepositoryController.getContributorsFromRepo(new Repository());
+		ContributorsResponse returnedContributors = (ContributorsResponse) response.getBody();
+
+		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		Assertions.assertNull(returnedContributors);
+	}
+
+	@Test
+	public void getRepositoriesContributorsReturnsServerError() throws Exception {
+		Mockito.when(repositoryMockService.getContributors(Mockito.any(Repository.class))).thenThrow(RuntimeException.class);
+
+		ResponseEntity<Object> response = gitRepositoryController.getContributorsFromRepo(new Repository());
+		ContributorsResponse returnedContributors = (ContributorsResponse) response.getBody();
+
+		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
+		Assertions.assertNull(returnedContributors);
+	}
 }
