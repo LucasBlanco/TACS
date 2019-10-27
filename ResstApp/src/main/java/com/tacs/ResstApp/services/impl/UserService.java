@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import com.tacs.ResstApp.model.LoginResponse;
 import com.tacs.ResstApp.repositories.RepositoryRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +42,8 @@ public class UserService {
 
 	@Autowired
 	private SaltService saltService;
+
+	Logger logger = LoggerFactory.getLogger("SampleLogger");
 
 	public UserService() {}
 
@@ -161,7 +165,7 @@ public class UserService {
 	public LoginResponse login(User user) throws ServiceException {
 		User foundUser = this.getUserByUsername(user.getUsername());
 		String decryptedPassword = saltService.decrypt(foundUser.getPassword());
-		System.out.println("Pass: " + foundUser.getPassword() + " y desencriptada: " + decryptedPassword);
+		logger.info("Pass: " + foundUser.getPassword() + " y desencriptada: " + decryptedPassword);
 		if(decryptedPassword.equals(user.getPassword())){
 			String token = userTokenService.generateToken(foundUser);
 			foundUser.setLastLoginDate(LocalDateTime.now());

@@ -17,6 +17,8 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -42,8 +44,10 @@ public class GitService {
 	@Value("${github.clientSecret}")
 	private String clientSecret;
 
+	Logger logger = LoggerFactory.getLogger("SampleLogger");
+
     public Repository getRepositoryByUserRepo(String username, String repoName) throws IOException {
-    	System.out.println(createUrl("/repos/" + username + "/" + repoName));
+    	logger.info("Get repositories: " + createUrl("/repos/" + username + "/" + repoName));
     	String result = executeGet(createUrl("/repos/" + username + "/" + repoName));
         Repository repo = parseRepository(result);
         repo.setOwner(username);
@@ -90,7 +94,7 @@ public class GitService {
 	public GitSearchResponse filterBy(Search search, String page) throws IOException {
 		List<String> queries = search.buildGitSearchQuery();
 		String uri = "/search/repositories?q=" + concatQueries(queries) + pageTrailer(page);
-		System.out.println(uri);
+		logger.info("Filter by: " + uri);
 		String executeRequest = this.executeGet(createUrl(uri));
 		JsonObject response = new JsonParser().parse(executeRequest).getAsJsonObject();
 		JsonArray items = response.get("items").getAsJsonArray();
