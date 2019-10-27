@@ -1,10 +1,13 @@
 package com.tacs.ResstApp.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Contributor {
     private String login;
     private Long id;
     private Integer contributions;
 
+    @JsonProperty("username")
     public String getLogin() {
         return login;
     }
