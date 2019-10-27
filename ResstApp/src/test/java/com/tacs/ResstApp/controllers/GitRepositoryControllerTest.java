@@ -219,13 +219,19 @@ class GitRepositoryControllerTest {
 	@Test
 	public void getRepositoriesContributorsReturns2Contributors() throws Exception {
 		Repository repo = new Repository(1L, "repo 1");
-		List<String> contributors = Arrays.asList("Contributor1", "Contrubutor2");
+		List<Contributor> contributors = new ArrayList<>();
+		Contributor contributor1 = new Contributor();
+		contributor1.setLogin("contributor1");
+		contributors.add(contributor1);
+		Contributor contributor2 = new Contributor();
+		contributor2.setLogin("contributor2");
+		contributors.add(contributor2);
 		ContributorsResponse mockResponse = new ContributorsResponse();
 		mockResponse.setContribuors(contributors);
 		Mockito.when(repositoryMockService.getContributors(repo)).thenReturn(mockResponse);
 
 		ResponseEntity<Object> response = gitRepositoryController.getContributorsFromRepo(repo);
-		List<String> returnedContributors = ((ContributorsResponse) response.getBody()).getContribuors();
+		List<Contributor> returnedContributors = ((ContributorsResponse) response.getBody()).getContribuors();
 
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 		Assertions.assertEquals(contributors.get(0), returnedContributors.get(0));

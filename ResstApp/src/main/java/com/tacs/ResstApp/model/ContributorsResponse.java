@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContributorsResponse {
-    List<String> contribuors = new ArrayList<>();
+    List<Contributor> contribuors = new ArrayList<>();
 
-    public List<String> getContribuors() {
+    public List<Contributor> getContribuors() {
         return contribuors;
     }
 
-    public void setContribuors(List<String> contribuors) {
+    public void setContribuors(List<Contributor> contribuors) {
         this.contribuors = contribuors;
     }
 }

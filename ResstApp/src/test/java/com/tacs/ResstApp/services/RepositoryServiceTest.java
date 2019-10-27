@@ -10,6 +10,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
+import com.tacs.ResstApp.model.Contributor;
 import com.tacs.ResstApp.model.ContributorsResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -167,11 +168,17 @@ public class RepositoryServiceTest {
 	public void getRepositoriesContributorsReturns2Contributors() throws Exception {
 		Repository repo = new Repository(1L, "repo 1");
 		repo.setOwner("Owner");
-		List<String> contributors = Arrays.asList("Contributor1", "Contrubutor2");
+		List<Contributor> contributors = new ArrayList<>();
+		Contributor contributor1 = new Contributor();
+		contributor1.setLogin("contributor1");
+		contributors.add(contributor1);
+		Contributor contributor2 = new Contributor();
+		contributor2.setLogin("contributor2");
+		contributors.add(contributor2);
 		Mockito.when(gitService.getContributorsByUserRepo(repo.getOwner(),repo.getName())).thenReturn(contributors);
 
 		ContributorsResponse response = repositoryService.getContributors(repo);
-		List<String> returnedContributors = response.getContribuors();
+		List<Contributor> returnedContributors = response.getContribuors();
 
 		Assertions.assertEquals(contributors.get(0), returnedContributors.get(0));
 		Assertions.assertEquals(contributors.get(1), returnedContributors.get(1));

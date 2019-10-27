@@ -150,12 +150,10 @@ public class GitService {
 
 	}
 
-	public List<String> getContributorsByUserRepo(String owner, String name) throws IOException {
+	public List<Contributor> getContributorsByUserRepo(String owner, String name) throws IOException {
 		logger.info("Get contributors: " + createUrl("/repos/" + owner + "/" + name + "/contributors"));
 		String result = executeGet(createUrl("/repos/" + owner + "/" + name + "/contributors"));
-		List<Contributor> contributors = this.parseContributors(result);
-
-		return null;
+		return this.parseContributors(result);
 	}
 
     public List<Contributor> parseContributors(String result) throws IOException {
