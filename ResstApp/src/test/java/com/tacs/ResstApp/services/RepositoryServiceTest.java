@@ -10,6 +10,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
+import com.tacs.ResstApp.model.ContributorsResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,6 +26,8 @@ import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.GitService;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.utils.CryptoUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @SpringBootTest
 public class RepositoryServiceTest {
@@ -156,6 +160,30 @@ public class RepositoryServiceTest {
 		Mockito.when(gitService.getRepositories(Mockito.anyString())).thenThrow(IOException.class);
 		
 		Throwable thrown = catchThrowable(() -> { 	repositoryService.getRepositories(encryptedPage ); });
+		assertThat(thrown).isInstanceOf(ServiceException.class);
+	}
+
+	@Test
+	public void getRepositoriesContributorsReturns2Contributors() throws Exception {
+		Repository repo = new Repository(1L, "repo 1");
+		repo.setOwner("Owner");
+		List<String> contributors = Arrays.asList("Contributor1", "Contrubutor2");
+		Mockito.when(gitService.getContributorsByUserRepo(repo.getOwner(),repo.getName())).thenReturn(contributors);
+
+		ContributorsResponse response = repositoryService.getContributors(repo);
+		List<String> returnedContributors = response.getContribuors();
+
+		Assertions.assertEquals(contributors.get(0), returnedContributors.get(0));
+		Assertions.assertEquals(contributors.get(1), returnedContributors.get(1));
+	}
+
+	@Test
+	public void getRepositoriesContributorsReturnsUserError() throws IOException {
+		Repository repository = new Repository(1L, "repo1");
+		repository.setOwner("owner");
+		Mockito.when(gitService.getContributorsByUserRepo(Mockito.anyString(), Mockito.anyString())).thenThrow(IOException.class);
+
+		Throwable thrown = catchThrowable(() -> { 	repositoryService.getContributors(repository ); });
 		assertThat(thrown).isInstanceOf(ServiceException.class);
 	}
 }

@@ -125,7 +125,14 @@ public class RepositoryService {
     }
 
 	public ContributorsResponse getContributors(Repository repository) throws ServiceException, IOException {
+		try{
+			List<String> contributors = gitService.getContributorsByUserRepo(repository.getOwner(), repository.getName());
+			ContributorsResponse response = new ContributorsResponse();
+			response.setContribuors(contributors);
+			return response;
+		} catch (Exception ex){
+			throw new ServiceException(ex.getMessage());
+		}
 
-		return null;
 	}
 }

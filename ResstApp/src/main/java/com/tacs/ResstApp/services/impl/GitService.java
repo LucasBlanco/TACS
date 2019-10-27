@@ -151,4 +151,12 @@ public class GitService {
 
 	}
 
+	public List<String> getContributorsByUserRepo(String owner, String name) throws IOException {
+		/*Logger.info("Get contributors: " + createUrl("/repos/" + username + "/" + repoName));
+		String result = executeGet(createUrl("/repos/" + username + "/" + repoName));
+		Repository repo = parseRepository(result);
+		repo.setOwner(username);
+		return repo;*/
+		return null;
+	}
 }
