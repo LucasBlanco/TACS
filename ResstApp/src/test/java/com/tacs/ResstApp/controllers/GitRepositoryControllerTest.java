@@ -218,7 +218,6 @@ class GitRepositoryControllerTest {
 
 	@Test
 	public void getRepositoriesContributorsReturns2Contributors() throws Exception {
-		Repository repo = new Repository(1L, "repo 1");
 		List<Contributor> contributors = new ArrayList<>();
 		Contributor contributor1 = new Contributor();
 		contributor1.setLogin("contributor1");
@@ -228,9 +227,9 @@ class GitRepositoryControllerTest {
 		contributors.add(contributor2);
 		ContributorsResponse mockResponse = new ContributorsResponse();
 		mockResponse.setContribuors(contributors);
-		Mockito.when(repositoryMockService.getContributors(repo)).thenReturn(mockResponse);
+		Mockito.when(repositoryMockService.getContributors(Mockito.any(Repository.class))).thenReturn(mockResponse);
 
-		ResponseEntity<Object> response = gitRepositoryController.getContributorsFromRepo(repo);
+		ResponseEntity<Object> response = gitRepositoryController.getContributorsFromRepo("owner", "name");
 		List<Contributor> returnedContributors = ((ContributorsResponse) response.getBody()).getContribuors();
 
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -242,7 +241,7 @@ class GitRepositoryControllerTest {
 	public void getRepositoriesContributorsReturnsUserError() throws Exception {
 		Mockito.when(repositoryMockService.getContributors(Mockito.any(Repository.class))).thenThrow(ServiceException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getContributorsFromRepo(new Repository());
+		ResponseEntity<Object> response = gitRepositoryController.getContributorsFromRepo("owner", "name");
 		ContributorsResponse returnedContributors = (ContributorsResponse) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -253,7 +252,7 @@ class GitRepositoryControllerTest {
 	public void getRepositoriesContributorsReturnsServerError() throws Exception {
 		Mockito.when(repositoryMockService.getContributors(Mockito.any(Repository.class))).thenThrow(RuntimeException.class);
 
-		ResponseEntity<Object> response = gitRepositoryController.getContributorsFromRepo(new Repository());
+		ResponseEntity<Object> response = gitRepositoryController.getContributorsFromRepo("owner", "name");
 		ContributorsResponse returnedContributors = (ContributorsResponse) response.getBody();
 
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
