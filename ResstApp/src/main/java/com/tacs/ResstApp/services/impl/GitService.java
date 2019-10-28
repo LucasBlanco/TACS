@@ -3,6 +3,7 @@ package com.tacs.ResstApp.services.impl;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -11,7 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.tacs.ResstApp.model.GitSearchResponse;
+import com.google.gson.reflect.TypeToken;
+import com.tacs.ResstApp.model.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
@@ -28,9 +30,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.tacs.ResstApp.model.GitRepository;
-import com.tacs.ResstApp.model.Repository;
-import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.services.exceptions.GHRateLimitExceededException;
 
 @Component
@@ -151,4 +150,17 @@ public class GitService {
 
 	}
 
+	public List<Contributor> getContributorsByUserRepo(String owner, String name) throws IOException {
+		logger.info("Get contributors: " + createUrl("/repos/" + owner + "/" + name + "/contributors"));
+		String result = executeGet(createUrl("/repos/" + owner + "/" + name + "/contributors"));
+		return this.parseContributors(result);
+	}
+
+    public List<Contributor> parseContributors(String result) throws IOException {
+        JsonArray obj = new JsonParser().parse(result).getAsJsonArray();
+        Type listType = new TypeToken<List<Contributor>>() {}.getType();
+        List<Contributor> contributors = new Gson().fromJson(obj, listType);
+
+        return contributors;
+    }
 }

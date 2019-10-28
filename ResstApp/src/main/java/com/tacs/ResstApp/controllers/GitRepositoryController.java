@@ -104,4 +104,19 @@ public class GitRepositoryController {
         }
     }
 
+    @CrossOrigin(origins = "*")
+    @GetMapping("/contributors")
+    public ResponseEntity<Object> getContributorsFromRepo(@RequestParam String owner, @RequestParam String reponame) {
+        try {
+            Repository repository = new Repository();
+            repository.setOwner(owner);
+            repository.setName(reponame);
+            ContributorsResponse contributors = repositoryService.getContributors(repository);
+            return ResponseEntity.ok(contributors);
+        } catch (ServiceException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
+    }
 }

@@ -6,14 +6,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.tacs.ResstApp.model.GitSearchResponse;
+import com.tacs.ResstApp.model.*;
 import com.tacs.ResstApp.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
-import com.tacs.ResstApp.model.Repository;
-import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.repositories.RepositoryRepository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 
@@ -122,4 +120,16 @@ public class RepositoryService {
         }
 	    return repository;
     }
+
+	public ContributorsResponse getContributors(Repository repository) throws ServiceException, IOException {
+		try{
+			List<Contributor> contributors = gitService.getContributorsByUserRepo(repository.getOwner(), repository.getName());
+			ContributorsResponse response = new ContributorsResponse();
+			response.setContribuors(contributors);
+			return response;
+		} catch (Exception ex){
+			throw new ServiceException(ex.getMessage());
+		}
+
+	}
 }
