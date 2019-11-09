@@ -132,4 +132,15 @@ public class RepositoryService {
 		}
 
 	}
+
+	public CommitsResponse getCommits(Repository repository) throws ServiceException {
+		try{
+			List<Commit> commits = gitService.getCommitsByUserRepo(repository.getOwner(), repository.getName());
+			CommitsResponse response = new CommitsResponse();
+			response.setCommits(commits);
+			return response;
+		} catch (Exception ex){
+			throw new ServiceException(ex.getMessage());
+		}
+	}
 }

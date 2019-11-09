@@ -163,4 +163,18 @@ public class GitService {
 
         return contributors;
     }
+
+	public List<Commit> getCommitsByUserRepo(String owner, String name) throws IOException {
+		logger.info("Get commits: " + createUrl("/repos/" + owner + "/" + name + "/commits"));
+		String result = executeGet(createUrl("/repos/" + owner + "/" + name + "/commits"));
+		return this.parseCommits(result);
+	}
+
+	private List<Commit> parseCommits(String result) {
+		JsonArray obj = new JsonParser().parse(result).getAsJsonArray();
+        Type listType = new TypeToken<List<Commit>>() {}.getType();
+        List<Commit> commits = new Gson().fromJson(obj, listType);
+
+        return commits;
+	}
 }

@@ -258,4 +258,52 @@ class GitRepositoryControllerTest {
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(returnedContributors);
 	}
+	
+	@Test
+	public void getRepositoriesCommitsReturns2Commits() throws Exception {
+		List<Commit> commits = new ArrayList<>();
+		Commit commit1 = new Commit();
+		CommitDescription commitDescription1 = new CommitDescription();
+		commitDescription1.setMessage("desc. 1");
+		commit1.setCommit(commitDescription1);
+		commits.add(commit1);
+
+		Commit commit2 = new Commit();
+		CommitDescription commitDescription2 = new CommitDescription();
+		commitDescription2.setMessage("desc. 2");
+		commit2.setCommit(commitDescription2);
+		commits.add(commit2);
+		CommitsResponse mockResponse = new CommitsResponse();
+		mockResponse.setCommits(commits);
+		Mockito.when(repositoryMockService.getCommits(Mockito.any(Repository.class))).thenReturn(mockResponse);
+
+		ResponseEntity<Object> response = gitRepositoryController.getCommitsFromRepo("owner", "name");
+		List<Commit> returnedCommits = ((CommitsResponse) response.getBody()).getCommits();
+
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+		Assertions.assertEquals(commits.get(0), returnedCommits.get(0));
+		Assertions.assertEquals(commits.get(1), returnedCommits.get(1));
+	}
+
+	@Test
+	public void getRepositoriesCommitsReturnsUserError() throws Exception {
+		Mockito.when(repositoryMockService.getCommits(Mockito.any(Repository.class))).thenThrow(ServiceException.class);
+
+		ResponseEntity<Object> response = gitRepositoryController.getCommitsFromRepo("owner", "name");
+		CommitsResponse returnedCommits = (CommitsResponse) response.getBody();
+
+		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		Assertions.assertNull(returnedCommits);
+	}
+
+	@Test
+	public void getRepositoriesCommitsReturnsServerError() throws Exception {
+		Mockito.when(repositoryMockService.getCommits(Mockito.any(Repository.class))).thenThrow(RuntimeException.class);
+
+		ResponseEntity<Object> response = gitRepositoryController.getCommitsFromRepo("owner", "name");
+		CommitsResponse returnedCommits = (CommitsResponse) response.getBody();
+
+		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
+		Assertions.assertNull(returnedCommits);
+	}
 }
