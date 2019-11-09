@@ -10,8 +10,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-import com.tacs.ResstApp.model.Contributor;
-import com.tacs.ResstApp.model.ContributorsResponse;
+import com.tacs.ResstApp.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.repositories.RepositoryRepository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.GitService;
@@ -192,5 +190,18 @@ public class RepositoryServiceTest {
 
 		Throwable thrown = catchThrowable(() -> { 	repositoryService.getContributors(repository ); });
 		assertThat(thrown).isInstanceOf(ServiceException.class);
+	}
+
+	@Test
+	public void getGitIgnoreTemplatesReturns2Templates() throws Exception {
+		GitIgnoreTemplate repo = new GitIgnoreTemplate("repo 1", "repo 1");
+		GitIgnoreTemplate repo2 = new GitIgnoreTemplate("repo 2", "repo 2");
+		List<GitIgnoreTemplate> templates = Arrays.asList(repo, repo2);
+		Mockito.when(gitService.getGitIgnoreTemplates()).thenReturn(templates);
+
+		GitIgnoreTemplateResponse response = repositoryService.getGitIgnoreTemplates();
+
+		Assertions.assertEquals(templates.get(0), response.getTemplates().get(0));
+		Assertions.assertEquals(templates.get(1), response.getTemplates().get(1));
 	}
 }
