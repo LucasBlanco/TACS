@@ -135,4 +135,17 @@ public class GitRepositoryController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
+            
+    @CrossOrigin(origins = "*")
+    @GetMapping("/gitIgnoreTemplates")
+    public ResponseEntity<Object> getGitIgnoreTemplates() {
+        try {
+            GitIgnoreTemplateResponse templates = repositoryService.getGitIgnoreTemplates();
+            return ResponseEntity.ok(templates);
+        } catch (ServiceException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
+    }
 }

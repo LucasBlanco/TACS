@@ -177,4 +177,14 @@ public class GitService {
 
         return commits;
 	}
+	
+	public List<GitIgnoreTemplate> getGitIgnoreTemplates() throws IOException {
+    	String result = executeGet(createUrl("/repos/github/gitignore/contents"));
+    	GitIgnoreTemplate[] templates = gson.fromJson(result, GitIgnoreTemplate[].class);
+    	List<GitIgnoreTemplate> listaTemplates = Arrays.stream(templates)
+				.map( temp -> new GitIgnoreTemplate(temp.getName(), temp.getDownloadUrl()))
+				.filter( temp -> temp.getName().contains(".gitignore"))
+				.collect(toList());
+    	return listaTemplates;
+	}
 }

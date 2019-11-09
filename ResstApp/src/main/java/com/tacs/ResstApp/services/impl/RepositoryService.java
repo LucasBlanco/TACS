@@ -2,6 +2,8 @@ package com.tacs.ResstApp.services.impl;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -130,7 +132,17 @@ public class RepositoryService {
 		} catch (Exception ex){
 			throw new ServiceException(ex.getMessage());
 		}
+	}
 
+	public GitIgnoreTemplateResponse getGitIgnoreTemplates() throws ServiceException, IOException {
+		try{
+			List<GitIgnoreTemplate> templates = gitService.getGitIgnoreTemplates();
+			GitIgnoreTemplateResponse response = new GitIgnoreTemplateResponse();
+			response.setTemplates(templates);
+			return response;
+		} catch (Exception ex){
+			throw new ServiceException(ex.getMessage());
+		}
 	}
 
 	public CommitsResponse getCommits(Repository repository) throws ServiceException {

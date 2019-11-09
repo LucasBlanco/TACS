@@ -306,4 +306,19 @@ class GitRepositoryControllerTest {
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(returnedCommits);
 	}
+
+	@Test
+	public void getGitIgnoreTemplatesReturns2Templates() throws Exception {
+		GitIgnoreTemplate repo = new GitIgnoreTemplate("repo 1", "repo 1");
+		GitIgnoreTemplate repo2 = new GitIgnoreTemplate("repo 2", "repo 2");
+		List<GitIgnoreTemplate> templates = Arrays.asList(repo,repo2);
+		GitIgnoreTemplateResponse responseSrv = new GitIgnoreTemplateResponse(templates);
+		Mockito.when(repositoryMockService.getGitIgnoreTemplates()).thenReturn(responseSrv);
+
+		ResponseEntity<Object> response = gitRepositoryController.getGitIgnoreTemplates();
+		List<GitIgnoreTemplate> returedTemplates = ((GitIgnoreTemplateResponse) response.getBody()).getTemplates();
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+		Assertions.assertEquals(templates.get(0), returedTemplates.get(0));
+		Assertions.assertEquals(templates.get(1), returedTemplates.get(1));
+	}
 }
