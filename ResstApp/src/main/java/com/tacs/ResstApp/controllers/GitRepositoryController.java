@@ -119,4 +119,18 @@ public class GitRepositoryController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
+    
+    @CrossOrigin(origins = "*")
+    @GetMapping("/tags")
+    public ResponseEntity<Object> getTagsFromRepo(@RequestParam String owner, @RequestParam String reponame) {
+        try {
+            Repository repository = new Repository();
+            repository.setOwner(owner);
+            repository.setName(reponame);
+            TagsResponse contributors = repositoryService.getTags(repository);
+            return ResponseEntity.ok(contributors);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
+    }
 }

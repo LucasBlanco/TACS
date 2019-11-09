@@ -130,6 +130,16 @@ public class RepositoryService {
 		} catch (Exception ex){
 			throw new ServiceException(ex.getMessage());
 		}
-
 	}
-}
+
+	public TagsResponse getTags(Repository repository) throws ServiceException {
+		try{
+			List<Tag> tags = gitService.getTagsByUserRepo(repository.getOwner(), repository.getName());
+			TagsResponse response = new TagsResponse();
+			response.setTags(tags);
+			return response;
+		} catch (Exception ex){
+			throw new ServiceException(ex.getMessage());
+		}
+	}
+}	

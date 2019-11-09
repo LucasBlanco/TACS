@@ -163,4 +163,28 @@ public class GitService {
 
         return contributors;
     }
+
+	public List<Tag> getTagsByUserRepo(String owner, String name) throws IOException {
+		logger.info("Get tags: " + createUrl("/repos/" + owner + "/" + name + "/tags"));
+		String result = executeGet(createUrl("/repos/" + owner + "/" + name + "/tags"));
+		List<Tag> tags = this.parseTags(result);
+		 
+		return tags;
+	}
+
+	private Tag parseTag(String result) {
+        JsonArray obj = new JsonParser().parse(result).getAsJsonArray();
+        Type tagType = new TypeToken<Tag>() {}.getType();
+        Tag tag = new Gson().fromJson(obj, tagType);
+
+        return tag;
+	}
+	
+	private List<Tag> parseTags(String result) {
+        JsonArray obj = new JsonParser().parse(result).getAsJsonArray();
+        Type listType = new TypeToken<List<Tag>>() {}.getType();
+        List<Tag> tags = new Gson().fromJson(obj, listType);
+
+        return tags;
+	}
 }
