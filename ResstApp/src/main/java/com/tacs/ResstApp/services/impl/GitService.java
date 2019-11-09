@@ -157,13 +157,31 @@ public class GitService {
 	}
 
     public List<Contributor> parseContributors(String result) throws IOException {
-        JsonArray obj = new JsonParser().parse(result).getAsJsonArray();
+        JsonArray obj = parseArray(result);
         Type listType = new TypeToken<List<Contributor>>() {}.getType();
         List<Contributor> contributors = new Gson().fromJson(obj, listType);
 
         return contributors;
     }
 
+	private JsonArray parseArray(String result) {
+		return new JsonParser().parse(result).getAsJsonArray();
+	}
+
+	public List<Commit> getCommitsByUserRepo(String owner, String name) throws IOException {
+		logger.info("Get commits: " + createUrl("/repos/" + owner + "/" + name + "/commits"));
+		String result = executeGet(createUrl("/repos/" + owner + "/" + name + "/commits"));
+		return this.parseCommits(result);
+	}
+
+	private List<Commit> parseCommits(String result) {
+		JsonArray obj = parseArray(result);
+        Type listType = new TypeToken<List<Commit>>() {}.getType();
+        List<Commit> commits = new Gson().fromJson(obj, listType);
+
+        return commits;
+	}
+	
 	public List<GitIgnoreTemplate> getGitIgnoreTemplates() throws IOException {
     	String result = executeGet(createUrl("/repos/github/gitignore/contents"));
     	GitIgnoreTemplate[] templates = gson.fromJson(result, GitIgnoreTemplate[].class);

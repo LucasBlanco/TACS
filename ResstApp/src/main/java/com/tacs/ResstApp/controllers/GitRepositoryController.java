@@ -119,7 +119,23 @@ public class GitRepositoryController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
-
+    
+    @CrossOrigin(origins = "*")
+    @GetMapping("/commits")
+    public ResponseEntity<Object> getCommitsFromRepo(@RequestParam String owner, @RequestParam String reponame) {
+        try {
+            Repository repository = new Repository();
+            repository.setOwner(owner);
+            repository.setName(reponame);
+            CommitsResponse commits = repositoryService.getCommits(repository);
+            return ResponseEntity.ok(commits);
+        } catch (ServiceException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
+    }
+            
     @CrossOrigin(origins = "*")
     @GetMapping("/gitIgnoreTemplates")
     public ResponseEntity<Object> getGitIgnoreTemplates() {
