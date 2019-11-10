@@ -2,20 +2,26 @@ package com.tacs.ResstApp.services.impl;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.tacs.ResstApp.model.*;
-import com.tacs.ResstApp.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import com.tacs.ResstApp.model.Commit;
+import com.tacs.ResstApp.model.CommitsResponse;
+import com.tacs.ResstApp.model.Contributor;
+import com.tacs.ResstApp.model.ContributorsResponse;
+import com.tacs.ResstApp.model.GitIgnoreTemplate;
+import com.tacs.ResstApp.model.GitIgnoreTemplateResponse;
+import com.tacs.ResstApp.model.GitSearchResponse;
+import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.repositories.RepositoryRepository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.utils.CryptoUtils;
 
 @Component
 public class RepositoryService {
@@ -155,4 +161,14 @@ public class RepositoryService {
 			throw new ServiceException(ex.getMessage());
 		}
 	}
+
+	public Repository createRepository(String json) throws ServiceException {
+		try{
+			return gitService.createRepository(json);
+		} catch (Exception ex){
+			throw new ServiceException(ex.getMessage());
+		}
+	}
+	
+	
 }

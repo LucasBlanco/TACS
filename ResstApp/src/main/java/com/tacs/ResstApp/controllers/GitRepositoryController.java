@@ -4,12 +4,25 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import com.tacs.ResstApp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.tacs.ResstApp.model.CommitsResponse;
+import com.tacs.ResstApp.model.ContributorsResponse;
+import com.tacs.ResstApp.model.FavouritesResponse;
+import com.tacs.ResstApp.model.GitIgnoreTemplateResponse;
+import com.tacs.ResstApp.model.GitRepositoriesResponse;
+import com.tacs.ResstApp.model.GitSearchResponse;
+import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
@@ -36,6 +49,19 @@ public class GitRepositoryController {
             String nextPageId = CryptoUtils.encrypt(lastRepoIdFilledWithZeros);
             GitRepositoriesResponse response = new GitRepositoriesResponse(repos, nextPageId);
             return ResponseEntity.ok(response);
+        } catch (ServiceException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("repositories")
+    public ResponseEntity<Object> createRepositories(@RequestBody String json) {
+        try {
+            Repository response = repositoryService.createRepository(json);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch (Exception ex) {

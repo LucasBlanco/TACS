@@ -43,6 +43,10 @@ public class TokenFilter implements Filter {
 		
 		if (!"OPTIONS".equals(request.getMethod())) {
 			if (!("POST".equals(request.getMethod()) && "/users".equals(request.getServletPath()))) {//Para la creacion de usuarios no hace falta estar logueado
+				if (!"POST".equals(request.getMethod()) && "/repositories".equals(request.getServletPath())) { //Solo en post es necesario ser admin
+					chain.doFilter(req, res);
+					return;
+				}
 				final String token = request.getHeader("authorization");
 		
 				if (token == null) {
