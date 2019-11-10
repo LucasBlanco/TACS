@@ -12,24 +12,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.google.gson.reflect.TypeToken;
-import com.tacs.ResstApp.model.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+import com.tacs.ResstApp.model.Commit;
+import com.tacs.ResstApp.model.Contributor;
+import com.tacs.ResstApp.model.GitIgnoreTemplate;
+import com.tacs.ResstApp.model.GitRepository;
+import com.tacs.ResstApp.model.GitSearchResponse;
+import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.services.exceptions.GHRateLimitExceededException;
 
 @Component
@@ -42,6 +48,8 @@ public class GitService {
 	private String clientId;
 	@Value("${github.clientSecret}")
 	private String clientSecret;
+	@Value("${github.accesToken}")
+	private String accesToken;
 
 	Logger logger = LoggerFactory.getLogger("SampleLogger");
 
@@ -190,5 +198,34 @@ public class GitService {
 				.filter( temp -> temp.getName().contains(".gitignore"))
 				.collect(toList());
     	return listaTemplates;
+	}
+
+	public String post(String url, String auth, String postData) throws IOException {
+		Request postRequest = Request.Post(url).bodyString(postData, ContentType.APPLICATION_JSON);
+		
+		if(auth != null && !auth.isEmpty()) {
+			postRequest.addHeader("Authorization", auth);
+		}
+
+		HttpResponse response = postRequest.execute().returnResponse();
+		StatusLine statusLine = response.getStatusLine();
+		if (statusLine.getStatusCode() == 403) {
+			Long resetTimeInSeconds = Long.valueOf(response.getFirstHeader("X-RateLimit-Reset").getValue());
+			Long minutes = (resetTimeInSeconds - Instant.now().atZone(ZoneOffset.UTC).toInstant().getEpochSecond())
+					/ 60;
+			throw new GHRateLimitExceededException(minutes);
+		} else if (statusLine.getStatusCode() >= 300) {
+			throw new HttpResponseException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
+		}
+		return EntityUtils.toString(response.getEntity());
+	}
+	
+	public Repository createRepository(String json) throws IOException {
+		String url = baseUrl + "/user/repos"; 
+		String auth = "token " + accesToken;
+        
+        String responseString = post(url, auth, json);
+        
+        return parseRepository(responseString);
 	}
 }
