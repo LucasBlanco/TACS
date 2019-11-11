@@ -127,8 +127,8 @@ public class GitRepositoryController {
             Repository repository = new Repository();
             repository.setOwner(owner);
             repository.setName(reponame);
-            TagsResponse contributors = repositoryService.getTags(repository);
-            return ResponseEntity.ok(contributors);
+            TagsResponse tags = repositoryService.getTags(repository);
+            return ResponseEntity.ok(tags);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
