@@ -6,14 +6,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.tacs.ResstApp.model.*;
-import com.tacs.ResstApp.utils.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import com.tacs.ResstApp.model.Commit;
+import com.tacs.ResstApp.model.CommitsResponse;
+import com.tacs.ResstApp.model.Contributor;
+import com.tacs.ResstApp.model.ContributorsResponse;
+import com.tacs.ResstApp.model.GitIgnoreTemplate;
+import com.tacs.ResstApp.model.GitIgnoreTemplateResponse;
+import com.tacs.ResstApp.model.GitSearchResponse;
+import com.tacs.ResstApp.model.Repository;
+import com.tacs.ResstApp.model.Search;
 import com.tacs.ResstApp.repositories.RepositoryRepository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
+import com.tacs.ResstApp.utils.CryptoUtils;
 
 @Component
 public class RepositoryService {
@@ -132,14 +140,45 @@ public class RepositoryService {
 		}
 	}
 
+
 	public TagsResponse getTags(Repository repository) throws ServiceException {
 		try{
 			List<Tag> tags = gitService.getTagsByUserRepo(repository.getOwner(), repository.getName());
 			TagsResponse response = new TagsResponse();
 			response.setTags(tags);
+      return response;
+		} catch (Exception ex){
+			throw new ServiceException(ex.getMessage());
+		}
+  }
+	public GitIgnoreTemplateResponse getGitIgnoreTemplates() throws ServiceException, IOException {
+		try{
+			List<GitIgnoreTemplate> templates = gitService.getGitIgnoreTemplates();
+			GitIgnoreTemplateResponse response = new GitIgnoreTemplateResponse();
+			response.setTemplates(templates);
+			return response;
+		} catch (Exception ex){
+			throw new ServiceException(ex.getMessage());
+		}
+  }
+
+	public CommitsResponse getCommits(Repository repository) throws ServiceException {
+		try{
+			List<Commit> commits = gitService.getCommitsByUserRepo(repository.getOwner(), repository.getName());
+			CommitsResponse response = new CommitsResponse();
+			response.setCommits(commits);
 			return response;
 		} catch (Exception ex){
 			throw new ServiceException(ex.getMessage());
 		}
 	}
-}	
+
+	public Repository createRepository(String json) throws ServiceException {
+		try{
+			return gitService.createRepository(json);
+		} catch (Exception ex){
+			throw new ServiceException(ex.getMessage());
+		}
+	}
+}
+
