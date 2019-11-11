@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tacs.ResstApp.model.CommitsResponse;
 import com.tacs.ResstApp.model.ContributorsResponse;
+import com.tacs.ResstApp.model.FavouritesResponse;
+import com.tacs.ResstApp.model.GitIgnoreTemplateResponse;
 import com.tacs.ResstApp.model.GitRepositoriesResponse;
 import com.tacs.ResstApp.model.GitSearchResponse;
 import com.tacs.ResstApp.model.Repository;
@@ -76,6 +79,31 @@ public class GitRepositoryController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
         }
     }
+    
+    @CrossOrigin(origins = "*")
+    @GetMapping("/favourites")
+    public ResponseEntity<Object> getRepositoryByDate(
+            @RequestParam(value = "pageId", required = false) String pageId,
+            @RequestParam(value = "since", required = false) String since,
+            @RequestParam(value = "to", required = false) String to,
+            @RequestParam("start") int start,
+            @RequestParam("limit") int limit
+    ) {
+        try {
+            DateTimeFormatter DATEFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate sinceParsed = since == null ? LocalDate.MIN : LocalDate.parse(since, DATEFORMATTER);
+            LocalDate toParsed = to == null ? LocalDate.now() : LocalDate.parse(to, DATEFORMATTER);
+            List<Repository> repos = repositoryService.getRepositoriesBetween(sinceParsed, toParsed);
+            FavouritesResponse response = new FavouritesResponse(repos.size(), repos.subList(start, Math.min(limit, repos.size())));
+
+            return ResponseEntity.ok(response);
+        } catch (ServiceException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
+        }
+    }
+
 
 	@CrossOrigin(origins = "*")
 	@GetMapping("/favourites/{name}")
@@ -119,7 +147,35 @@ public class GitRepositoryController {
 		}
 	}
 
+    @CrossOrigin(origins = "*")
+    @GetMapping("/commits")
+    public ResponseEntity<Object> getCommitsFromRepo(@RequestParam String owner, @RequestParam String reponame) {
+        try {
+            Repository repository = new Repository();
+            repository.setOwner(owner);
+            repository.setName(reponame);
+            CommitsResponse commits = repositoryService.getCommits(repository);
+            return ResponseEntity.ok(commits);
+        } catch (ServiceException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
+    }
     
+    @CrossOrigin(origins = "*")
+    @GetMapping("/gitIgnoreTemplates")
+    public ResponseEntity<Object> getGitIgnoreTemplates() {
+        try {
+            GitIgnoreTemplateResponse templates = repositoryService.getGitIgnoreTemplates();
+            return ResponseEntity.ok(templates);
+        } catch (ServiceException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
+    }
+	
     @CrossOrigin(origins = "*")
     @GetMapping("/tags")
     public ResponseEntity<Object> getTagsFromRepo(@RequestParam String owner, @RequestParam String reponame) {
