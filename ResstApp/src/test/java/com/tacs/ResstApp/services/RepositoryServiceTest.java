@@ -259,7 +259,6 @@ public class RepositoryServiceTest {
 		List<Tag> returnedTags = response.getTags();
 
 		Assertions.assertEquals(tags.get(0), returnedTags.get(0));
-		Assertions.assertEquals(tags.get(1), returnedTags.get(1));
 	}
 
 }
