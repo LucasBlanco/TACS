@@ -23,38 +23,49 @@ import com.tacs.ResstApp.model.GitRepositoriesResponse;
 import com.tacs.ResstApp.model.GitSearchResponse;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.Search;
+import com.tacs.ResstApp.model.TagsResponse;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
 import com.tacs.ResstApp.utils.CryptoUtils;
 
-
 @RestController
 public class GitRepositoryController {
 
+	@Autowired
+	RepositoryService repositoryService;
 
-    @Autowired
-    RepositoryService repositoryService;
+	@Autowired
+	UserService userService;
 
-    @Autowired
-    UserService userService;
+	@CrossOrigin(origins = "*")
+	@GetMapping("repositories")
+	public ResponseEntity<Object> getRepositories(@RequestParam(value = "pageId", required = false) String pageId) {
+		try {
+			List<Repository> repos = repositoryService.getRepositories(pageId);
+			String lastRepoId = repos.get(repos.size() - 1).getId().toString();
+			String lastRepoIdFilledWithZeros = CryptoUtils.leftPadWithCharacter(lastRepoId, 9, '0');
+			String nextPageId = CryptoUtils.encrypt(lastRepoIdFilledWithZeros);
+			GitRepositoriesResponse response = new GitRepositoriesResponse(repos, nextPageId);
+			return ResponseEntity.ok(response);
+		} catch (ServiceException ex) {
+			return ResponseEntity.badRequest().body(ex.getMessage());
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
+		}
+	}
 
-    @CrossOrigin(origins = "*")
-    @GetMapping("repositories")
-    public ResponseEntity<Object> getRepositories(@RequestParam(value = "pageId", required = false) String pageId) {
-        try {
-            List<Repository> repos = repositoryService.getRepositories(pageId);
-            String lastRepoId = repos.get(repos.size() - 1).getId().toString();
-            String lastRepoIdFilledWithZeros = CryptoUtils.leftPadWithCharacter(lastRepoId, 9, '0');
-            String nextPageId = CryptoUtils.encrypt(lastRepoIdFilledWithZeros);
-            GitRepositoriesResponse response = new GitRepositoriesResponse(repos, nextPageId);
-            return ResponseEntity.ok(response);
-        } catch (ServiceException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
-        }
-    }
+	@CrossOrigin(origins = "*")
+	@GetMapping("/repositories/{user}/{repoName}")
+	public ResponseEntity<Object> getRepository(@PathVariable String user, @PathVariable String repoName) {
+		try {
+			return ResponseEntity.ok(repositoryService.getRepositoryByUserRepo(user, repoName));
+		} catch (ServiceException ex) {
+			return ResponseEntity.badRequest().body(ex.getMessage());
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
+		}
+	}
 
     @CrossOrigin(origins = "*")
     @PostMapping("repositories")
@@ -68,19 +79,7 @@ public class GitRepositoryController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
         }
     }
-
-    @CrossOrigin(origins = "*")
-    @GetMapping("/repositories/{user}/{repoName}")
-    public ResponseEntity<Object> getRepository(@PathVariable String user, @PathVariable String repoName) {
-        try {
-            return ResponseEntity.ok(repositoryService.getRepositoryByUserRepo(user, repoName));
-        } catch (ServiceException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
-        }
-    }
-
+    
     @CrossOrigin(origins = "*")
     @GetMapping("/favourites")
     public ResponseEntity<Object> getRepositoryByDate(
@@ -105,47 +104,49 @@ public class GitRepositoryController {
         }
     }
 
-    @CrossOrigin(origins = "*")
-    @GetMapping("/favourites/{name}")
-    public ResponseEntity<Object> getRepositoryByName( @PathVariable("name") String name) {
-        try {
-            return ResponseEntity.ok(userService.getFavouriteByName(name));
-        } catch (ServiceException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
-        }
-    }
 
-    @CrossOrigin(origins = "*")
-    @GetMapping("/repositories/search")
-    public ResponseEntity<Object> getRepositoriesFiltered(Search search, @RequestParam(value = "page", required = false) String page) {
-        try {
-            GitSearchResponse response = repositoryService.getRepositoriesFiltered(search, page);
-            return ResponseEntity.ok(response);
-        } catch (ServiceException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
-        }
-    }
+	@CrossOrigin(origins = "*")
+	@GetMapping("/favourites/{name}")
+	public ResponseEntity<Object> getRepositoryByName(@PathVariable("name") String name) {
+		try {
+			return ResponseEntity.ok(userService.getFavouriteByName(name));
+		} catch (ServiceException ex) {
+			return ResponseEntity.badRequest().body(ex.getMessage());
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
+		}
+	}
 
-    @CrossOrigin(origins = "*")
-    @GetMapping("/contributors")
-    public ResponseEntity<Object> getContributorsFromRepo(@RequestParam String owner, @RequestParam String reponame) {
-        try {
-            Repository repository = new Repository();
-            repository.setOwner(owner);
-            repository.setName(reponame);
-            ContributorsResponse contributors = repositoryService.getContributors(repository);
-            return ResponseEntity.ok(contributors);
-        } catch (ServiceException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
-        }
-    }
-    
+	@CrossOrigin(origins = "*")
+	@GetMapping("/repositories/search")
+	public ResponseEntity<Object> getRepositoriesFiltered(Search search,
+			@RequestParam(value = "page", required = false) String page) {
+		try {
+			GitSearchResponse response = repositoryService.getRepositoriesFiltered(search, page);
+			return ResponseEntity.ok(response);
+		} catch (ServiceException ex) {
+			return ResponseEntity.badRequest().body(ex.getMessage());
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+		}
+	}
+
+	@CrossOrigin(origins = "*")
+	@GetMapping("/contributors")
+	public ResponseEntity<Object> getContributorsFromRepo(@RequestParam String owner, @RequestParam String reponame) {
+		try {
+			Repository repository = new Repository();
+			repository.setOwner(owner);
+			repository.setName(reponame);
+			ContributorsResponse contributors = repositoryService.getContributors(repository);
+			return ResponseEntity.ok(contributors);
+		} catch (ServiceException ex) {
+			return ResponseEntity.badRequest().body(ex.getMessage());
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+		}
+	}
+
     @CrossOrigin(origins = "*")
     @GetMapping("/commits")
     public ResponseEntity<Object> getCommitsFromRepo(@RequestParam String owner, @RequestParam String reponame) {
@@ -161,7 +162,7 @@ public class GitRepositoryController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
     }
-            
+    
     @CrossOrigin(origins = "*")
     @GetMapping("/gitIgnoreTemplates")
     public ResponseEntity<Object> getGitIgnoreTemplates() {
@@ -170,6 +171,20 @@ public class GitRepositoryController {
             return ResponseEntity.ok(templates);
         } catch (ServiceException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
+    }
+	
+    @CrossOrigin(origins = "*")
+    @GetMapping("/tags")
+    public ResponseEntity<Object> getTagsFromRepo(@RequestParam String owner, @RequestParam String reponame) {
+        try {
+            Repository repository = new Repository();
+            repository.setOwner(owner);
+            repository.setName(reponame);
+            TagsResponse tags = repositoryService.getTags(repository);
+            return ResponseEntity.ok(tags);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }
