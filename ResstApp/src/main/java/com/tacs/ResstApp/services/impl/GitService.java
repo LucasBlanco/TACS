@@ -36,6 +36,7 @@ import com.tacs.ResstApp.model.GitRepository;
 import com.tacs.ResstApp.model.GitSearchResponse;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.Search;
+import com.tacs.ResstApp.model.Tag;
 import com.tacs.ResstApp.services.exceptions.GHRateLimitExceededException;
 
 @Component

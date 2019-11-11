@@ -15,14 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tacs.ResstApp.model.CommitsResponse;
 import com.tacs.ResstApp.model.ContributorsResponse;
-import com.tacs.ResstApp.model.FavouritesResponse;
-import com.tacs.ResstApp.model.GitIgnoreTemplateResponse;
 import com.tacs.ResstApp.model.GitRepositoriesResponse;
 import com.tacs.ResstApp.model.GitSearchResponse;
 import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.model.Search;
+import com.tacs.ResstApp.model.TagsResponse;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.RepositoryService;
 import com.tacs.ResstApp.services.impl.UserService;
@@ -79,26 +77,6 @@ public class GitRepositoryController {
         }
     }
 
-    @CrossOrigin(origins = "*")
-    @GetMapping("/repositories/{user}/{repoName}")
-    public ResponseEntity<Object> getRepository(@PathVariable String user, @PathVariable String repoName) {
-        try {
-            return ResponseEntity.ok(repositoryService.getRepositoryByUserRepo(user, repoName));
-        } catch (ServiceException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
-        }
-    }
-
-			return ResponseEntity.ok(response);
-		} catch (ServiceException ex) {
-			return ResponseEntity.badRequest().body(ex.getMessage());
-		} catch (Exception ex) {
-			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
-		}
-	}
-
 	@CrossOrigin(origins = "*")
 	@GetMapping("/favourites/{name}")
 	public ResponseEntity<Object> getRepositoryByName(@PathVariable("name") String name) {
@@ -141,21 +119,6 @@ public class GitRepositoryController {
 		}
 	}
 
-    @CrossOrigin(origins = "*")
-    @GetMapping("/contributors")
-    public ResponseEntity<Object> getContributorsFromRepo(@RequestParam String owner, @RequestParam String reponame) {
-        try {
-            Repository repository = new Repository();
-            repository.setOwner(owner);
-            repository.setName(reponame);
-            ContributorsResponse contributors = repositoryService.getContributors(repository);
-            return ResponseEntity.ok(contributors);
-        } catch (ServiceException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
-        }
-    }
     
     @CrossOrigin(origins = "*")
     @GetMapping("/tags")
