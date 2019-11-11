@@ -262,13 +262,4 @@ public class RepositoryServiceTest {
 		Assertions.assertEquals(tags.get(1), returnedTags.get(1));
 	}
 
-	@Test
-	public void getRepositoriesTagsReturnsUserError() throws IOException {
-		Repository repository = new Repository(1L, "repo1");
-		repository.setOwner("owner");
-		Mockito.when(gitService.getTagsByUserRepo(Mockito.anyString(), Mockito.anyString())).thenThrow(IOException.class);
-
-		Throwable thrown = catchThrowable(() -> { repositoryService.getTags(repository); });
-		assertThat(thrown).isInstanceOf(ServiceException.class);
-	}
 }

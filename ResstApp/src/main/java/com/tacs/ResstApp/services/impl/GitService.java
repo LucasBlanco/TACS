@@ -181,13 +181,6 @@ public class GitService {
 		return tags;
 	}
 
-	private Tag parseTag(String result) {
-        JsonArray obj = new JsonParser().parse(result).getAsJsonArray();
-        Type tagType = new TypeToken<Tag>() {}.getType();
-        Tag tag = new Gson().fromJson(obj, tagType);
-
-        return tag;
-	}
 	
 	private List<Tag> parseTags(String result) {
         JsonArray obj = new JsonParser().parse(result).getAsJsonArray();
