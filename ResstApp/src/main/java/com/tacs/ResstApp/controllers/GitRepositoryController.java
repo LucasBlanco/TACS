@@ -185,6 +185,8 @@ public class GitRepositoryController {
             repository.setName(reponame);
             TagsResponse tags = repositoryService.getTags(repository);
             return ResponseEntity.ok(tags);
+        } catch (ServiceException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         }

@@ -306,6 +306,48 @@ class GitRepositoryControllerTest {
 		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
 		Assertions.assertNull(returnedCommits);
 	}
+	
+	@Test
+	public void getRepositoriesTagsReturnsTag() throws Exception {
+		List<Tag> tags = new ArrayList<>();
+		Tag tag1 = new Tag();
+		tag1.setName("Release 1.0");
+		tag1.setTarball_Url("www.release10tarball.com");
+		tag1.setZipball_Url("www.release10zipball.com");
+		tags.add(tag1);
+
+		TagsResponse mockResponse = new TagsResponse();
+		mockResponse.setTags(tags);
+		Mockito.when(repositoryMockService.getTags(Mockito.any(Repository.class))).thenReturn(mockResponse);
+
+		ResponseEntity<Object> response = gitRepositoryController.getTagsFromRepo("owner", "name");
+		List<Tag> returnedTags = ((TagsResponse) response.getBody()).getTags();
+
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+		Assertions.assertEquals(tags.get(0), returnedTags.get(0));
+	}
+
+	@Test
+	public void getRepositoriesTagsReturnsUserError() throws Exception {
+		Mockito.when(repositoryMockService.getTags(Mockito.any(Repository.class))).thenThrow(ServiceException.class);
+
+		ResponseEntity<Object> response = gitRepositoryController.getTagsFromRepo("owner", "name");
+		TagsResponse returnedTags = (TagsResponse) response.getBody();
+
+		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		Assertions.assertNull(returnedTags);
+	}
+
+	@Test
+	public void getRepositoriesTagsReturnsServerError() throws Exception {
+		Mockito.when(repositoryMockService.getTags(Mockito.any(Repository.class))).thenThrow(RuntimeException.class);
+
+		ResponseEntity<Object> response = gitRepositoryController.getTagsFromRepo("owner", "name");
+		TagsResponse returnedTags = (TagsResponse) response.getBody();
+
+		Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
+		Assertions.assertNull(returnedTags);
+	}
 
 	@Test
 	public void getGitIgnoreTemplatesReturns2Templates() throws Exception {
