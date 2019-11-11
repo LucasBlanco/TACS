@@ -240,4 +240,25 @@ public class RepositoryServiceTest {
 		Throwable thrown = catchThrowable(() -> { repositoryService.getCommits(repository); });
 		assertThat(thrown).isInstanceOf(ServiceException.class);
 	}
+	
+	@Test
+	public void getRepositoriesTagsReturnsTag() throws Exception {
+		Repository repo = new Repository(1L, "repo 1");
+		repo.setOwner("Owner");
+
+		List<Tag> tags = new ArrayList<>();
+		Tag tag1 = new Tag();
+		tag1.setName("Release 1.0");
+		tag1.setTarball_Url("www.release10tarball.com");
+		tag1.setZipball_Url("www.release10zipball.com");
+		tags.add(tag1);
+
+		Mockito.when(gitService.getTagsByUserRepo(repo.getOwner(),repo.getName())).thenReturn(tags);
+
+		TagsResponse response = repositoryService.getTags(repo);
+		List<Tag> returnedTags = response.getTags();
+
+		Assertions.assertEquals(tags.get(0), returnedTags.get(0));
+	}
+
 }

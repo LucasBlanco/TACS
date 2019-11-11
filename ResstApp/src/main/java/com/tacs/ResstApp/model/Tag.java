@@ -30,8 +30,8 @@ public class Tag {
         return zipball_url;
     }
 
-    public void tarball_Url(String tarball_url) {
-        this.tarball_url = tarball_url;
+    public void setZipball_Url(String zipball_url) {
+        this.zipball_url = zipball_url;
     }
     
     public String getTarball_Url() {
