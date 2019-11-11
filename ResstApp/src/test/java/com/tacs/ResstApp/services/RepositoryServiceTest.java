@@ -10,8 +10,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-import com.tacs.ResstApp.model.Contributor;
-import com.tacs.ResstApp.model.ContributorsResponse;
+import com.tacs.ResstApp.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.tacs.ResstApp.model.Repository;
 import com.tacs.ResstApp.repositories.RepositoryRepository;
 import com.tacs.ResstApp.services.exceptions.ServiceException;
 import com.tacs.ResstApp.services.impl.GitService;
@@ -191,6 +189,55 @@ public class RepositoryServiceTest {
 		Mockito.when(gitService.getContributorsByUserRepo(Mockito.anyString(), Mockito.anyString())).thenThrow(IOException.class);
 
 		Throwable thrown = catchThrowable(() -> { 	repositoryService.getContributors(repository ); });
+		assertThat(thrown).isInstanceOf(ServiceException.class);
+	}
+
+	@Test
+	public void getGitIgnoreTemplatesReturns2Templates() throws Exception {
+		GitIgnoreTemplate repo = new GitIgnoreTemplate("repo 1", "repo 1");
+		GitIgnoreTemplate repo2 = new GitIgnoreTemplate("repo 2", "repo 2");
+		List<GitIgnoreTemplate> templates = Arrays.asList(repo, repo2);
+		Mockito.when(gitService.getGitIgnoreTemplates()).thenReturn(templates);
+
+		GitIgnoreTemplateResponse response = repositoryService.getGitIgnoreTemplates();
+
+		Assertions.assertEquals(templates.get(0), response.getTemplates().get(0));
+		Assertions.assertEquals(templates.get(1), response.getTemplates().get(1));
+	}
+	
+	@Test
+	public void getRepositoriesCommitsReturns2Commits() throws Exception {
+		Repository repo = new Repository(1L, "repo 1");
+		repo.setOwner("Owner");
+
+		List<Commit> commits = new ArrayList<>();
+		Commit commit1 = new Commit();
+		CommitDescription commitDescription1 = new CommitDescription();
+		commitDescription1.setMessage("desc. 1");
+		commit1.setCommit(commitDescription1);
+		commits.add(commit1);
+
+		Commit commit2 = new Commit();
+		CommitDescription commitDescription2 = new CommitDescription();
+		commitDescription2.setMessage("desc. 2");
+		commit2.setCommit(commitDescription2);
+		commits.add(commit2);		
+		Mockito.when(gitService.getCommitsByUserRepo(repo.getOwner(),repo.getName())).thenReturn(commits);
+
+		CommitsResponse response = repositoryService.getCommits(repo);
+		List<Commit> returnedCommits = response.getCommits();
+
+		Assertions.assertEquals(commits.get(0), returnedCommits.get(0));
+		Assertions.assertEquals(commits.get(1), returnedCommits.get(1));
+	}
+
+	@Test
+	public void getRepositoriesCommitsReturnsUserError() throws IOException {
+		Repository repository = new Repository(1L, "repo1");
+		repository.setOwner("owner");
+		Mockito.when(gitService.getCommitsByUserRepo(Mockito.anyString(), Mockito.anyString())).thenThrow(IOException.class);
+
+		Throwable thrown = catchThrowable(() -> { repositoryService.getCommits(repository); });
 		assertThat(thrown).isInstanceOf(ServiceException.class);
 	}
 }
